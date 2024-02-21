@@ -6,68 +6,64 @@
 #include <iostream>
 #include <sstream>
 
-class Shader {
+class ShaderProgram {
 public:
-    Shader(GLenum type) {
-        shader = glCreateShader(type);
+    ShaderProgram(char const* vertex, char const* fragment) {
+        m_programId = glCreateProgram();
+
+        if (!loadFromFile(vertex, GL_VERTEX_SHADER)) {
+            std::cout << "Couldn't load vertex shader\n";
+        }
+
+        if (!loadFromFile(fragment, GL_FRAGMENT_SHADER)) {
+            std::cout << "Couldn't load fragment shader\n";
+        }
+
+        glLinkProgram(m_programId);
     }
 
-    void loadFromFile(char const* filename) {
+    bool loadFromFile(char const* filename, GLenum type) {
         std::ifstream file(filename);
 
         if (!file.is_open()) {
             std::cout << "Couldn't open the file!\n";
-            return;
+            return false;
         }
+
+        int shaderId = glCreateShader(type);
 
         std::stringstream buffer;
         buffer << file.rdbuf();
         auto str = buffer.str();
         auto c_str = str.c_str();
-        glShaderSource(shader, 1, &c_str, NULL);
-        glCompileShader(shader);
+        file.close();
+        glShaderSource(shaderId, 1, &c_str, NULL);
+        glCompileShader(shaderId);
 
         int success;
         char log[512];
-        glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+        glGetShaderiv(shaderId, GL_COMPILE_STATUS, &success);
         if (!success) {
-            glGetShaderInfoLog(shader, 512, NULL, log);
+            glGetShaderInfoLog(shaderId, 512, NULL, log);
             std::cout << "Shader compilation error: " << log << '\n';
+            return false;
         }
 
-        file.close();
+        glAttachShader(m_programId, shaderId);
+        glDeleteShader(shaderId);
+        return true;
     }
 
-    void attach(int program) {
-        glAttachShader(program, shader);
+    void use() {
+        glUseProgram(m_programId);
     }
 
-private:
-    unsigned int shader;
-};
-
-class Buffer {
-public:
-    Buffer() {
-        glGenBuffers(1, &index);
-    }
-
-    Buffer(GLenum target, void* data, int size) {
-        glGenBuffers(1, &index);
-        glBindBuffer(target, index);
-        glBufferData(target, size, data, GL_STATIC_DRAW);
-    }
-
-    void bind(GLenum target) {
-        glBindBuffer(target, index);
-    }
-
-    void setData(GLenum target, void* data, int size) {
-        glBufferData(target, size, data, GL_STATIC_DRAW);
+    ~ShaderProgram() {
+        glDeleteProgram(m_programId);
     }
 
 private:
-    unsigned int index;
+    int m_programId;
 };
 
 struct VertexAttrib {
@@ -78,38 +74,61 @@ struct VertexAttrib {
     void* pointer = nullptr;
 };
 
-class VertexArray {
+class Model {
 public:
-    VertexArray() {
-        glGenVertexArrays(1, &vao);
-        glBindVertexArray(vao);
+    Model() {
+        glGenBuffers(1, &m_vbo);
+        glGenVertexArrays(1, &m_vao);
     }
 
-    VertexArray(VertexAttrib* attribs, int length) {
-        glGenVertexArrays(1, &vao);
-        glBindVertexArray(vao);
+    Model(void* vertexData, int size, int count) {
+        glGenBuffers(1, &m_vbo);
+        glGenVertexArrays(1, &m_vao);
 
-        for (auto i = 0; i < length; i++) {
-            addAttribute(i, attribs[i]);
-        }
+        glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+        glBufferData(GL_ARRAY_BUFFER, size, vertexData, GL_STATIC_DRAW);
+        m_count = count;
     }
 
-    void bind() {
-        glBindVertexArray(vao);
+    void setVertexData(void* vertexData, int size, int count) {
+        glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+        glBufferData(GL_ARRAY_BUFFER, size, vertexData, GL_STATIC_DRAW);
+        m_count = count;
+    }
+
+    void setProgram(ShaderProgram* program) {
+        m_program = program;
     }
 
     void addAttribute(int index, VertexAttrib& attrib) {
+        glBindVertexArray(m_vao);
         glVertexAttribPointer(index, attrib.size, attrib.type, attrib.normalized, attrib.stride, attrib.pointer);
         glEnableVertexAttribArray(index);
     }
 
+    void draw() {
+        glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+        glBindVertexArray(m_vao);
+        if (m_program)
+            m_program->use();
+        glDrawArrays(GL_TRIANGLES, 0, m_count);
+    }
+
+    ~Model() {
+        glDeleteBuffers(1, &m_vbo);
+        glDeleteVertexArrays(1, &m_vao);
+    }
+
 private:
-    unsigned int vao;
+    GLuint m_vbo;
+    GLuint m_vao;
+    ShaderProgram* m_program;
+    int m_count;
 };
 
 int main()
 {
-    auto window = sf::Window{ { 1920u, 1080u }, "CMake SFML Project" };
+    auto window = sf::Window{ { 1920u, 1080u }, "Cube" };
     window.setFramerateLimit(144);
 
     float vertices[] = {
@@ -117,32 +136,19 @@ int main()
         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
         0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
     }; 
-
-    // vertex buffer
-    Buffer buf(GL_ARRAY_BUFFER, vertices, sizeof(vertices));
-
-    //vertex shader
-    Shader vertex(GL_VERTEX_SHADER);
-    vertex.loadFromFile("./vertex.glsl");
-
-    // fragment shader
-    Shader fragment(GL_FRAGMENT_SHADER);
-    fragment.loadFromFile("./fragment.glsl");
-
-    // shader program
-    unsigned int shaderProgram;
-    shaderProgram = glCreateProgram();
-    vertex.attach(shaderProgram);
-    fragment.attach(shaderProgram);
-    glLinkProgram(shaderProgram);
-    glUseProgram(shaderProgram);
-
-    // attributes
-    VertexArray vao;
+    
+    // vertex attribs
     VertexAttrib pos = { .size = 3, .type = GL_FLOAT, .stride = 6 * sizeof(float)};
     VertexAttrib col = { .size = 3, .type = GL_FLOAT, .stride = 6 * sizeof(float), .pointer = (void*)(3 * sizeof(float))};
-    vao.addAttribute(0, pos);
-    vao.addAttribute(1, col);
+
+    // shader program
+    ShaderProgram program("vertex.glsl", "fragment.glsl");
+
+    // model
+    Model model(vertices, sizeof(vertices), 3);
+    model.addAttribute(0, pos);
+    model.addAttribute(1, col);
+    model.setProgram(&program);
 
     while (window.isOpen())
     {
@@ -156,9 +162,7 @@ int main()
 
         glClearColor(0, 0.5, 0.5, 1);
         glClear(GL_COLOR_BUFFER_BIT);
-        buf.bind(GL_ARRAY_BUFFER);
-        vao.bind();
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        model.draw();
         window.display();
     }
 }

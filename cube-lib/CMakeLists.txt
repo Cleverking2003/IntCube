@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 project(cube LANGUAGES CXX)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+#set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 
 include(FetchContent)
@@ -21,5 +21,12 @@ if(WIN32)
         PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${SFML_SOURCE_DIR}/extlibs/bin/$<IF:$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>,x64,x86>/openal32.dll $<TARGET_FILE_DIR:cube>
         VERBATIM)
 endif()
+
+add_custom_command(
+        TARGET cube
+        COMMENT "Copy shader files"
+        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/src/vertex.glsl ${CMAKE_BINARY_DIR}
+        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/src/fragment.glsl ${CMAKE_BINARY_DIR}
+        VERBATIM)
 
 install(TARGETS cube)
