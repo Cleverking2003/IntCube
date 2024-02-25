@@ -1,6 +1,7 @@
 #define GL_GLEXT_PROTOTYPES
 #include <SFML/OpenGL.hpp>
 #include <SFML/Window.hpp>
+#include <SFML/Graphics.hpp>
 
 #include <fstream>
 #include <iostream>
@@ -71,6 +72,12 @@ public:
         glUniformMatrix4fv(loc, 1, GL_FALSE, glm::value_ptr(mat));
     }
 
+    void setInt(char const* name, int value) {
+        glUseProgram(m_programId);
+        auto loc = glGetUniformLocation(m_programId, name);
+        glUniform1i(loc, value);
+    }
+
 private:
     int m_programId;
 };
@@ -78,7 +85,7 @@ private:
 struct VertexAttrib {
     GLint size;
     GLenum type;
-    GLboolean normalized = false;
+    GLboolean normalized = GL_FALSE;
     GLsizei stride;
     void* pointer = nullptr;
 };
@@ -113,7 +120,7 @@ public:
         m_program = program;
     }
 
-    void addAttribute(int index, VertexAttrib& attrib) {
+    void addAttribute(int index, VertexAttrib attrib) {
         glBindVertexArray(m_vao);
         glVertexAttribPointer(index, attrib.size, attrib.type, attrib.normalized, attrib.stride, attrib.pointer);
         glEnableVertexAttribArray(index);
@@ -139,97 +146,167 @@ private:
     GLuint m_ebo;
     ShaderProgram* m_program;
     int m_count;
+};
+
+float vertices[] = {
+    // face 1
+    -0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+     0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+     0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f,
+    // face 2
+    -0.5f, -0.5f, 0.5f, 1.0f, 0.5f, 0.0f,
+    0.5f, -0.5f, 0.5f, 1.0f, 0.5f, 0.0f,
+    -0.5f, 0.5f, 0.5f, 1.0f, 0.5f, 0.0f,
+    0.5f, 0.5f, 0.5f, 1.0f, 0.5f, 0.0f,
+    // face 3
+    -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+    -0.5f, -0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+    -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+    -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
+    // face 4
+    0.5f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
+    0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+    0.5f, 0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
+    0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
+    // face 5
+    -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f,
+    0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f,
+    -0.5f, -0.5f, 0.5f, 1.0f, 1.0f, 0.0f,
+    0.5f, -0.5f, 0.5f, 1.0f, 1.0f, 0.0f,
+    // face 6
+    -0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 1.0f,
+    0.5f, 0.5f, -0.5f, 1.0f, 1.0f, 1.0f,
+    -0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f,
+    0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f,
+};
+
+unsigned int indices[] = {
+    // face 1
+    0, 1, 2,
+    1, 2, 3,
+    // face 2
+    4, 5, 6,
+    5, 6, 7,
+    // face 3
+    8, 9, 10,
+    9, 10, 11,
+    // face 4
+    12, 13, 14,
+    13, 14, 15,
+    // face 5
+    16, 17, 18,
+    17, 18, 19,
+    // face 6
+    20, 21, 22,
+    21, 22, 23,
+};
+
+const int screen_width = 1920;
+const int screen_height = 1080;
+
+class Cubie {
+public:
+    Cubie(glm::vec3 pos, glm::vec3 rot, glm::vec3 scale) 
+            : m_shader_program("cube_vertex.glsl", "cube_fragment.glsl"), 
+            m_model(vertices, indices, sizeof(vertices), sizeof(indices), 36) {
+        // vertex attribs
+        VertexAttrib coord = { .size = 3, .type = GL_FLOAT, .stride = 6 * sizeof(float)};
+        VertexAttrib col = { .size = 3, .type = GL_FLOAT, .stride = 6 * sizeof(float), .pointer = (void*)(3 * sizeof(float))};
+        m_model.addAttribute(0, coord);
+        m_model.addAttribute(1, col);
+        m_model.setProgram(&m_shader_program);
+        m_position = pos;
+        m_rotation = rot;
+        m_scale = scale;
+    }
+
+    void setPosition(glm::vec3 pos) {
+        m_position = pos;
+    }
+
+    void setRotation(glm::vec3 rot) {
+        m_rotation = rot;
+    }
+
+    void draw(glm::mat4& view, glm::mat4& proj) {
+        auto mod = glm::mat4(1.0);
+        mod = glm::scale(mod, m_scale);
+        mod = glm::rotate(mod, glm::radians(m_rotation.x), glm::vec3(0.0, 1.0, 0.0));
+        mod = glm::rotate(mod, glm::radians(m_rotation.y), glm::vec3(1.0, 0.0, 0.0));
+        mod = glm::translate(mod, m_position);
+        m_shader_program.setUniformMatrix4fv("model", mod);
+        m_shader_program.setUniformMatrix4fv("view", view);
+        m_shader_program.setUniformMatrix4fv("projection", proj);
+        m_model.draw();
+    }
+
+private:
+    Model m_model;
+    ShaderProgram m_shader_program;
 
     glm::vec3 m_position;
+    glm::vec3 m_rotation;
+    glm::vec3 m_scale;
 };
 
 int main()
 {
-    auto window = sf::Window{ { 1920u, 1080u }, "Cube" };
+    auto window = sf::Window{ { screen_width, screen_height }, "Cube"};
     window.setFramerateLimit(144);
 
     glEnable(GL_DEPTH_TEST);
 
-    // float vertices[] = {
-    //     -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-    //     0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-    //     0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
-    // }; 
+    unsigned int fbo;
+    glGenFramebuffers(1, &fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);  
 
-    // int indices[] = {
-    //     0, 1, 2,
-    // };
+    unsigned int texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, screen_width, screen_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 
-    float vertices[] = {
-        // face 1
-        0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-        0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-        0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-        0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f,
-        // face 2
-        0.0f, 0.0f, 0.5f, 1.0f, 0.5f, 0.0f,
-        0.5f, 0.0f, 0.5f, 1.0f, 0.5f, 0.0f,
-        0.0f, 0.5f, 0.5f, 1.0f, 0.5f, 0.0f,
-        0.5f, 0.5f, 0.5f, 1.0f, 0.5f, 0.0f,
-        // face 3
-        0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.5f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
-        // face 4
-        0.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-        0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 1.0f,
-        0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
-        0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f,
-        // face 5
-        0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
-        0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.5f, 1.0f, 1.0f, 0.0f,
-        0.5f, 0.0f, 0.5f, 1.0f, 1.0f, 0.0f,
-        // face 6
-        0.0f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f,
-        0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 1.0f,
-        0.0f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f,
-        0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f,
-    };
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);  
 
-    unsigned int indices[] = {
-        // face 1
-        0, 1, 2,
-        1, 2, 3,
-        // face 2
-        4, 5, 6,
-        5, 6, 7,
-        // face 3
-        8, 9, 10,
-        9, 10, 11,
-        // face 4
-        12, 13, 14,
-        13, 14, 15,
-        // face 5
-        16, 17, 18,
-        17, 18, 19,
-        // face 6
-        20, 21, 22,
-        21, 22, 23,
-    };
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0); 
 
-    // vertex attribs
-    VertexAttrib pos = { .size = 3, .type = GL_FLOAT, .stride = 6 * sizeof(float)};
-    VertexAttrib col = { .size = 3, .type = GL_FLOAT, .stride = 6 * sizeof(float), .pointer = (void*)(3 * sizeof(float))};
+    unsigned int rbo;
+    glGenRenderbuffers(1, &rbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo); 
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, screen_width, screen_height);  
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
 
-    // shader program
-    ShaderProgram program("vertex.glsl", "fragment.glsl");
-    auto mod = glm::translate(glm::mat4(1.0), glm::vec3(-0.25));
+    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "yay\n";
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);  
+
     auto view = glm::mat4(1.0f);
     view = glm::translate(view, glm::vec3(0.0f, 0.0f, -2.0f));
-    glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)1920/(float)1080, 0.1f, 100.0f);
+    glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)screen_width/(float)screen_height, 0.1f, 100.0f);
 
-    // model
-    Model model(vertices, indices, sizeof(vertices), sizeof(indices), 36);
-    model.addAttribute(0, pos);
-    model.addAttribute(1, col);
-    model.setProgram(&program);
+    Cubie cubie(glm::vec3(0.0f), glm::vec3(0.0f), glm::vec3(1.0f));
+
+    float quadVertices[] = {
+        -1.0f,  1.0f,  0.0f, 1.0f,
+        -1.0f, -1.0f,  0.0f, 0.0f,
+         1.0f, -1.0f,  1.0f, 0.0f,
+         1.0f,  1.0f,  1.0f, 1.0f
+    };
+
+    GLuint quadIndices[] = {
+        0, 1, 2,
+        0, 2, 3,
+    };
+
+    ShaderProgram screen_prog("simple_vertex.glsl", "simple_fragment.glsl");
+    screen_prog.setInt("screenTexture", 0);
+    Model screen(quadVertices, quadIndices, sizeof(quadVertices), sizeof(quadIndices), 6);
+    screen.setProgram(&screen_prog);
+    screen.addAttribute(0, { .size = 2, .type = GL_FLOAT, .stride = 4 * sizeof(float), .pointer = nullptr });
+    screen.addAttribute(1, { .size = 2, .type = GL_FLOAT, .stride = 4 * sizeof(float), .pointer = (void*)(2 * sizeof(float)) });
 
     sf::Vector2i prev = sf::Mouse::getPosition();
     float angleX = 0, angleY = 0;
@@ -244,29 +321,29 @@ int main()
             }
             else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
                 prev = sf::Vector2i(event.mouseButton.x, event.mouseButton.y);
-                std::cout << prev.x << '\n';
-                std::cout << prev.y << '\n';
             }
             else if (event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-                std::cout << event.mouseMove.x << '\n';
-                std::cout << event.mouseMove.y << '\n';
                 prev = sf::Vector2i(event.mouseMove.x, event.mouseMove.y) - prev;
-                angleX += prev.x / 1920.0f * 90.0f;
-                angleY += prev.y / 1080.0f * 90.0f;
-                mod = glm::mat4(1.0);
-                mod = glm::rotate(mod, glm::radians(angleX), glm::vec3(0.0, 1.0, 0.0));
-                mod = glm::rotate(mod, glm::radians(angleY), glm::vec3(1.0, 0.0, 0.0));
-                mod = glm::translate(mod, glm::vec3(-0.25));
+                angleX += (float)prev.x / screen_width * 90.0f;
+                angleY += (float)prev.y / screen_height * 90.0f;
+                cubie.setRotation(glm::vec3(angleX, angleY, 0.0f));
                 prev = sf::Vector2i(event.mouseMove.x, event.mouseMove.y);
             }
         }
 
+        glBindFramebuffer(GL_FRAMEBUFFER, fbo);  
+        glEnable(GL_DEPTH_TEST);
         glClearColor(0, 0.5, 0.5, 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        program.setUniformMatrix4fv("model", mod);
-        program.setUniformMatrix4fv("view", view);
-        program.setUniformMatrix4fv("projection", proj);
-        model.draw();
+        cubie.draw(view, proj);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glClearColor(0, 0.5, 0.5, 1);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDisable(GL_DEPTH_TEST);
+        glActiveTexture(0);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        screen.draw();
         window.display();
     }
 }

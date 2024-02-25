@@ -25,8 +25,10 @@ endif()
 add_custom_command(
         TARGET cube
         COMMENT "Copy shader files"
-        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/src/vertex.glsl ${CMAKE_BINARY_DIR}
-        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/src/fragment.glsl ${CMAKE_BINARY_DIR}
+        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/src/cube_vertex.glsl ${CMAKE_BINARY_DIR}
+        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/src/cube_fragment.glsl ${CMAKE_BINARY_DIR}
+        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/src/simple_vertex.glsl ${CMAKE_BINARY_DIR}
+        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/src/simple_fragment.glsl ${CMAKE_BINARY_DIR}
         VERBATIM)
 
 install(TARGETS cube)
