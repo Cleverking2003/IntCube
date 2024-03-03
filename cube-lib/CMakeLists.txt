@@ -10,7 +10,7 @@ FetchContent_Declare(SFML
     GIT_TAG 2.6.x)
 FetchContent_MakeAvailable(SFML)
 
-add_executable(cube src/main.cpp)
+add_executable(cube src/cube.cpp src/cubie.cpp src/main.cpp src/mesh.cpp src/shader.cpp)
 target_link_libraries(cube PRIVATE sfml-graphics)
 target_compile_features(cube PRIVATE cxx_std_17)
 
