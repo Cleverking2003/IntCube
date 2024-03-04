@@ -127,14 +127,14 @@ static std::map<CubieType, glm::vec3> cubie_coords {
 };
 
 static std::map<CubieType, std::array<int,3>> cubieColors {
-    { ULF, { 6, 3, 2 } },
-    { UBL, { 6, 1, 3 } },
-    { UFR, { 6, 2, 4 } },
-    { URB, { 6, 4, 1 } },
-    { DFL, { 5, 2, 3 } },
-    { DLB, { 5, 3, 1 } },
-    { DRF, { 5, 4, 2 } },
-    { DBR, { 5, 1, 4 } },
+    { ULF, { 5, 2, 1 } },
+    { UBL, { 5, 0, 2 } },
+    { UFR, { 5, 1, 3 } },
+    { URB, { 5, 3, 0 } },
+    { DFL, { 4, 1, 2 } },
+    { DLB, { 4, 2, 0 } },
+    { DRF, { 4, 3, 1 } },
+    { DBR, { 4, 0, 3 } },
 };
 
 Cubie::Cubie(ShaderProgram* program, CubieType type) 
@@ -165,10 +165,10 @@ void Cubie::draw(glm::mat4& view, glm::mat4& proj) {
     mod = glm::scale(mod, glm::vec3(0.5f));
     mod = glm::translate(mod, cubie_coords[m_cube_position] - 0.5f);
 
-    int colors[7] = { 0 }, i = 0;
+    int colors[7] = { 0, 0, 0, 0, 0, 0, 6 }, i = 0;
 
     for (auto c : cubieColors[m_cube_position]) {
-        colors[c - 1] = cubieColors[m_type][((i++) + m_orientation) % 3];
+        colors[c] = cubieColors[m_type][((i++) + m_orientation) % 3];
     }
 
     m_shader_program->setUniformMatrix4fv("model", mod);
