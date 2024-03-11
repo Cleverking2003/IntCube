@@ -16,7 +16,12 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
-    <string name="textButtonHelp">Справка</string>
-    <string name="textButtonGuide">Обучение</string>
-    <string name="textButtonScan">Сканирование</string>
+    <string name="textToHelpButton">Справка</string>
+    <string name="textToGuideButton">Обучение</string>
+    <string name="textToScanButton">Сканирование</string>
+    <string name="textLogo">IntCube</string>
+    <string name="textBackButton">Назад</string>
+    <string name="textScanButton">Сканировать</string>
+    <string name="textToSolveButton">Решить</string>
+    <string name="textToScanColorsButton">Далее</string>
 </resources>
