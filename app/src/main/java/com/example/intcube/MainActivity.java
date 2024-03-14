@@ -1,6 +1,5 @@
 package com.example.intcube;
 
-import static android.content.ContentValues.TAG;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,12 +13,17 @@ import org.opencv.android.OpenCVLoader;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button buttonToScan;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (OpenCVLoader.initLocal()){
+            Log.d("LOADED", "success");
+        }
+        else{
+            Log.d("LOADED", "err");
+        }
     }
 
     public void startActivityScan(View v){
