@@ -1,6 +1,8 @@
+#include "cube.hpp"
 #include "cubie.hpp"
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/euler_angles.hpp>
 #include <iostream>
 
 static const struct CubieVertex {
@@ -115,32 +117,12 @@ static unsigned int indices[] = {
     45, 46, 47,
 };
 
-static std::map<CubieType, glm::vec3> cubie_coords {
-    {ULF, glm::vec3{0, 1, 1}},
-    {UBL, glm::vec3{0, 1, 0}},
-    {UFR, glm::vec3{1, 1, 1}},
-    {URB, glm::vec3{1, 1, 0}},
-    {DFL, glm::vec3{0, 0, 1}},
-    {DLB, glm::vec3{0, 0, 0}},
-    {DRF, glm::vec3{1, 0, 1}},
-    {DBR, glm::vec3{1, 0, 0}},
-};
-
-static std::map<CubieType, std::array<int,3>> cubieColors {
-    { ULF, { 5, 2, 1 } },
-    { UBL, { 5, 0, 2 } },
-    { UFR, { 5, 1, 3 } },
-    { URB, { 5, 3, 0 } },
-    { DFL, { 4, 1, 2 } },
-    { DLB, { 4, 2, 0 } },
-    { DRF, { 4, 3, 1 } },
-    { DBR, { 4, 0, 3 } },
-};
-
-Cubie::Cubie(ShaderProgram* program, CubieType type) 
+Cubie::Cubie(ShaderProgram* program, glm::ivec3 vector_pos, std::array<int, 7> colors) 
         : m_shader_program(program), 
         m_model((void*)vertices, indices, sizeof(vertices), sizeof(indices), 72),
-        m_type(type), m_cube_position(type) {
+        m_vector_position(vector_pos),
+        m_colors(colors),
+        m_orig_position(vector_pos) {
     // vertex attribs
     VertexAttrib coord = { .size = 3, .type = GL_FLOAT, .stride = sizeof(CubieVertex)};
     VertexAttrib col = { .size = 1, .type = GL_UNSIGNED_INT, .stride = sizeof(CubieVertex), .pointer = (void*)(3*sizeof(float))};
@@ -151,8 +133,10 @@ Cubie::Cubie(ShaderProgram* program, CubieType type)
 Cubie::Cubie(Cubie&& other) 
     : m_model(std::move(other.m_model)),
     m_shader_program(other.m_shader_program),
-    m_type(other.m_type), m_cube_position(other.m_cube_position),
-    m_orientation(other.m_orientation) {
+    m_vector_position(other.m_vector_position),
+    m_colors(other.m_colors),
+    m_orig_position(other.m_orig_position),
+    m_rot(other.m_rot) {
     // vertex attribs
     VertexAttrib coord = { .size = 3, .type = GL_FLOAT, .stride = sizeof(CubieVertex)};
     VertexAttrib col = { .size = 1, .type = GL_UNSIGNED_INT, .stride = sizeof(CubieVertex), .pointer = (void*)(3*sizeof(float))};
@@ -160,21 +144,20 @@ Cubie::Cubie(Cubie&& other)
     m_model.addIntAttribute(1, col);
 }
 
-void Cubie::draw(glm::mat4& view, glm::mat4& proj) {
+void Cubie::draw(glm::mat4& view, glm::mat4& proj, Cube& cube) {
     auto mod = glm::mat4(1.0);
     mod = glm::scale(mod, glm::vec3(0.5f));
-    mod = glm::translate(mod, cubie_coords[m_cube_position] - 0.5f);
 
-    int colors[7] = { 0, 0, 0, 0, 0, 0, 6 }, i = 0;
+    mod = m_rot * mod;
 
-    for (auto c : cubieColors[m_cube_position]) {
-        colors[c] = cubieColors[m_type][((i++) + m_orientation) % 3];
-    }
+    glm::vec3 pos = m_vector_position;
+    auto trans = glm::translate(glm::mat4(1.0), pos * .25f);
+    mod = trans * mod;
 
     m_shader_program->setUniformMatrix4fv("model", mod);
     m_shader_program->setUniformMatrix4fv("view", view);
     m_shader_program->setUniformMatrix4fv("projection", proj);
-    m_shader_program->setIntArray("state", colors, 7);
+    m_shader_program->setIntArray("state", m_colors.data(), 7);
     m_shader_program->use();
     m_model.draw();
 }

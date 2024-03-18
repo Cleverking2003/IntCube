@@ -8,6 +8,7 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 uniform int state[7];
+uniform vec3 rot;
 
 vec3 colors[] = vec3[](
     vec3(1.0, 0.5, 0.0),
@@ -23,4 +24,5 @@ void main()
 {
     gl_Position = projection * view * model * vec4(aPos.x, aPos.y, aPos.z, 1.0);
     colorOut = colors[state[color]];
+    // colorOut = rot / 4.0;
 }
