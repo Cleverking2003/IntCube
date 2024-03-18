@@ -55,7 +55,7 @@ int main()
     view = glm::translate(view, glm::vec3(0.0f, 0.0f, -5.0f));
     glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)screen_width/(float)screen_height, 0.1f, 100.0f);
 
-    Cube cube;
+    Cube<3> cube;
 
     float quadVertices[] = {
         -1.0f,  1.0f,  0.0f, 1.0f,
@@ -99,24 +99,34 @@ int main()
                 prev = glm::vec2(event.mouseMove.x, event.mouseMove.y);
             }
             else if (event.type == sf::Event::KeyPressed) {
+                auto inverse = event.key.shift;
                 switch (event.key.code) {
-                case sf::Keyboard::U:
-                    cube.execute_move(0);
-                    break;
-                case sf::Keyboard::D:
-                    cube.execute_move(1);
-                    break;
                 case sf::Keyboard::L:
-                    cube.execute_move(2);
+                    cube.execute_move(0, -1, inverse);
                     break;
                 case sf::Keyboard::R:
-                    cube.execute_move(3);
+                    cube.execute_move(0, 1, inverse);
                     break;
-                case sf::Keyboard::F:
-                    cube.execute_move(4);
+                case sf::Keyboard::D:
+                    cube.execute_move(1, -1, inverse);
+                    break;
+                case sf::Keyboard::U:
+                    cube.execute_move(1, 1, inverse);
                     break;
                 case sf::Keyboard::B:
-                    cube.execute_move(5);
+                    cube.execute_move(2, -1, inverse);
+                    break;
+                case sf::Keyboard::F:
+                    cube.execute_move(2, 1, inverse);
+                    break;
+                case sf::Keyboard::M:
+                    cube.execute_move(0, 0, inverse);
+                    break;
+                case sf::Keyboard::E:
+                    cube.execute_move(1, 0, inverse);
+                    break;
+                case sf::Keyboard::S:
+                    cube.execute_move(2, 0, !inverse);
                     break;
                 }
             }

@@ -18,9 +18,9 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(glm)
 
-add_executable(cube src/cube.cpp src/cubie.cpp src/main.cpp src/mesh.cpp src/shader.cpp)
+add_executable(cube src/main.cpp src/mesh.cpp src/piece.cpp src/shader.cpp)
 target_link_libraries(cube PRIVATE sfml-graphics glm::glm)
-target_compile_features(cube PRIVATE cxx_std_17)
+target_compile_features(cube PRIVATE cxx_std_20)
 
 if(WIN32)
     add_custom_command(
@@ -33,8 +33,8 @@ endif()
 add_custom_command(
         TARGET cube
         COMMENT "Copy shader files"
-        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/src/cube_vertex.glsl ${CMAKE_BINARY_DIR}
-        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/src/cube_fragment.glsl ${CMAKE_BINARY_DIR}
+        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/src/piece_vertex.glsl ${CMAKE_BINARY_DIR}
+        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/src/piece_fragment.glsl ${CMAKE_BINARY_DIR}
         PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/src/simple_vertex.glsl ${CMAKE_BINARY_DIR}
         PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/src/simple_fragment.glsl ${CMAKE_BINARY_DIR}
         VERBATIM)
