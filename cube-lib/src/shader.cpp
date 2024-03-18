@@ -75,3 +75,9 @@ void ShaderProgram::setIntArray(char const* name, int* value, int count) {
     auto loc = glGetUniformLocation(m_programId, name);
     glUniform1iv(loc, count, value);
 }
+
+void ShaderProgram::setVec3(char const* name, glm::vec3 vec) {
+    glUseProgram(m_programId);
+    auto loc = glGetUniformLocation(m_programId, name);
+    glUniform3fv(loc, 1, &vec[0]);
+}

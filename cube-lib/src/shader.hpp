@@ -16,6 +16,7 @@ public:
     void setUniformMatrix4fv(char const* name, glm::mat4x4& mat);
     void setInt(char const* name, int value);
     void setIntArray(char const* name, int* value, int count);
+    void setVec3(char const* name, glm::vec3);
 
 private:
     int m_programId;

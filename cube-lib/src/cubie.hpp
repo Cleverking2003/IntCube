@@ -4,30 +4,21 @@
 
 #include <array>
 #include <map>
+#include <vector>
 
-enum CubieType : int {
-    ULF,
-    UBL,
-    UFR,
-    URB,
-    DFL,
-    DLB,
-    DRF,
-    DBR,
-};
+class Cube;
 
 class Cubie {
 public:
-    explicit Cubie(ShaderProgram*, CubieType type);
+    explicit Cubie(ShaderProgram*, glm::ivec3 vector_pos, std::array<int, 7>);
     Cubie(Cubie&&);
-    void setPosition(glm::vec3 pos);
-    void setRotation(glm::vec3 rot);
-    void draw(glm::mat4& view, glm::mat4& proj);
+    void draw(glm::mat4& view, glm::mat4& proj, Cube&);
 
-    CubieType m_cube_position;
-    int m_orientation { 0 };
+    glm::ivec3 m_vector_position;
+    glm::ivec3 m_orig_position;
+    glm::mat4 m_rot { 1.0 };
 private:
     Model m_model;
     ShaderProgram* m_shader_program;
-    CubieType m_type;
+    std::array<int, 7> m_colors { 0 };
 };
