@@ -64,7 +64,7 @@ public class ScanColorActivity extends AppCompatActivity{
 
         if (requestCode == CAMERA_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(ScanColorActivity.this, "Camera Permission Granted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ScanColorActivity.this, "Разрешение на использование камеры получено", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(ScanColorActivity.this, "Для сканирования необходимо разрешение для использования камеры", Toast.LENGTH_SHORT).show();
             }
