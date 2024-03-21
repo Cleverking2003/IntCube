@@ -6,4 +6,51 @@
     android:layout_height="match_parent"
     tools:context=".GuideActivity">
 
+    <Button
+        android:id="@+id/buttonToGuide2x2"
+        android:layout_width="380dp"
+        android:layout_height="57dp"
+        android:layout_marginTop="100dp"
+        android:onClick="startActivity2x2G"
+        android:text="2x2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/buttonToGuide3x3"
+        android:layout_width="380dp"
+        android:layout_height="57dp"
+        android:layout_marginTop="8dp"
+        android:onClick="startActivity3x3G"
+        android:text="3x3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonToGuide2x2" />
+
+    <Button
+        android:id="@+id/buttonToGuide4x4"
+        android:layout_width="380dp"
+        android:layout_height="57dp"
+        android:layout_marginTop="8dp"
+        android:onClick="startActivity4x4G"
+        android:text="4x4"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonToGuide3x3" />
+
+    <Button
+        android:id="@+id/buttonToGuideAxis"
+        android:layout_width="380dp"
+        android:layout_height="57dp"
+        android:layout_marginTop="8dp"
+        android:onClick="startActivityAxisG"
+        android:text="Axis cube"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/buttonToGuide4x4" />
 </androidx.constraintlayout.widget.ConstraintLayout>
