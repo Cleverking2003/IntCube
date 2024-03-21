@@ -9,6 +9,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/euler_angles.hpp>
 
 #include "cube.hpp"
 #include "mesh.hpp"
@@ -54,7 +55,7 @@ int main()
     view = glm::translate(view, glm::vec3(0.0f, 0.0f, -5.0f));
     glm::mat4 proj = glm::perspective(glm::radians(45.0f), (float)screen_width/(float)screen_height, 0.1f, 100.0f);
 
-    Cube cube;
+    Cube<3> cube;
 
     float quadVertices[] = {
         -1.0f,  1.0f,  0.0f, 1.0f,
@@ -74,8 +75,10 @@ int main()
     screen.addAttribute(0, { .size = 2, .type = GL_FLOAT, .stride = 4 * sizeof(float), .pointer = nullptr });
     screen.addAttribute(1, { .size = 2, .type = GL_FLOAT, .stride = 4 * sizeof(float), .pointer = (void*)(2 * sizeof(float)) });
 
-    sf::Vector2i prev = sf::Mouse::getPosition();
-    float angleX = 0, angleY = 0;
+    glm::vec2 prev;
+    bool is_moving = false;
+
+    glm::mat4 rot = glm::yawPitchRoll(0, 0, 0);
 
     while (window.isOpen())
     {
@@ -85,35 +88,45 @@ int main()
             {
                 window.close();
             }
-            else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
-                prev = sf::Vector2i(event.mouseButton.x, event.mouseButton.y);
+            else if ((event.type == sf::Event::MouseButtonPressed || event.type == sf::Event::MouseButtonReleased) && event.mouseButton.button == sf::Mouse::Left) {
+                prev = glm::vec2(event.mouseButton.x, event.mouseButton.y);
+                is_moving = event.type == sf::Event::MouseButtonPressed;
             }
-            else if (event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-                prev = sf::Vector2i(event.mouseMove.x, event.mouseMove.y) - prev;
-                angleX += (float)prev.x / screen_width * 90.0f;
-                angleY += (float)prev.y / screen_height * 90.0f;
-                cube.setRotation(glm::vec3(angleX, angleY, 0.0f));
-                prev = sf::Vector2i(event.mouseMove.x, event.mouseMove.y);
+            else if (event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left) && is_moving) {
+                prev = glm::vec2(event.mouseMove.x, event.mouseMove.y) - prev;
+                auto angles = prev / glm::vec2(screen_width, screen_height) * 360.0f;
+                rot = glm::yawPitchRoll(glm::radians(angles.x), glm::radians(angles.y), 0.0f) * rot;
+                prev = glm::vec2(event.mouseMove.x, event.mouseMove.y);
             }
             else if (event.type == sf::Event::KeyPressed) {
+                auto inverse = event.key.shift;
                 switch (event.key.code) {
-                case sf::Keyboard::U:
-                    cube.execute_move(0);
-                    break;
-                case sf::Keyboard::D:
-                    cube.execute_move(1);
-                    break;
                 case sf::Keyboard::L:
-                    cube.execute_move(2);
+                    cube.execute_move(0, -1, inverse);
                     break;
                 case sf::Keyboard::R:
-                    cube.execute_move(3);
+                    cube.execute_move(0, 1, inverse);
                     break;
-                case sf::Keyboard::F:
-                    cube.execute_move(4);
+                case sf::Keyboard::D:
+                    cube.execute_move(1, -1, inverse);
+                    break;
+                case sf::Keyboard::U:
+                    cube.execute_move(1, 1, inverse);
                     break;
                 case sf::Keyboard::B:
-                    cube.execute_move(5);
+                    cube.execute_move(2, -1, inverse);
+                    break;
+                case sf::Keyboard::F:
+                    cube.execute_move(2, 1, inverse);
+                    break;
+                case sf::Keyboard::M:
+                    cube.execute_move(0, 0, inverse);
+                    break;
+                case sf::Keyboard::E:
+                    cube.execute_move(1, 0, inverse);
+                    break;
+                case sf::Keyboard::S:
+                    cube.execute_move(2, 0, !inverse);
                     break;
                 }
             }
@@ -124,7 +137,8 @@ int main()
         glClearColor(0, 0.5, 0.5, 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        cube.draw(view, proj);
+        auto new_view = view * rot;
+        cube.draw(new_view, proj);
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glClearColor(0, 0.5, 0.5, 1);
