@@ -40,6 +40,18 @@
             android:name=".GuideActivity"
             android:exported="false" />
         <activity
+            android:name=".Guide2x2Activity"
+            android:exported="false" />
+        <activity
+            android:name=".Guide3x3Activity"
+            android:exported="false" />
+        <activity
+            android:name=".Guide4x4Activity"
+            android:exported="false" />
+        <activity
+            android:name=".GuideAxisActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true" >
             <intent-filter>
