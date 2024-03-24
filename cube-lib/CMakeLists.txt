@@ -15,10 +15,10 @@ FetchContent_Declare(
 	GIT_REPOSITORY	https://github.com/g-truc/glm.git
 	GIT_TAG 	bf71a834948186f4097caa076cd2663c69a10e1e #refs/tags/1.0.1
 )
-
 FetchContent_MakeAvailable(glm)
 
-add_executable(cube src/main.cpp src/mesh.cpp src/piece.cpp src/shader.cpp)
+include_directories(src/include)
+add_executable(cube src/main.cpp src/mesh.cpp src/piece.cpp src/scene.cpp src/shader.cpp src/gl.c)
 target_link_libraries(cube PRIVATE sfml-graphics glm::glm)
 target_compile_features(cube PRIVATE cxx_std_20)
 

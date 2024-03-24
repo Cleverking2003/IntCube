@@ -19,6 +19,7 @@ public:
     explicit Model(void* vertexData, void* indexData, int vertexSize, int indexSize, int count);
     Model(Model&&);
 
+    void setVertexData(void* vertexData, int vertexSize);
     void addAttribute(int index, VertexAttrib attrib);
     void addIntAttribute(int index, VertexAttrib attrib);
     void draw();

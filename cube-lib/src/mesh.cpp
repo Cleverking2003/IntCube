@@ -1,3 +1,4 @@
+#include <glad/gl.h>
 #include "mesh.hpp"
 
 #include <iostream>
@@ -36,6 +37,11 @@ Model::Model(Model&& other)
     glBindBuffer(GL_COPY_READ_BUFFER, other.m_ebo);
     glBindBuffer(GL_COPY_WRITE_BUFFER, m_ebo);
     glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER, 0, 0, m_indexSize);
+}
+
+void Model::setVertexData(void* vertexData, int vertexSize) {
+    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+    glBufferData(GL_ARRAY_BUFFER, vertexSize, vertexData, GL_STATIC_DRAW);
 }
 
 void Model::addAttribute(int index, VertexAttrib attrib) {
