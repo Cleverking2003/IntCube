@@ -16,12 +16,12 @@ static GLuint quadIndices[] = {
     0, 2, 3,
 };
 
-Scene::Scene(int width, int height)
+Scene::Scene(int width, int height, int size)
     : m_fb_shader("simple_vertex.glsl", "simple_fragment.glsl"),
     m_fb_mesh((void*)quadVertices, quadIndices, sizeof(quadVertices), sizeof(quadIndices), 6),
     m_view(glm::translate(glm::mat4(1.0), glm::vec3(0.0, 0.0, -5.0))),
     m_proj(glm::perspective(glm::radians(45.0f), (float)width/(float)height, 0.1f, 100.0f)),
-    m_width(width), m_height(height) {
+    m_width(width), m_height(height), m_cube(size) {
     glEnable(GL_DEPTH_TEST);
 
     glGenFramebuffers(1, &m_fbo);
