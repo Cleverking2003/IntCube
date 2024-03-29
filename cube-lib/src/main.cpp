@@ -3,6 +3,7 @@
 #include <SFML/Window.hpp>
 
 #include <glm/glm.hpp>
+#include <iostream>
 
 #include "scene.hpp"
 
@@ -11,11 +12,13 @@ const int screen_height = 1080;
 
 int main()
 {
+    int size;
+    std::cin >> size;
     auto window = sf::Window{ { screen_width, screen_height }, "Cube"};
     window.setFramerateLimit(144);
     auto res = gladLoadGL(sf::Context::getFunction);
 
-    Scene scene(screen_width, screen_height);
+    Scene scene(screen_width, screen_height, size);
 
     glm::vec2 prev;
     bool is_moving = false;

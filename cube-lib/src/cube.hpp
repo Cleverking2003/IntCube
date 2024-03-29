@@ -122,10 +122,9 @@ static Model* transform_cube_mesh(glm::mat4 transform) {
     return mesh;
 }
 
-template<int N>
 class Cube : public Puzzle<3> {
 public:
-    Cube() : Puzzle() {
+    explicit Cube(int size) : Puzzle(), m_size(size) {
         m_axes = std::array<std::pair<glm::vec3, int>, 3> {
             std::pair { glm::vec3(1.0, 0.0, 0.0), 4 },
             std::pair { glm::vec3(0.0, 1.0, 0.0), 4 },
@@ -138,19 +137,19 @@ public:
 
 protected:
     virtual void fill_cubies() override {
-        for (int x = 0; x < N; x++) {
-            for (int y = 0; y < N; y++) {
-              for (int z = 0; z < N; z++) {
-                    if ((x != 0 && x != N - 1)
-                        && (y != 0 && y != N - 1)
-                        && (z != 0 && z != N - 1))
+        for (int x = 0; x < m_size; x++) {
+            for (int y = 0; y < m_size; y++) {
+              for (int z = 0; z < m_size; z++) {
+                    if ((x != 0 && x != m_size - 1)
+                        && (y != 0 && y != m_size - 1)
+                        && (z != 0 && z != m_size - 1))
                             continue;
                     auto transform = glm::mat4(1.0);
-                    transform = glm::translate(transform, glm::vec3(x, y, z) - N/2.0f + 0.5f);
-                    transform = glm::scale(glm::mat4(1.0), glm::vec3(1.0 / N)) * transform;
+                    transform = glm::translate(transform, glm::vec3(x, y, z) - m_size/2.0f + 0.5f);
+                    transform = glm::scale(glm::mat4(1.0), glm::vec3(1.0 / m_size)) * transform;
                     auto mesh = transform_cube_mesh(transform);
-                    auto pos = glm::vec3(x, y, z) - float(N/2);
-                    if (N % 2 == 0) {
+                    auto pos = glm::vec3(x, y, z) - float(m_size/2);
+                    if (m_size % 2 == 0) {
                         for (int i = 0; i < 3; i++)
                             if (pos[i] >= 0)
                                 pos[i]++;
@@ -163,8 +162,8 @@ protected:
 
     virtual void fill_moves() override {
         for (int i = 0; i < 3; i++) {
-            for (int j = -N/2; j <= N/2; j++) {
-                if (N % 2 == 0 && j == 0) continue;
+            for (int j = -m_size/2; j <= m_size/2; j++) {
+                if (m_size % 2 == 0 && j == 0) continue;
                 auto [axis, angle] = m_axes[i];
                 if (j > 0) axis *= -1;
                 auto mat = glm::rotate(glm::mat4(1.0), glm::two_pi<float>() / angle, axis);
@@ -172,4 +171,7 @@ protected:
             }
         }
     }
+
+private:
+    int m_size;
 };

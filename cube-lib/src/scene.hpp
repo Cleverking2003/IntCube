@@ -20,7 +20,7 @@ enum class SceneKey {
 
 class Scene {
 public:
-    explicit Scene(int width, int height);
+    explicit Scene(int width, int height, int size);
     void render();
     void handleMouseMovement(glm::vec2 delta);
     void handleKeyPress(SceneKey key, bool inverse);
@@ -33,5 +33,5 @@ private:
     glm::mat4 m_rot { 1.0 };
     int m_width, m_height;
 
-    Cube<3> m_cube;
+    Cube m_cube;
 };
