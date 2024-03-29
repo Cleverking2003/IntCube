@@ -402,6 +402,7 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
      * then displayed on the screen.
      * @param frame - the current frame to be delivered
      */
+    //Fix start
     private final Matrix mMatrix = new Matrix();
 
     private void updateMatrix() {
@@ -507,6 +508,7 @@ public abstract class CameraBridgeViewBase extends SurfaceView implements Surfac
             }
         }
     }
+    //Fix end
 
     /**
      * This method is invoked shall perform concrete operation to initialize the camera.
