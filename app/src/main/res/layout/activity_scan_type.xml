@@ -4,8 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:onClick="BackActivityMain"
     tools:context=".ScanTypeActivity">
+
+    <org.opencv.android.JavaCameraView
+        android:id="@+id/typeCamera"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/buttonBackToMain"
@@ -42,4 +53,62 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.95" />
+
+    <SeekBar
+        android:id="@+id/seekBar6"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:max="255"
+        android:progress="128"
+        app:layout_constraintEnd_toEndOf="@+id/typeCamera"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <SeekBar
+        android:id="@+id/seekBar7"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="40dp"
+        android:max="255"
+        android:progress="40"
+        app:layout_constraintEnd_toEndOf="@+id/typeCamera"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/typeCamera"
+        app:layout_constraintTop_toTopOf="@+id/typeCamera" />
+
+    <SeekBar
+        android:id="@+id/seekBar9"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="120dp"
+        android:max="500"
+        android:progress="250"
+        app:layout_constraintEnd_toEndOf="@+id/typeCamera"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/typeCamera"
+        app:layout_constraintTop_toTopOf="@+id/typeCamera" />
+
+    <SeekBar
+        android:id="@+id/seekBar10"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="160dp"
+        android:max="1000"
+        android:progress="500"
+        app:layout_constraintEnd_toEndOf="@+id/typeCamera"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/typeCamera"
+        app:layout_constraintTop_toTopOf="@+id/typeCamera" />
+
+    <Button
+        android:id="@+id/matButton"
+        android:layout_width="90dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginEnd="321dp"
+        android:text="Mat"
+        app:layout_constraintEnd_toEndOf="@+id/typeCamera"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/typeCamera" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
