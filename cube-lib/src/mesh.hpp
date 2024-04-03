@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-#include "shader.hpp"
+#include "gl_helpers.hpp"
 
 struct FaceData {
     void* indices;
