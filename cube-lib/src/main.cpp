@@ -1,5 +1,4 @@
 #include <glad/gl.h>
-#define GL_GLEXT_PROTOTYPES
 #include <SFML/Window.hpp>
 
 #include <glm/glm.hpp>

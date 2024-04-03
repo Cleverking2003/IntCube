@@ -1,8 +1,9 @@
 #pragma once
 
+#include <array>
 #include <map>
 #include <vector>
-#include "piece.hpp"
+#include "mesh.hpp"
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -37,7 +38,7 @@ public:
             auto [axis_vec, axis_part] = m_axes[axis];
             if (coord > 0) axis_vec *= -1;
             if (inverse) axis_vec *= -1;
-            c.m_model_mat = glm::rotate(glm::mat4(1.0), glm::two_pi<float>() / axis_part, axis_vec) * c.m_model_mat;
+            c.model_mat = glm::rotate(glm::mat4(1.0), glm::two_pi<float>() / axis_part, axis_vec) * c.model_mat;
         }
     }
 
@@ -48,6 +49,6 @@ protected:
     virtual void fill_cubies() {};
     virtual void fill_moves() {};
 
-    std::vector<std::pair<Piece, glm::vec<N, float>>> m_cubies;
+    std::vector<std::pair<Mesh, glm::vec<N, float>>> m_cubies;
     ShaderProgram m_program;
 };

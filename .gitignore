@@ -15,4 +15,4 @@ local.properties
 .vscode
 .vs/
 .cxx/
-
+*.obj

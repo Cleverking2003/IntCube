@@ -1,24 +1,19 @@
-#include <glad/gl.h>
 #include <glm/gtx/euler_angles.hpp>
 #include "scene.hpp"
 
 #include <iostream>
 
-static const float quadVertices[] = {
+static float quadVertices[] = {
     -1.0f,  1.0f,  0.0f, 1.0f,
     -1.0f, -1.0f,  0.0f, 0.0f,
+    1.0f, -1.0f,  1.0f, 0.0f,
+    -1.0f,  1.0f,  0.0f, 1.0f,
     1.0f, -1.0f,  1.0f, 0.0f,
     1.0f,  1.0f,  1.0f, 1.0f
 };
 
-static GLuint quadIndices[] = {
-    0, 1, 2,
-    0, 2, 3,
-};
-
 Scene::Scene(int width, int height, int size)
     : m_fb_shader("simple_vertex.glsl", "simple_fragment.glsl"),
-    m_fb_mesh((void*)quadVertices, quadIndices, sizeof(quadVertices), sizeof(quadIndices), 6),
     m_view(glm::translate(glm::mat4(1.0), glm::vec3(0.0, 0.0, -5.0))),
     m_proj(glm::perspective(glm::radians(45.0f), (float)width/(float)height, 0.1f, 100.0f)),
     m_width(width), m_height(height), m_cube(size) {
@@ -47,19 +42,15 @@ Scene::Scene(int width, int height, int size)
         std::cout << "yay\n";
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    std::cout << quadVertices[1] << '\n';
-
-    m_fb_mesh.setVertexData((void*)quadVertices, sizeof(quadVertices));
-
-    m_fb_shader.setInt("screenTexture", 0);
-    m_fb_mesh.addAttribute(0, { .size = 2, .type = GL_FLOAT, .stride = 4 * sizeof(float), .pointer = nullptr });
-    m_fb_mesh.addAttribute(1, { .size = 2, .type = GL_FLOAT, .stride = 4 * sizeof(float), .pointer = (void*)(2 * sizeof(float)) });
+    m_vbo.setData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
+    m_vao.setAttribute(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+    m_vao.setAttribute(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 2 * sizeof(float));
 }
 
 void Scene::render() {
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);  
     glEnable(GL_DEPTH_TEST);
-    glClearColor(0, 0, 0, 0);
+    glClearColor(0, 0.5, 0.5, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     auto new_view = m_view * m_rot;
@@ -72,7 +63,9 @@ void Scene::render() {
     glActiveTexture(0);
     glBindTexture(GL_TEXTURE_2D, m_texture);
     m_fb_shader.use();
-    m_fb_mesh.draw();
+    m_vbo.bind(GL_ARRAY_BUFFER);
+    m_vao.bind();
+    glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
 void Scene::handleMouseMovement(glm::vec2 delta) {

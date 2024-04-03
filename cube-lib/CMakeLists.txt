@@ -18,7 +18,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(glm)
 
 include_directories(src/include)
-add_executable(cube src/main.cpp src/mesh.cpp src/piece.cpp src/scene.cpp src/shader.cpp src/gl.c)
+add_executable(cube src/cube.cpp src/main.cpp src/mesh.cpp src/scene.cpp src/shader.cpp src/gl.c)
 target_link_libraries(cube PRIVATE sfml-graphics glm::glm)
 target_compile_features(cube PRIVATE cxx_std_20)
 

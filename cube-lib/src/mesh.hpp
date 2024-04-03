@@ -1,34 +1,33 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <memory>
+#include <vector>
 
 #include "shader.hpp"
 
-struct VertexAttrib {
-    GLint size;
-    GLenum type;
-    GLboolean normalized = GL_FALSE;
-    GLsizei stride;
-    void* pointer = nullptr;
+struct FaceData {
+    void* indices;
+    int count;
+    glm::vec3 color;
 };
 
-class Model {
-public:
-    explicit Model(void* vertexData, void* indexData, int vertexSize, int indexSize, int count);
-    Model(Model&&);
+struct MeshData {
+    void* vertices;
+    int vertex_count;
+    std::vector<FaceData> face_data;
+};
 
-    void setVertexData(void* vertexData, int vertexSize);
-    void addAttribute(int index, VertexAttrib attrib);
-    void addIntAttribute(int index, VertexAttrib attrib);
-    void draw();
-    ~Model();
+class Mesh {
+public:
+    explicit Mesh(MeshData& data);
+
+    void draw(glm::mat4, glm::mat4);
+    glm::mat4 model_mat { 1.0 };
 
 private:
-    GLuint m_vbo;
-    GLuint m_vao;
-    GLuint m_ebo;
-
-    int m_vertexSize;
-    int m_indexSize;
-    int m_count;
+    std::shared_ptr<Buffer> m_vbo;
+    std::vector<std::tuple<std::shared_ptr<Buffer>, glm::vec3, int>> m_faces;
+    std::shared_ptr<VertexArray> m_vao;
+    std::shared_ptr<ShaderProgram> m_shader;
 };

@@ -1,8 +1,6 @@
 #pragma once
 
 #include "cube.hpp"
-#include "mesh.hpp"
-#include "shader.hpp"
 
 #include <glm/glm.hpp>
 
@@ -27,7 +25,8 @@ public:
 
 private:
     unsigned int m_fbo, m_texture, m_rbo;
-    Model m_fb_mesh;
+    Buffer m_vbo;
+    VertexArray m_vao;
     ShaderProgram m_fb_shader;
     glm::mat4 m_view, m_proj;
     glm::mat4 m_rot { 1.0 };
