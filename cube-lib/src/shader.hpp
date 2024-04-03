@@ -1,7 +1,6 @@
 #pragma once
 
-#define GL_GLEXT_PROTOTYPES
-#include <SFML/OpenGL.hpp>
+#include <glad/gl.h>
 
 #include <glm/glm.hpp>
 
@@ -20,4 +19,53 @@ public:
 
 private:
     int m_programId;
+};
+
+struct Buffer {
+    unsigned int index;
+
+    Buffer() {
+        glGenBuffers(1, &index);
+    }
+
+    ~Buffer() {
+        glDeleteBuffers(1, &index);
+    }
+
+    Buffer(Buffer&) = delete;
+    Buffer(Buffer&&) = delete;
+
+    void bind(GLenum target) const {
+        glBindBuffer(target, index);
+    }
+
+    void setData(GLenum target, int size, void* data, GLenum usage) const {
+        glBindBuffer(target, index);
+        glBufferData(target, size, data, usage);
+    }
+};
+
+struct VertexArray {
+    unsigned int index;
+
+    VertexArray() {
+        glGenVertexArrays(1, &index);
+    }
+
+    ~VertexArray() {
+        glDeleteVertexArrays(1, &index);
+    }
+
+    VertexArray(VertexArray&) = delete;
+    VertexArray(VertexArray&&) = delete;
+
+    void bind() const {
+        glBindVertexArray(index);
+    }
+
+    void setAttribute(int attrib, int size, GLenum type, GLboolean normalized, int stride, size_t offset) const {
+        glBindVertexArray(index);
+        glVertexAttribPointer(attrib, size, type, normalized, stride, (void*)offset);
+        glEnableVertexAttribArray(attrib);
+    }
 };

@@ -1,7 +1,5 @@
 #pragma once
 
-#define GL_GLEXT_PROTOTYPES
-#include <SFML/OpenGL.hpp>
 #include <glm/glm.hpp>
 
 #include "shader.hpp"
