@@ -29,5 +29,6 @@ private:
     std::shared_ptr<Buffer> m_vbo;
     std::vector<std::tuple<std::shared_ptr<Buffer>, glm::vec3, int>> m_faces;
     std::shared_ptr<VertexArray> m_vao;
-    std::shared_ptr<ShaderProgram> m_shader;
+
+    int m_model_loc, m_view_loc, m_proj_loc, m_color_loc;
 };

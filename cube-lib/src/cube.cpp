@@ -2,65 +2,65 @@
 
 static const glm::vec3 cube_vertices[] = {
     // face 1
-    glm::vec3(-0.5f, -0.5f, -0.5f),
     glm::vec3( 0.5f, -0.5f, -0.5f),
+    glm::vec3(-0.5f, -0.5f, -0.5f),
     glm::vec3(-0.5f,  0.5f, -0.5f),
     glm::vec3( 0.5f,  0.5f, -0.5f),
     // face 2
+    glm::vec3(-0.5f,  0.5f,  0.5f),
     glm::vec3(-0.5f, -0.5f,  0.5f),
     glm::vec3( 0.5f, -0.5f,  0.5f),
-    glm::vec3(-0.5f,  0.5f,  0.5f),
     glm::vec3( 0.5f,  0.5f,  0.5f),
     // face 3
+    glm::vec3(-0.5f,  0.5f, -0.5f),
     glm::vec3(-0.5f, -0.5f, -0.5f),
     glm::vec3(-0.5f, -0.5f,  0.5f),
-    glm::vec3(-0.5f,  0.5f, -0.5f),
     glm::vec3(-0.5f,  0.5f,  0.5f),
     // face 4
-    glm::vec3( 0.5f, -0.5f, -0.5f),
     glm::vec3( 0.5f, -0.5f,  0.5f),
+    glm::vec3( 0.5f, -0.5f, -0.5f),
     glm::vec3( 0.5f,  0.5f, -0.5f),
     glm::vec3( 0.5f,  0.5f,  0.5f),
     // face 5
+    glm::vec3(-0.5f, -0.5f,  0.5f),
     glm::vec3(-0.5f, -0.5f, -0.5f),
     glm::vec3( 0.5f, -0.5f, -0.5f),
-    glm::vec3(-0.5f, -0.5f,  0.5f),
     glm::vec3( 0.5f, -0.5f,  0.5f),
     // face 6
-    glm::vec3(-0.5f,  0.5f, -0.5f),
     glm::vec3( 0.5f,  0.5f, -0.5f),
+    glm::vec3(-0.5f,  0.5f, -0.5f),
     glm::vec3(-0.5f,  0.5f,  0.5f),
     glm::vec3( 0.5f,  0.5f,  0.5f),
 
     // stickers
     // face 1
-    glm::vec3(-0.45f, -0.45f, -0.501f),
     glm::vec3( 0.45f, -0.45f, -0.501f),
+    glm::vec3(-0.45f, -0.45f, -0.501f),
     glm::vec3(-0.45f,  0.45f, -0.501f),
     glm::vec3( 0.45f,  0.45f, -0.501f),
     // face 2
+    glm::vec3(-0.45f,  0.45f,  0.501f),
     glm::vec3(-0.45f, -0.45f,  0.501f),
     glm::vec3( 0.45f, -0.45f,  0.501f),
-    glm::vec3(-0.45f,  0.45f,  0.501f),
     glm::vec3( 0.45f,  0.45f,  0.501f),
     // face 3
+    glm::vec3(-0.501f,  0.45f, -0.45f),
     glm::vec3(-0.501f, -0.45f, -0.45f),
     glm::vec3(-0.501f, -0.45f,  0.45f),
-    glm::vec3(-0.501f,  0.45f, -0.45f),
     glm::vec3(-0.501f,  0.45f,  0.45f),
     // face 4
-    glm::vec3( 0.501f, -0.45f, -0.45f),
     glm::vec3( 0.501f, -0.45f,  0.45f),
+    glm::vec3( 0.501f, -0.45f, -0.45f),
     glm::vec3( 0.501f,  0.45f, -0.45f),
     glm::vec3( 0.501f,  0.45f,  0.45f),
     // face 5
+    glm::vec3(-0.45f, -0.501f,  0.45f),
     glm::vec3(-0.45f, -0.501f, -0.45f),
     glm::vec3( 0.45f, -0.501f, -0.45f),
-    glm::vec3(-0.45f, -0.501f,  0.45f),
     glm::vec3( 0.45f, -0.501f,  0.45f),
     // face 6
-    glm::vec3(-0.45f,  0.501f, -0.45f),
     glm::vec3( 0.45f,  0.501f, -0.45f),
+    glm::vec3(-0.45f,  0.501f, -0.45f),
     glm::vec3(-0.45f,  0.501f,  0.45f),
     glm::vec3( 0.45f,  0.501f,  0.45f),
 };
@@ -68,59 +68,59 @@ static const glm::vec3 cube_vertices[] = {
 static unsigned int black_indices[] = {
     // face 1
     0, 1, 2,
-    1, 2, 3,
+    0, 2, 3,
     // face 2
     4, 5, 6,
-    5, 6, 7,
+    4, 6, 7,
     // face 3
     8, 9, 10,
-    9, 10, 11,
+    8, 10, 11,
     // face 4
     12, 13, 14,
-    13, 14, 15,
+    12, 14, 15,
     // face 5
     16, 17, 18,
-    17, 18, 19,
+    16, 18, 19,
     // face 6
     20, 21, 22,
-    21, 22, 23,
+    20, 22, 23,
 };
 
 static unsigned int orange_indices[] = {
     // stickers
     // face 1
     24, 25, 26,
-    25, 26, 27,
+    24, 26, 27,
 };
 
 static unsigned int red_indices[] = {
     // face 2
     28, 29, 30,
-    29, 30, 31,
+    28, 30, 31,
 };
 
 static unsigned int green_indices[] = {
     // face 3
     32, 33, 34,
-    33, 34, 35,
+    32, 34, 35,
 };
 
 static unsigned int blue_indices[] = {
     // face 4
     36, 37, 38,
-    37, 38, 39,
+    36, 38, 39,
 };
 
 static unsigned int yellow_indices[] = {
     // face 5
     40, 41, 42,
-    41, 42, 43,
+    40, 42, 43,
 };
 
 static unsigned int white_indices[] = {
     // face 6
     44, 45, 46,
-    45, 46, 47,
+    44, 46, 47,
 };
 
 static MeshData cube_data = {
@@ -205,8 +205,7 @@ void Cube::fill_cubies() {
                         if (pos[i] >= 0)
                             pos[i]++;
                 }
-                auto mesh = Mesh(data);
-                m_cubies.push_back({ mesh, pos });
+                m_cubies.emplace_back(data, pos);
             }
         }
     }

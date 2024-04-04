@@ -59,25 +59,25 @@ ShaderProgram::~ShaderProgram() {
 }
 
 void ShaderProgram::setUniformMatrix4fv(char const* name, glm::mat4x4& mat) {
-    glUseProgram(m_programId);
+    // glUseProgram(m_programId);
     auto loc = glGetUniformLocation(m_programId, name);
     glUniformMatrix4fv(loc, 1, GL_FALSE, &mat[0][0]);
 }
 
 void ShaderProgram::setInt(char const* name, int value) {
-    glUseProgram(m_programId);
+    // glUseProgram(m_programId);
     auto loc = glGetUniformLocation(m_programId, name);
     glUniform1i(loc, value);
 }
 
 void ShaderProgram::setIntArray(char const* name, int* value, int count) {
-    glUseProgram(m_programId);
+    // glUseProgram(m_programId);
     auto loc = glGetUniformLocation(m_programId, name);
     glUniform1iv(loc, count, value);
 }
 
 void ShaderProgram::setVec3(char const* name, glm::vec3 vec) {
-    glUseProgram(m_programId);
+    // glUseProgram(m_programId);
     auto loc = glGetUniformLocation(m_programId, name);
     glUniform3fv(loc, 1, &vec[0]);
 }
