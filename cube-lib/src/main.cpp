@@ -46,7 +46,10 @@ int main()
                     scene.handleKeyPress(SceneKey::L, inverse);
                     break;
                 case sf::Keyboard::R:
-                    scene.handleKeyPress(SceneKey::R, inverse);
+                    if (event.key.control)
+                        scene.handleKeyPress(SceneKey::Reset, inverse);
+                    else
+                        scene.handleKeyPress(SceneKey::R, inverse);
                     break;
                 case sf::Keyboard::D:
                     scene.handleKeyPress(SceneKey::D, inverse);

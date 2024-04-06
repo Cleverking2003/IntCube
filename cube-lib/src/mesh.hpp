@@ -7,14 +7,12 @@
 #include "gl_helpers.hpp"
 
 struct FaceData {
-    void* indices;
-    int count;
+    std::vector<int> indices;
     glm::vec3 color;
 };
 
 struct MeshData {
-    void* vertices;
-    int vertex_count;
+    std::vector<float> vertices;
     std::vector<FaceData> face_data;
 };
 
@@ -30,5 +28,6 @@ private:
     std::vector<std::tuple<std::shared_ptr<Buffer>, glm::vec3, int>> m_faces;
     std::shared_ptr<VertexArray> m_vao;
 
+    MeshData m_data;
     int m_model_loc, m_view_loc, m_proj_loc, m_color_loc;
 };

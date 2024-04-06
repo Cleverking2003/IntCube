@@ -14,6 +14,7 @@ enum class SceneKey {
     M,
     E,
     S,
+    Reset,
 };
 
 class Scene {
@@ -31,6 +32,7 @@ private:
     glm::mat4 m_view, m_proj;
     glm::mat4 m_rot { 1.0 };
     int m_width, m_height;
+    bool m_redraw { true };
 
-    Cube m_cube;
+    Cube* m_cube;
 };

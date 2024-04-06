@@ -50,13 +50,15 @@ Scene::Scene(int width, int height, int size)
 }
 
 void Scene::render() {
-    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);  
-    glEnable(GL_DEPTH_TEST);
-    glClearColor(0, 0.5, 0.5, 1);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if (m_redraw) {
+        glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);  
+        glEnable(GL_DEPTH_TEST);
+        glClearColor(0, 0.5, 0.5, 1);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    auto new_view = m_view * m_rot;
-    m_cube.draw(new_view, m_proj);
+        auto new_view = m_view * m_rot;
+        m_cube->draw(new_view, m_proj);
+    }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glClearColor(0, 0.5, 0.5, 1);
@@ -71,38 +73,43 @@ void Scene::render() {
 }
 
 void Scene::handleMouseMovement(glm::vec2 delta) {
+    m_redraw = true;
     auto angles = delta / glm::vec2(m_width, m_height) * 360.0f;
     m_rot = glm::yawPitchRoll(glm::radians(angles.x), glm::radians(angles.y), 0.0f) * m_rot;
 }
 
 void Scene::handleKeyPress(SceneKey key, bool inverse) {
+    m_redraw = true;
     switch (key) {
     case SceneKey::L:
-        m_cube.execute_move(0, -1, inverse);
+        m_cube->execute_move(0, -1, inverse);
         break;
     case SceneKey::R:
-        m_cube.execute_move(0, 1, inverse);
+        m_cube->execute_move(0, 1, inverse);
         break;
     case SceneKey::D:
-        m_cube.execute_move(1, -1, inverse);
+        m_cube->execute_move(1, -1, inverse);
         break;
     case SceneKey::U:
-        m_cube.execute_move(1, 1, inverse);
+        m_cube->execute_move(1, 1, inverse);
         break;
     case SceneKey::B:
-        m_cube.execute_move(2, -1, inverse);
+        m_cube->execute_move(2, -1, inverse);
         break;
     case SceneKey::F:
-        m_cube.execute_move(2, 1, inverse);
+        m_cube->execute_move(2, 1, inverse);
         break;
     case SceneKey::M:
-        m_cube.execute_move(0, 0, inverse);
+        m_cube->execute_move(0, 0, inverse);
         break;
     case SceneKey::E:
-        m_cube.execute_move(1, 0, inverse);
+        m_cube->execute_move(1, 0, inverse);
         break;
     case SceneKey::S:
-        m_cube.execute_move(2, 0, !inverse);
+        m_cube->execute_move(2, 0, !inverse);
+        break;
+    case SceneKey::Reset:
+        m_cube->reset();
         break;
     }
 }

@@ -18,7 +18,7 @@ public:
     }
 
     void draw(glm::mat4& view, glm::mat4& proj) {
-        for (auto& [cubie, pos] : m_cubies) {
+        for (auto& [cubie, pos, orig_pos] : m_cubies) {
             cubie.draw(view, proj);
         }
     }
@@ -29,7 +29,7 @@ public:
         if (inverse)
             coord_mat = glm::inverse(coord_mat);
 
-        for (auto& [c, pos] : m_cubies) {
+        for (auto& [c, pos, orig_pos] : m_cubies) {
 
             if (glm::round(pos[axis]) != coord) continue;
 
@@ -49,6 +49,6 @@ protected:
     virtual void fill_cubies() {};
     virtual void fill_moves() {};
 
-    std::vector<std::pair<Mesh, glm::vec<N, float>>> m_cubies;
+    std::vector<std::tuple<Mesh, glm::vec<N, float>, glm::vec<N, float>>> m_cubies;
     ShaderProgram m_program;
 };
