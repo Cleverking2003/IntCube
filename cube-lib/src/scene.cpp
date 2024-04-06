@@ -1,5 +1,6 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/euler_angles.hpp>
+#include "axis_cube.hpp"
 #include "scene.hpp"
 
 #include <iostream>
@@ -17,9 +18,17 @@ Scene::Scene(int width, int height, int size)
     : m_fb_shader("simple_vertex.glsl", "simple_fragment.glsl"),
     m_view(glm::translate(glm::mat4(1.0), glm::vec3(0.0, 0.0, -5.0))),
     m_proj(glm::perspective(glm::radians(45.0f), (float)width/(float)height, 0.1f, 100.0f)),
-    m_width(width), m_height(height), m_cube(size) {
+    m_width(width), m_height(height) {
+
+    if (size == 0) {
+        m_cube = new AxisCube();
+    }
+    else {
+        m_cube = new Cube(size);
+    }
+
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
+    // glEnable(GL_CULL_FACE);
 
     glGenFramebuffers(1, &m_fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);  
