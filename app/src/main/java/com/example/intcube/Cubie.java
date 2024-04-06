@@ -154,4 +154,11 @@ public class Cubie {
 		return false;
 	}
 
+	public boolean cornerHasColor(char color) {
+		if (corner) {
+			return (colors[0].getColor() == color || colors[1].getColor() == color || colors[2].getColor() == color);
+		}
+		return false;
+	}
+
 }
