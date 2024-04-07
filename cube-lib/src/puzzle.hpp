@@ -24,7 +24,7 @@ public:
     }
 
     void execute_move(int axis, int coord, bool inverse = false) {
-        if (m_moves.find({ axis, coord }) == m_moves.end()) return;
+        if (is_in_animation() || m_moves.find({ axis, coord }) == m_moves.end()) return;
         auto coord_mat = m_moves[{ axis, coord }];
         if (inverse)
             coord_mat = glm::inverse(coord_mat);
@@ -38,8 +38,15 @@ public:
             auto [axis_vec, axis_part] = m_axes[axis];
             if (coord > 0) axis_vec *= -1;
             if (inverse) axis_vec *= -1;
-            c.model_mat = glm::rotate(glm::mat4(1.0), glm::two_pi<float>() / axis_part, axis_vec) * c.model_mat;
+            c.play_rotate_animation(axis_vec, glm::two_pi<float>() / axis_part, 250ms);
         }
+    }
+
+    bool is_in_animation() {
+        for (auto& [c, pos, orig_pos] : m_cubies) {
+            if (c.in_animation) return true;
+        }
+        return false;
     }
 
     std::array<std::pair<glm::vec3, int>, N> m_axes;

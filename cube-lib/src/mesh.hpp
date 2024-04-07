@@ -1,10 +1,13 @@
 #pragma once
 
+#include <chrono>
 #include <glm/glm.hpp>
 #include <memory>
 #include <vector>
 
 #include "gl_helpers.hpp"
+
+using namespace std::literals::chrono_literals;
 
 struct FaceData {
     std::vector<int> indices;
@@ -20,8 +23,11 @@ class Mesh {
 public:
     explicit Mesh(MeshData& data);
 
+    void play_rotate_animation(glm::vec3 axis, float angle, std::chrono::milliseconds time);
+
     void draw(glm::mat4, glm::mat4);
     glm::mat4 model_mat { 1.0 };
+    bool in_animation { false };
 
 private:
     std::shared_ptr<Buffer> m_vbo;
@@ -29,5 +35,7 @@ private:
     std::shared_ptr<VertexArray> m_vao;
 
     MeshData m_data;
-    int m_model_loc, m_view_loc, m_proj_loc, m_color_loc;
+    glm::mat4 m_rot_mat;
+    std::chrono::milliseconds m_elapsed_time, m_time;
+    std::chrono::time_point<std::chrono::high_resolution_clock> m_start_time;
 };

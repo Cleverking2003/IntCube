@@ -178,6 +178,26 @@ void Cube::fill_cubies() {
                         if (pos[i] >= 0)
                             pos[i]++;
                 }
+
+                if (pos.x != m_size / 2) {
+                    data.face_data[4].color = glm::vec3(0.0);
+                }
+                if (pos.x != -m_size / 2) {
+                    data.face_data[3].color = glm::vec3(0.0);
+                }
+                if (pos.y != m_size / 2) {
+                    data.face_data[6].color = glm::vec3(0.0);
+                }
+                if (pos.y != -m_size / 2) {
+                    data.face_data[5].color = glm::vec3(0.0);
+                }
+                if (pos.z != m_size / 2) {
+                    data.face_data[2].color = glm::vec3(0.0);
+                }
+                if (pos.z != -m_size / 2) {
+                    data.face_data[1].color = glm::vec3(0.0);
+                }
+
                 m_cubies.emplace_back(data, pos, pos);
             }
         }

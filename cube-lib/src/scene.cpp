@@ -59,7 +59,8 @@ Scene::Scene(int width, int height, int size)
 }
 
 void Scene::render() {
-    if (m_redraw) {
+    if (m_redraw || m_cube->is_in_animation()) {
+        m_redraw = false;
         glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);  
         glEnable(GL_DEPTH_TEST);
         glClearColor(0, 0.5, 0.5, 1);
