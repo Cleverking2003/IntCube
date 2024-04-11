@@ -24,17 +24,15 @@ import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 
+import java.io.Console;
 import java.util.Collections;
 import java.util.List;
+import java.util.MissingResourceException;
 
 public class ScanColorActivity extends CameraActivity implements CvCameraViewListener2 {
     private static final String TAG = "OCVSample::Activity";
 
     private CameraBridgeViewBase mOpenCvCameraView;
-
-    public ScanColorActivity() {
-        Log.i(TAG, "Instantiated new " + this.getClass());
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -99,13 +97,63 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
     @Override
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         Mat mRgba = inputFrame.rgba();
+
         int w = mRgba.width();
         int h = mRgba.height();
-        Imgproc.rectangle(mRgba, new Point((double) w / 4,  (double) h / 4), new Point(
-                 (double) (w * 2) / 3,  (double) (h * 2) / 3), Scalar.all(255.0));
-        Rect roi = new Rect(new Point((double) w / 3,  (double) h / 3), new Point(
-                (double) (w * 2) / 3,  (double) (h * 2) / 3));
-        Mat viewFinder = mRgba.submat(roi);
+        double min = (double)Math.min(w, h);
+        double step = min * 0.15;
+        Point stepCenter = new Point(w * 0.5 - step * 0.5 - step, h * 0.5 - step * 0.5);
+        Rect[] rois = new Rect[9];
+        Scalar[] scalars = new Scalar[9];
+
+        scalars[0] = new Scalar(255, 255, 255);
+        scalars[1] = new Scalar(0, 255, 255);
+        scalars[2] = new Scalar(255, 0, 255);
+        scalars[3] = new Scalar(255, 255, 0);
+        scalars[4] = new Scalar(0, 0, 255);
+        scalars[5] = new Scalar(255, 0, 0);
+        scalars[6] = new Scalar(0, 255, 0);
+        scalars[7] = new Scalar(125, 125, 255);
+        scalars[8] = new Scalar(255, 125, 125);
+
+        int index = 0;
+        for (int i = -1; i <= 1; i++)
+            for (int j = -1; j <= 1; j++)
+            {
+                Point pt1 = new Point(stepCenter.x + step * i, stepCenter.y + step * j);
+                Point pt2 = new Point(stepCenter.x + step + step * i, stepCenter.y + step + step * j);
+                Imgproc.rectangle(mRgba,
+                        pt1,
+                        pt2,
+                        Scalar.all(255.0));
+                Imgproc.putText(mRgba, String.valueOf(index), pt1, 4, 2, scalars[index], 4);
+                rois[index] = new Rect(pt1, pt2);
+                index++;
+            }
+
+        for (int i = 0; i < 9; i++) {
+            Rect roi = rois[i];
+            Mat ROI = new Mat(mRgba, roi);
+            Mat gray = new Mat();
+            Imgproc.cvtColor(ROI, gray, Imgproc.COLOR_BGR2GRAY);
+
+            Mat dst = new Mat();
+            Mat lines = new Mat();
+            Mat cdst = new Mat();
+            Imgproc.Canny(gray, dst, 50, 100, 3, false);
+            Imgproc.HoughLines(dst, lines, 1, Math.PI / 180, 150); // runs the actual detection
+            Imgproc.cvtColor(dst, cdst, Imgproc.COLOR_GRAY2BGR);
+
+            for (int x = 0; x < lines.rows(); x++) {
+                double rho = lines.get(x, 0)[0],
+                        theta = lines.get(x, 0)[1];
+                double a = Math.cos(theta), b = Math.sin(theta);
+                double x0 = a * rho, y0 = b * rho;
+                Point pt1 = new Point(roi.x + Math.round(x0 + 1000 * (-b)), roi.y + Math.round(y0 + 1000 * (a)));
+                Point pt2 = new Point(roi.x + Math.round(x0 - 1000 * (-b)), roi.y + Math.round(y0 - 1000 * (a)));
+                Imgproc.line(mRgba, pt1, pt2, scalars[i], 3, Imgproc.LINE_AA, 0);
+            }
+        }
         return mRgba;
     }
 
