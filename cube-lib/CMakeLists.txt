@@ -22,10 +22,11 @@ set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 include_directories(src/include)
 add_library(libcube SHARED src/axis_cube.cpp src/cube.cpp src/mesh.cpp src/scene.cpp src/gl_helpers.cpp src/gl.c)
 target_link_libraries(libcube PRIVATE glm::glm sfml-window)
+target_compile_features(libcube PRIVATE cxx_std_20)
 
-#if(BUILD_CUBE_APP)
+if(BUILD_CUBE_APP)
     add_subdirectory(cube-app)
-#endif()
+endif()
 
 add_custom_command(
         TARGET libcube
