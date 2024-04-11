@@ -4,6 +4,8 @@
 
 #include <glm/glm.hpp>
 
+int initGL();
+
 enum class SceneKey {
     U,
     D,

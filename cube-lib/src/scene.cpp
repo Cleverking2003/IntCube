@@ -3,7 +3,12 @@
 #include "axis_cube.hpp"
 #include "scene.hpp"
 
+#include <SFML/Window/Context.hpp>
 #include <iostream>
+
+int initGL() {
+    return gladLoadGL(sf::Context::getFunction);
+}
 
 static float quadVertices[] = {
     -1.0f,  1.0f,  0.0f, 1.0f,

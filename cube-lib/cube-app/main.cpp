@@ -15,7 +15,8 @@ int main()
     std::cin >> size;
     auto window = sf::Window{ { screen_width, screen_height }, "Cube"};
     window.setFramerateLimit(144);
-    auto res = gladLoadGL(sf::Context::getFunction);
+    // auto res = gladLoadGL(sf::Context::getFunction);
+    std::cout << initGL();
 
     Scene scene(screen_width, screen_height, size);
 

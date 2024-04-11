@@ -17,26 +17,21 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(glm)
 
-include_directories(src/include)
-add_executable(cube src/axis_cube.cpp src/cube.cpp src/main.cpp src/mesh.cpp src/scene.cpp src/gl_helpers.cpp src/gl.c)
-target_link_libraries(cube PRIVATE sfml-graphics glm::glm)
-target_compile_features(cube PRIVATE cxx_std_20)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-if(WIN32)
-    add_custom_command(
-        TARGET cube
-        COMMENT "Copy OpenAL DLL"
-        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${SFML_SOURCE_DIR}/extlibs/bin/$<IF:$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>,x64,x86>/openal32.dll $<TARGET_FILE_DIR:cube>
-        VERBATIM)
-endif()
+include_directories(src/include)
+add_library(libcube SHARED src/axis_cube.cpp src/cube.cpp src/mesh.cpp src/scene.cpp src/gl_helpers.cpp src/gl.c)
+target_link_libraries(libcube PRIVATE glm::glm sfml-window)
+
+#if(BUILD_CUBE_APP)
+    add_subdirectory(cube-app)
+#endif()
 
 add_custom_command(
-        TARGET cube
+        TARGET libcube
         COMMENT "Copy shader files"
-        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/src/piece_vertex.glsl ${CMAKE_BINARY_DIR}
-        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/src/piece_fragment.glsl ${CMAKE_BINARY_DIR}
-        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/src/simple_vertex.glsl ${CMAKE_BINARY_DIR}
-        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/src/simple_fragment.glsl ${CMAKE_BINARY_DIR}
+        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/src/piece_vertex.glsl $<TARGET_FILE_DIR:libcube>
+        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/src/piece_fragment.glsl $<TARGET_FILE_DIR:libcube>
+        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/src/simple_vertex.glsl $<TARGET_FILE_DIR:libcube>
+        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/src/simple_fragment.glsl $<TARGET_FILE_DIR:libcube>
         VERBATIM)
-
-install(TARGETS cube)
