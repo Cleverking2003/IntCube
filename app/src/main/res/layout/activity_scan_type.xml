@@ -55,7 +55,7 @@
         app:layout_constraintVertical_bias="0.95" />
 
     <SeekBar
-        android:id="@+id/seekBar6"
+        android:id="@+id/secondbar"
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:max="255"
@@ -65,7 +65,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <SeekBar
-        android:id="@+id/seekBar7"
+        android:id="@+id/firstbar"
         android:layout_width="0dp"
         android:layout_height="40dp"
         android:layout_marginTop="40dp"

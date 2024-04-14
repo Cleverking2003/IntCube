@@ -15,12 +15,35 @@
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.516"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.416"
+        app:layout_constraintVertical_bias="0.0"
         opencv:camera_id="any"
         opencv:show_fps="false" />
+
+    <SeekBar
+        android:id="@+id/secondbar"
+        android:layout_width="405dp"
+        android:layout_height="100dp"
+        android:layout_marginBottom="48dp"
+        android:max="255"
+        android:progress="128"
+        app:layout_constraintBottom_toTopOf="@+id/buttonScanType"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <SeekBar
+        android:id="@+id/firstbar"
+        android:layout_width="405dp"
+        android:layout_height="100dp"
+        android:layout_marginBottom="96dp"
+        android:max="255"
+        android:progress="40"
+        app:layout_constraintBottom_toTopOf="@+id/buttonScanType"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/buttonBackToMain"
@@ -58,5 +81,27 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.998" />
+
+    <ImageView
+        android:id="@+id/leftupcorner"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginBottom="144dp"
+        android:src="@drawable/one_color_edge_lda"
+        app:layout_constraintBottom_toBottomOf="@+id/tutorial1_activity_java_surface_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.16"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/upedge"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginBottom="145dp"
+        android:src="@drawable/two_color_edge_lda"
+        app:layout_constraintBottom_toBottomOf="@+id/tutorial1_activity_java_surface_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/leftupcorner" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

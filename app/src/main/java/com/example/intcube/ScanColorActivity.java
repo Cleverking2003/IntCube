@@ -3,13 +3,27 @@ package com.example.intcube;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.VectorDrawable;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
+
+import com.google.android.material.shape.ShapePathModel;
 
 import org.opencv.android.CameraActivity;
 import org.opencv.android.CameraBridgeViewBase;
@@ -22,6 +36,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.io.Console;
@@ -33,6 +48,10 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
     private static final String TAG = "OCVSample::Activity";
 
     private CameraBridgeViewBase mOpenCvCameraView;
+
+    private SeekBar threshold1, threshold2;
+
+    private ImageView leftupcorner, upedge;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,6 +70,18 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
 
         setContentView(R.layout.activity_scan_color);
 
+        threshold1 = findViewById(R.id.firstbar);
+        threshold2 = findViewById(R.id.secondbar);
+        //Изменение цвета drawable
+//        leftupcorner = findViewById(R.id.leftupcorner);
+//        leftupcorner.setColorFilter(getResources().getColor(R.color.black));
+
+        upedge = findViewById(R.id.upedge);
+        setGradientForEdge(upedge, Color.blue(255), Color.red(255));
+        //upedge.setRotation(90);
+
+
+
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.tutorial1_activity_java_surface_view);
 
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
@@ -58,6 +89,17 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
         mOpenCvCameraView.setCvCameraViewListener(this);
     }
 
+    public void setGradientForEdge(ImageView cell, int firstcolor, int secondcolor){
+        GradientDrawable drawable = new GradientDrawable();
+
+        drawable.setColors(new int[]{firstcolor, firstcolor, secondcolor, secondcolor}, new float[]{0,(float)0.5, (float)0.5, 1});
+        drawable.setGradientType(GradientDrawable.LINEAR_GRADIENT);
+        drawable.setOrientation(GradientDrawable.Orientation.BL_TR);
+        cell.setImageDrawable(drawable);
+    }
+    public void setGradientForCorner(ImageView cell, Color first, Color second){
+
+    }
     @Override
     public void onPause()
     {
@@ -131,16 +173,20 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
                 index++;
             }
 
+        Mat dsIMG = new Mat();
+        Mat usIMG = new Mat();
         for (int i = 0; i < 9; i++) {
             Rect roi = rois[i];
             Mat ROI = new Mat(mRgba, roi);
             Mat gray = new Mat();
             Imgproc.cvtColor(ROI, gray, Imgproc.COLOR_BGR2GRAY);
+            Imgproc.pyrDown(gray, dsIMG, new Size((double) gray.cols() / 2, (double) gray.rows() / 2));
+            Imgproc.pyrUp(dsIMG, usIMG, gray.size());
 
             Mat dst = new Mat();
             Mat lines = new Mat();
             Mat cdst = new Mat();
-            Imgproc.Canny(gray, dst, 50, 100, 3, false);
+            Imgproc.Canny(usIMG, dst, threshold1.getProgress(), threshold2.getProgress());
             Imgproc.HoughLines(dst, lines, 1, Math.PI / 180, 150); // runs the actual detection
             Imgproc.cvtColor(dst, cdst, Imgproc.COLOR_GRAY2BGR);
 
@@ -151,9 +197,14 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
                 double x0 = a * rho, y0 = b * rho;
                 Point pt1 = new Point(roi.x + Math.round(x0 + 1000 * (-b)), roi.y + Math.round(y0 + 1000 * (a)));
                 Point pt2 = new Point(roi.x + Math.round(x0 - 1000 * (-b)), roi.y + Math.round(y0 - 1000 * (a)));
-                Imgproc.line(mRgba, pt1, pt2, scalars[i], 3, Imgproc.LINE_AA, 0);
+                Imgproc.line(mRgba, pt1, pt2, scalars[i], 2, Imgproc.LINE_AA, 0);
             }
         }
+
+//        Mat gray = new Mat();
+//        Mat dst = new Mat();
+//        Imgproc.cvtColor(mRgba, gray, Imgproc.COLOR_BGR2GRAY);
+//        Imgproc.Canny(gray, dst, threshold1.getProgress(), threshold2.getProgress());
         return mRgba;
     }
 

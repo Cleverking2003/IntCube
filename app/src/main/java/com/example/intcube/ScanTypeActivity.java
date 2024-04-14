@@ -78,8 +78,8 @@ public class ScanTypeActivity extends CameraActivity implements CvCameraViewList
             previewMatIndex = (previewMatIndex + 1) % (previewMats.size() + 1);
         });
 
-        threshold1 = findViewById(R.id.seekBar6);
-        threshold2 = findViewById(R.id.seekBar7);
+        threshold1 = findViewById(R.id.secondbar);
+        threshold2 = findViewById(R.id.firstbar);
         epsilon = findViewById(R.id.seekBar9);
         minArea = findViewById(R.id.seekBar10);
 
