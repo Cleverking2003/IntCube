@@ -2,10 +2,13 @@ package com.example.intcube;
 
 
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.LinearGradient;
+import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.PaintDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.VectorDrawable;
 import android.os.Bundle;
@@ -72,13 +75,10 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
 
         threshold1 = findViewById(R.id.firstbar);
         threshold2 = findViewById(R.id.secondbar);
-        //Изменение цвета drawable
-//        leftupcorner = findViewById(R.id.leftupcorner);
-//        leftupcorner.setColorFilter(getResources().getColor(R.color.black));
+        leftupcorner = findViewById(R.id.leftupcorner);
+        leftupcorner.setColorFilter(getResources().getColor(R.color.black));
 
         upedge = findViewById(R.id.upedge);
-        setGradientForEdge(upedge, Color.blue(255), Color.red(255));
-        //upedge.setRotation(90);
 
 
 
@@ -89,17 +89,6 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
         mOpenCvCameraView.setCvCameraViewListener(this);
     }
 
-    public void setGradientForEdge(ImageView cell, int firstcolor, int secondcolor){
-        GradientDrawable drawable = new GradientDrawable();
-
-        drawable.setColors(new int[]{firstcolor, firstcolor, secondcolor, secondcolor}, new float[]{0,(float)0.5, (float)0.5, 1});
-        drawable.setGradientType(GradientDrawable.LINEAR_GRADIENT);
-        drawable.setOrientation(GradientDrawable.Orientation.BL_TR);
-        cell.setImageDrawable(drawable);
-    }
-    public void setGradientForCorner(ImageView cell, Color first, Color second){
-
-    }
     @Override
     public void onPause()
     {

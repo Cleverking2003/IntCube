@@ -31,7 +31,8 @@
         android:progress="128"
         app:layout_constraintBottom_toTopOf="@+id/buttonScanType"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="gone" />
 
     <SeekBar
         android:id="@+id/firstbar"
@@ -43,7 +44,8 @@
         app:layout_constraintBottom_toTopOf="@+id/buttonScanType"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="gone" />
 
     <Button
         android:id="@+id/buttonBackToMain"
@@ -62,13 +64,12 @@
         android:id="@+id/buttonScanType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="88dp"
         android:text="@string/textScanButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/buttonToScanColors"
-        app:layout_constraintHorizontal_bias="0.361"
-        app:layout_constraintStart_toEndOf="@+id/buttonBackToMain"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.996" />
 
     <Button
         android:id="@+id/buttonToScanColors"
@@ -86,22 +87,95 @@
         android:id="@+id/leftupcorner"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginBottom="144dp"
-        android:src="@drawable/one_color_edge_lda"
+        android:layout_marginStart="70dp"
+        android:layout_marginBottom="244dp"
+        android:src="@drawable/three_color_corner"
         app:layout_constraintBottom_toBottomOf="@+id/tutorial1_activity_java_surface_view"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.16"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
         android:id="@+id/upedge"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginBottom="145dp"
+        android:layout_marginEnd="156dp"
+        android:layout_marginBottom="244dp"
+        android:rotation="90"
         android:src="@drawable/two_color_edge_lda"
         app:layout_constraintBottom_toBottomOf="@+id/tutorial1_activity_java_surface_view"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/rightupcorner"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginEnd="72dp"
+        android:layout_marginBottom="244dp"
+        android:src="@drawable/one_color_corner"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="175dp"
+        android:layout_marginBottom="180dp"
+        android:src="@drawable/center"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/leftupcorner" />
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="70dp"
+        android:layout_marginBottom="160dp"
+        android:src="@drawable/one_color_edge_lda"
+        app:layout_constraintBottom_toBottomOf="@+id/tutorial1_activity_java_surface_view"
+        app:layout_constraintStart_toStartOf="@+id/tutorial1_activity_java_surface_view" />
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="239dp"
+        android:layout_marginBottom="160dp"
+        android:src="@drawable/one_color_edge_rda"
+        app:layout_constraintBottom_toBottomOf="@+id/tutorial1_activity_java_surface_view"
+        app:layout_constraintStart_toStartOf="@+id/tutorial1_activity_java_surface_view" />
+
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginEnd="73dp"
+        android:layout_marginBottom="75dp"
+        android:src="@drawable/one_color_corner_fv"
+        app:layout_constraintBottom_toBottomOf="@+id/tutorial1_activity_java_surface_view"
+        app:layout_constraintEnd_toEndOf="@+id/tutorial1_activity_java_surface_view" />
+
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginEnd="156dp"
+        android:layout_marginBottom="75dp"
+        android:rotation="90"
+        android:src="@drawable/two_color_edge_rda"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView7"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="70dp"
+        android:layout_marginBottom="75dp"
+        android:rotation="180"
+        android:src="@drawable/one_color_corner"
+        app:layout_constraintBottom_toBottomOf="@+id/tutorial1_activity_java_surface_view"
+        app:layout_constraintStart_toStartOf="@+id/tutorial1_activity_java_surface_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

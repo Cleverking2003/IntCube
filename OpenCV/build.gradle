@@ -106,7 +106,7 @@ android {
     compileSdkVersion 34
 
     defaultConfig {
-        minSdkVersion 24
+        minSdkVersion 31
         targetSdkVersion 34
 
         versionCode openCVersionCode
