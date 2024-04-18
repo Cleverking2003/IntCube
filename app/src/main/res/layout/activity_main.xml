@@ -6,18 +6,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    tools:layout_editor_absoluteY="25dp">
+
+    <Button
+        android:id="@+id/buttonToCube"
+        android:layout_width="380dp"
+        android:layout_height="57dp"
+        android:layout_marginBottom="152dp"
+        android:onClick="startActivityCube"
+        android:text="@string/textToCubeButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.483"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/buttonToScan"
         android:layout_width="380dp"
         android:layout_height="57dp"
-        android:layout_marginBottom="152dp"
+        android:layout_marginBottom="220dp"
         android:onClick="startActivityScan"
         android:text="@string/textToScanButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.483"
+        app:layout_constraintHorizontal_bias="0.516"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
@@ -51,7 +64,7 @@
         android:text="@string/textLogo"
         android:textColor="#000000"
         android:textSize="48sp"
-        app:layout_constraintBottom_toTopOf="@+id/buttonToScan"
+        app:layout_constraintBottom_toTopOf="@+id/buttonToCube"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.252"
         app:layout_constraintStart_toStartOf="parent"

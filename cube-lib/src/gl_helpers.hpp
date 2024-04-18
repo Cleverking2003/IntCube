@@ -1,15 +1,21 @@
 #pragma once
 
+#ifdef __ANDROID__
+#include <GLES3/gl3.h>
+#else
 #include <glad/gl.h>
+#endif
 
 #include <glm/glm.hpp>
 
 class ShaderProgram {
 public:
     explicit ShaderProgram(char const* vertex, char const* fragment);
+    explicit ShaderProgram(char** vertex, char** fragment);
     ShaderProgram(ShaderProgram&) = delete;
 
     bool loadFromFile(char const* filename, GLenum type);
+    bool loadFromString(char** str, GLenum type);
     void use();
     ~ShaderProgram();
     void setUniformMatrix4fv(char const* name, glm::mat4x4& mat);

@@ -5,6 +5,7 @@
 class Cube : public Puzzle<3> {
 public:
     explicit Cube(int size);
+    Cube(int size, char** vertexShader, char** fragmentShader);
     void reset();
 
 protected:

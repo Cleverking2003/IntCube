@@ -24,6 +24,15 @@ endif()
 include_directories(src/include)
 add_library(libcube SHARED src/axis_cube.cpp src/cube.cpp src/mesh.cpp src/scene.cpp src/gl_helpers.cpp src/gl.c)
 target_link_libraries(libcube PRIVATE glm::glm sfml-window)
+if(ANDROID)
+	find_library(GLES-lib
+			GLESv3)
+	find_library(android-lib
+			android)
+	find_library(log-lib
+			log)
+	target_link_libraries(libcube PRIVATE ${GLES-lib} ${android-lib} ${log-lib})
+endif()
 target_compile_features(libcube PRIVATE cxx_std_20)
 
 if(BUILD_CUBE_APP)

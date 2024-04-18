@@ -24,4 +24,5 @@
     <string name="textToSolveButton">Решить</string>
     <string name="textToScanColorsButton">Далее</string>
     <string name="app_name">IntCube</string>
+    <string name="textToCubeButton">Кубик</string>
 </resources>

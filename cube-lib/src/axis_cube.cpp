@@ -1208,35 +1208,75 @@ AxisCube::AxisCube() : Cube(3) {
         { glm::vec3(0.5, -0.25, 0.5), 4 },
     };
 
+//    m_cubies.clear();
+//    m_cubies.emplace_back(zwr, glm::vec3(0, 1, 0), glm::vec3(0, 1, 0));
+//    m_cubies.emplace_back(zrg, glm::vec3(0, 0, 1), glm::vec3(0, 0, 1));
+//    m_cubies.emplace_back(zyb, glm::vec3(1, 0, 0), glm::vec3(1, 0, 0));
+//    m_cubies.emplace_back(zyo, glm::vec3(0, -1, 0), glm::vec3(0, -1, 0));
+//    m_cubies.emplace_back(zob, glm::vec3(0, 0, -1), glm::vec3(0, 0, -1));
+//    m_cubies.emplace_back(zwg, glm::vec3(-1, 0, 0), glm::vec3(-1, 0, 0));
+//
+//    m_cubies.emplace_back(cwrg, glm::vec3(-1, 1, 1), glm::vec3(-1, 1, 1));
+//    m_cubies.emplace_back(cyob, glm::vec3(1, -1, -1), glm::vec3(1, -1, -1));
+//
+//    m_cubies.emplace_back(cw, glm::vec3(-1, 1, -1), glm::vec3(-1, 1, -1));
+//    m_cubies.emplace_back(cy, glm::vec3(1, -1, 1), glm::vec3(1, -1, 1));
+//    m_cubies.emplace_back(cr, glm::vec3(1, 1, 1), glm::vec3(1, 1, 1));
+//    m_cubies.emplace_back(co, glm::vec3(-1, -1, -1), glm::vec3(-1, -1, -1));
+//    m_cubies.emplace_back(cg, glm::vec3(-1, -1, 1), glm::vec3(-1, -1, 1));
+//    m_cubies.emplace_back(cb, glm::vec3(1, 1, -1), glm::vec3(1, 1, -1));
+//
+//    m_cubies.emplace_back(ew, glm::vec3(-1, 1, 0), glm::vec3(-1, 1, 0));
+//    m_cubies.emplace_back(ey, glm::vec3(1, -1, 0), glm::vec3(1, -1, 0));
+//    m_cubies.emplace_back(er, glm::vec3(0, 1, 1), glm::vec3(0, 1, 1));
+//    m_cubies.emplace_back(eo, glm::vec3(0, -1, -1), glm::vec3(0, -1, -1));
+//    m_cubies.emplace_back(eg, glm::vec3(-1, 0, 1), glm::vec3(-1, 0, 1));
+//    m_cubies.emplace_back(eb, glm::vec3(1, 0, -1), glm::vec3(1, 0, -1));
+//
+//    m_cubies.emplace_back(ewo, glm::vec3(-1, 0, -1), glm::vec3(-1, 0, -1));
+//    m_cubies.emplace_back(eyr, glm::vec3(1, 0, 1), glm::vec3(1, 0, 1));
+//    m_cubies.emplace_back(erb, glm::vec3(1, 1, 0), glm::vec3(1, 1, 0));
+//    m_cubies.emplace_back(eog, glm::vec3(-1, -1, 0), glm::vec3(-1, -1, 0));
+//    m_cubies.emplace_back(eyg, glm::vec3(0, -1, 1), glm::vec3(0, -1, 1));
+//    m_cubies.emplace_back(ewb, glm::vec3(0, 1, -1), glm::vec3(0, 1, -1));
+}
+
+AxisCube::AxisCube(char** vertexShader, char** fragmentShader) : Cube(3, vertexShader, fragmentShader) {
+    m_axes = {
+            std::pair { glm::vec3(0.25, -0.5, -0.5), 4 },
+            { glm::vec3(0.5, 0.5, -0.25), 4 },
+            { glm::vec3(0.5, -0.25, 0.5), 4 },
+    };
+
     m_cubies.clear();
-    m_cubies.emplace_back(zwr, glm::vec3(0, 1, 0), glm::vec3(0, 1, 0));
-    m_cubies.emplace_back(zrg, glm::vec3(0, 0, 1), glm::vec3(0, 0, 1));
-    m_cubies.emplace_back(zyb, glm::vec3(1, 0, 0), glm::vec3(1, 0, 0));
-    m_cubies.emplace_back(zyo, glm::vec3(0, -1, 0), glm::vec3(0, -1, 0));
-    m_cubies.emplace_back(zob, glm::vec3(0, 0, -1), glm::vec3(0, 0, -1));
-    m_cubies.emplace_back(zwg, glm::vec3(-1, 0, 0), glm::vec3(-1, 0, 0));
-    
-    m_cubies.emplace_back(cwrg, glm::vec3(-1, 1, 1), glm::vec3(-1, 1, 1));
-    m_cubies.emplace_back(cyob, glm::vec3(1, -1, -1), glm::vec3(1, -1, -1));
+    m_cubies.emplace_back(Mesh(zwr, m_shader), glm::vec3(0, 1, 0), glm::vec3(0, 1, 0));
+    m_cubies.emplace_back(Mesh(zrg, m_shader), glm::vec3(0, 0, 1), glm::vec3(0, 0, 1));
+    m_cubies.emplace_back(Mesh(zyb, m_shader), glm::vec3(1, 0, 0), glm::vec3(1, 0, 0));
+    m_cubies.emplace_back(Mesh(zyo, m_shader), glm::vec3(0, -1, 0), glm::vec3(0, -1, 0));
+    m_cubies.emplace_back(Mesh(zob, m_shader), glm::vec3(0, 0, -1), glm::vec3(0, 0, -1));
+    m_cubies.emplace_back(Mesh(zwg, m_shader), glm::vec3(-1, 0, 0), glm::vec3(-1, 0, 0));
 
-    m_cubies.emplace_back(cw, glm::vec3(-1, 1, -1), glm::vec3(-1, 1, -1));
-    m_cubies.emplace_back(cy, glm::vec3(1, -1, 1), glm::vec3(1, -1, 1));
-    m_cubies.emplace_back(cr, glm::vec3(1, 1, 1), glm::vec3(1, 1, 1));
-    m_cubies.emplace_back(co, glm::vec3(-1, -1, -1), glm::vec3(-1, -1, -1));
-    m_cubies.emplace_back(cg, glm::vec3(-1, -1, 1), glm::vec3(-1, -1, 1));
-    m_cubies.emplace_back(cb, glm::vec3(1, 1, -1), glm::vec3(1, 1, -1));
+    m_cubies.emplace_back(Mesh(cwrg, m_shader), glm::vec3(-1, 1, 1), glm::vec3(-1, 1, 1));
+    m_cubies.emplace_back(Mesh(cyob, m_shader), glm::vec3(1, -1, -1), glm::vec3(1, -1, -1));
 
-    m_cubies.emplace_back(ew, glm::vec3(-1, 1, 0), glm::vec3(-1, 1, 0));
-    m_cubies.emplace_back(ey, glm::vec3(1, -1, 0), glm::vec3(1, -1, 0));
-    m_cubies.emplace_back(er, glm::vec3(0, 1, 1), glm::vec3(0, 1, 1));
-    m_cubies.emplace_back(eo, glm::vec3(0, -1, -1), glm::vec3(0, -1, -1));
-    m_cubies.emplace_back(eg, glm::vec3(-1, 0, 1), glm::vec3(-1, 0, 1));
-    m_cubies.emplace_back(eb, glm::vec3(1, 0, -1), glm::vec3(1, 0, -1));
+    m_cubies.emplace_back(Mesh(cw, m_shader), glm::vec3(-1, 1, -1), glm::vec3(-1, 1, -1));
+    m_cubies.emplace_back(Mesh(cy, m_shader), glm::vec3(1, -1, 1), glm::vec3(1, -1, 1));
+    m_cubies.emplace_back(Mesh(cr, m_shader), glm::vec3(1, 1, 1), glm::vec3(1, 1, 1));
+    m_cubies.emplace_back(Mesh(co, m_shader), glm::vec3(-1, -1, -1), glm::vec3(-1, -1, -1));
+    m_cubies.emplace_back(Mesh(cg, m_shader), glm::vec3(-1, -1, 1), glm::vec3(-1, -1, 1));
+    m_cubies.emplace_back(Mesh(cb, m_shader), glm::vec3(1, 1, -1), glm::vec3(1, 1, -1));
 
-    m_cubies.emplace_back(ewo, glm::vec3(-1, 0, -1), glm::vec3(-1, 0, -1));
-    m_cubies.emplace_back(eyr, glm::vec3(1, 0, 1), glm::vec3(1, 0, 1));
-    m_cubies.emplace_back(erb, glm::vec3(1, 1, 0), glm::vec3(1, 1, 0));
-    m_cubies.emplace_back(eog, glm::vec3(-1, -1, 0), glm::vec3(-1, -1, 0));
-    m_cubies.emplace_back(eyg, glm::vec3(0, -1, 1), glm::vec3(0, -1, 1));
-    m_cubies.emplace_back(ewb, glm::vec3(0, 1, -1), glm::vec3(0, 1, -1));
+    m_cubies.emplace_back(Mesh(ew, m_shader), glm::vec3(-1, 1, 0), glm::vec3(-1, 1, 0));
+    m_cubies.emplace_back(Mesh(ey, m_shader), glm::vec3(1, -1, 0), glm::vec3(1, -1, 0));
+    m_cubies.emplace_back(Mesh(er, m_shader), glm::vec3(0, 1, 1), glm::vec3(0, 1, 1));
+    m_cubies.emplace_back(Mesh(eo, m_shader), glm::vec3(0, -1, -1), glm::vec3(0, -1, -1));
+    m_cubies.emplace_back(Mesh(eg, m_shader), glm::vec3(-1, 0, 1), glm::vec3(-1, 0, 1));
+    m_cubies.emplace_back(Mesh(eb, m_shader), glm::vec3(1, 0, -1), glm::vec3(1, 0, -1));
+
+    m_cubies.emplace_back(Mesh(ewo, m_shader), glm::vec3(-1, 0, -1), glm::vec3(-1, 0, -1));
+    m_cubies.emplace_back(Mesh(eyr, m_shader), glm::vec3(1, 0, 1), glm::vec3(1, 0, 1));
+    m_cubies.emplace_back(Mesh(erb, m_shader), glm::vec3(1, 1, 0), glm::vec3(1, 1, 0));
+    m_cubies.emplace_back(Mesh(eog, m_shader), glm::vec3(-1, -1, 0), glm::vec3(-1, -1, 0));
+    m_cubies.emplace_back(Mesh(eyg, m_shader), glm::vec3(0, -1, 1), glm::vec3(0, -1, 1));
+    m_cubies.emplace_back(Mesh(ewb, m_shader), glm::vec3(0, 1, -1), glm::vec3(0, 1, -1));
 }

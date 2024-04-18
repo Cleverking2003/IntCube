@@ -31,6 +31,7 @@ public:
     friend void ::render();
     friend void ::handleMouseMovement(int x, int y);
     friend void ::handleKeyPress(SceneKey key, bool inverse);
+    ~Scene();
 
 private:
     explicit Scene(int width, int height, int size);
@@ -40,7 +41,7 @@ private:
     unsigned int m_fbo, m_texture, m_rbo;
     Buffer m_vbo;
     VertexArray m_vao;
-    ShaderProgram m_fb_shader;
+    ShaderProgram* m_fb_shader;
     glm::mat4 m_view, m_proj;
     glm::mat4 m_rot { 1.0 };
     int m_width, m_height;

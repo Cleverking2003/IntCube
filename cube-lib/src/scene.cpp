@@ -3,17 +3,63 @@
 #include "axis_cube.hpp"
 #include "scene.hpp"
 
+#ifdef __ANDROID__
+#include <GLES3/gl3.h>
+#include <jni.h>
+#include <android/asset_manager_jni.h>
+#include <android/log.h>
+#else
 #include <SFML/Window/Context.hpp>
+#endif
+#include <fstream>
 #include <iostream>
+#include <sstream>
 
-static Scene* s_scene;
+static Scene* s_scene = nullptr;
+
+#ifdef __ANDROID__
+static JNIEnv * jni_env;
+static AAssetManager* s_mgr;
+#endif
 
 int initGL() {
+#ifdef __ANDROID__
+    return 0;
+#else
     return gladLoadGL(sf::Context::getFunction);
+#endif
+}
+
+static char* loadStringFromFile(const char* filename) {
+#ifdef __ANDROID__
+    auto file = AAssetManager_open(s_mgr, filename, AASSET_MODE_BUFFER);
+    auto len = AAsset_getLength(file);
+    auto buf = new char[len + 1];
+    std::fill(buf, buf + len, 0);
+    char* src = (char*)AAsset_getBuffer(file);
+    std::copy(src, src + len, buf);
+    __android_log_print(ANDROID_LOG_DEBUG, "glsl", "%s\n", buf);
+    return buf;
+#else
+    std::ifstream file(filename);
+
+    if (!file.is_open()) {
+        std::cout << "Couldn't open the file!\n";
+        return nullptr;
+    }
+
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    auto str = buffer.str();
+    file.close();
+    auto c_str = new char[str.size() + 1];
+    std::copy(str.begin(), str.end() + 1, c_str);
+    return c_str;
+#endif
 }
 
 void initScene(int width, int height, int size) {
-    if (!s_scene)
+    // if (!s_scene)
         s_scene = new Scene(width, height, size);
 }
 
@@ -39,16 +85,23 @@ static float quadVertices[] = {
 };
 
 Scene::Scene(int width, int height, int size)
-    : m_fb_shader("simple_vertex.glsl", "simple_fragment.glsl"),
-    m_view(glm::translate(glm::mat4(1.0), glm::vec3(0.0, 0.0, -5.0))),
+    : m_view(glm::translate(glm::mat4(1.0), glm::vec3(0.0, 0.0, -5.0))),
     m_proj(glm::perspective(glm::radians(45.0f), (float)width/(float)height, 0.1f, 100.0f)),
     m_width(width), m_height(height) {
 
+    auto vertex = loadStringFromFile("simple_vertex.glsl");
+    auto frag = loadStringFromFile("simple_fragment.glsl");
+    m_fb_shader = new ShaderProgram(&vertex, &frag);
+
+    auto cube_vertex = loadStringFromFile("piece_vertex.glsl");
+    std::cout << cube_vertex;
+    auto cube_frag = loadStringFromFile("piece_fragment.glsl");
+
     if (size == 0) {
-        m_cube = new AxisCube();
+        m_cube = new AxisCube(&cube_vertex, &cube_frag);
     }
     else {
-        m_cube = new Cube(size);
+        m_cube = new Cube(size, &cube_vertex, &cube_frag);
     }
 
     glEnable(GL_DEPTH_TEST);
@@ -80,6 +133,17 @@ Scene::Scene(int width, int height, int size)
     m_vbo.setData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
     m_vao.setAttribute(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
     m_vao.setAttribute(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 2 * sizeof(float));
+
+#ifdef __ANDROID__
+    GLenum err;
+    while ((err = glGetError()) != GL_NO_ERROR)
+        __android_log_print(ANDROID_LOG_ERROR, "gl", "OPENGL ERROR %x\n", err);
+#endif
+}
+
+Scene::~Scene() {
+    if (s_scene)
+        s_scene = nullptr;
 }
 
 void Scene::render() {
@@ -87,7 +151,7 @@ void Scene::render() {
         m_redraw = false;
         glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);  
         glEnable(GL_DEPTH_TEST);
-        glClearColor(0, 0.5, 0.5, 1);
+        glClearColor(0, 0.1, 0.5, 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         auto new_view = m_view * m_rot;
@@ -98,9 +162,10 @@ void Scene::render() {
     glClearColor(0, 0.5, 0.5, 1);
     glClear(GL_COLOR_BUFFER_BIT);
     glDisable(GL_DEPTH_TEST);
-    glActiveTexture(0);
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_texture);
-    m_fb_shader.use();
+    m_fb_shader->use();
+    m_fb_shader->setInt("screenTexture", 0);
     m_vbo.bind(GL_ARRAY_BUFFER);
     m_vao.bind();
     glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -147,3 +212,29 @@ void Scene::handleKeyPress(SceneKey key, bool inverse) {
         break;
     }
 }
+
+#ifdef __ANDROID__
+extern "C"
+JNIEXPORT jint JNICALL
+Java_com_example_intcube_CubeGLRenderer_initGL(JNIEnv *env, jobject thiz) {
+    return initGL();
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_intcube_CubeGLRenderer_initScene(JNIEnv *env, jobject thiz, jint width,
+                                                  jint height, jint size, jobject mgr) {
+    s_mgr = AAssetManager_fromJava(env, mgr);
+    __android_log_print(ANDROID_LOG_DEBUG, "glsl", "SCREEN SIZE %d %d\n", width, height);
+    initScene(width, height, size);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_intcube_CubeGLRenderer_render(JNIEnv *env, jobject thiz) {
+    render();
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_intcube_CubeGLView_handleMouseMovement(JNIEnv *env, jobject thiz, jint x, jint y) {
+    handleMouseMovement(x, y);
+}
+#endif

@@ -1,16 +1,16 @@
 #include "mesh.hpp"
 
+#ifdef __ANDROID__
+#include <android/log.h>
+#endif
+
 #include <glm/gtc/matrix_transform.hpp>
 
-static std::shared_ptr<ShaderProgram> m_shader = nullptr;
-
-Mesh::Mesh(MeshData& data) 
+Mesh::Mesh(MeshData& data, std::shared_ptr<ShaderProgram> program) 
     : m_vbo(std::make_shared<Buffer>()),
     m_vao(std::make_shared<VertexArray>()),
-    m_data(data) {
-
-    if (!m_shader)
-        m_shader = std::make_shared<ShaderProgram>("piece_vertex.glsl", "piece_fragment.glsl");
+    m_data(data),
+    m_shader(program) {
 
     m_vbo->setData(GL_ARRAY_BUFFER, data.vertices.size() * sizeof(float), data.vertices.data(), GL_STATIC_DRAW);
     m_vao->setAttribute(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), 0);
@@ -33,12 +33,21 @@ void Mesh::draw(glm::mat4 view, glm::mat4 proj) {
         if (m_time <= 0ms) in_animation = false;
     }
 
+    GLenum err;
     m_shader->use();
     m_shader->setUniformMatrix4fv("model", model_mat);
     m_shader->setUniformMatrix4fv("view", view);
     m_shader->setUniformMatrix4fv("projection", proj);
+//#ifdef __ANDROID__
+//    while ((err = glGetError()) != GL_NO_ERROR)
+//        __android_log_print(ANDROID_LOG_ERROR, "gl", "OPENGL ERROR %x\n", err);
+//#endif
     m_vbo->bind(GL_ARRAY_BUFFER);
     m_vao->bind();
+//#ifdef __ANDROID__
+//    while ((err = glGetError()) != GL_NO_ERROR)
+//        __android_log_print(ANDROID_LOG_ERROR, "gl_draw", "OPENGL ERROR %x\n", err);
+//#endif
     for (auto& [ebo, color, count] : m_faces) {
         m_shader->setVec3("color", color);
         ebo->bind(GL_ELEMENT_ARRAY_BUFFER);

@@ -10,9 +10,20 @@
 template<int N>
 class Puzzle {
 public:
-    Puzzle() 
-        : m_program("piece_vertex.glsl", "piece_fragment.glsl") {
+    Puzzle() {
 
+        if (!m_shader)
+            m_shader = std::make_shared<ShaderProgram>("piece_vertex.glsl", "piece_fragment.glsl");
+
+        fill_cubies();
+        fill_moves();
+    }
+
+    Puzzle(char** vertexShader, char** fragmentShader) {
+
+        if (!m_shader)
+            m_shader = std::make_shared<ShaderProgram>(vertexShader, fragmentShader);
+        
         fill_cubies();
         fill_moves();
     }
@@ -57,5 +68,5 @@ protected:
     virtual void fill_moves() {};
 
     std::vector<std::tuple<Mesh, glm::vec<N, float>, glm::vec<N, float>>> m_cubies;
-    ShaderProgram m_program;
+    std::shared_ptr<ShaderProgram> m_shader = nullptr;
 };

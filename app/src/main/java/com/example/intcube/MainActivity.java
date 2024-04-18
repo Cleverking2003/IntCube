@@ -24,6 +24,8 @@ public class MainActivity extends AppCompatActivity {
         else{
             Log.d("LOADED", "err");
         }
+
+        System.loadLibrary("libcube");
     }
 
     public void startActivityScan(View v){
@@ -38,6 +40,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void startActivityHelp(View v){
         Intent intent = new Intent(this, HelpActivity.class);
+        startActivity(intent);
+    }
+
+    public void startActivityCube(View v){
+        Intent intent = new Intent(this, CubeActivity.class);
         startActivity(intent);
     }
 }

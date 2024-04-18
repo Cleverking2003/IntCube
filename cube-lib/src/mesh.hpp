@@ -21,7 +21,7 @@ struct MeshData {
 
 class Mesh {
 public:
-    explicit Mesh(MeshData& data);
+    explicit Mesh(MeshData& data, std::shared_ptr<ShaderProgram> program);
 
     void play_rotate_animation(glm::vec3 axis, float angle, std::chrono::milliseconds time);
 
@@ -38,4 +38,5 @@ private:
     glm::mat4 m_rot_mat;
     std::chrono::milliseconds m_elapsed_time, m_time;
     std::chrono::time_point<std::chrono::high_resolution_clock> m_start_time;
+    std::shared_ptr<ShaderProgram> m_shader;
 };

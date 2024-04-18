@@ -158,7 +158,18 @@ Cube::Cube(int size) : Puzzle(), m_size(size) {
 
     fill_cubies();
     fill_moves();
-} 
+}
+
+Cube::Cube(int size, char** vertexShader, char** fragmentShader) : Puzzle(vertexShader, fragmentShader), m_size(size) {
+    m_axes = {
+            std::pair { glm::vec3(1.0, 0.0, 0.0), 4 },
+            std::pair { glm::vec3(0.0, 1.0, 0.0), 4 },
+            std::pair { glm::vec3(0.0, 0.0, 1.0), 4 },
+    };
+
+    fill_cubies();
+    fill_moves();
+}
 
 void Cube::fill_cubies() {
     for (int x = 0; x < m_size; x++) {
@@ -198,7 +209,7 @@ void Cube::fill_cubies() {
                     data.face_data[1].color = glm::vec3(0.0);
                 }
 
-                m_cubies.emplace_back(data, pos, pos);
+                m_cubies.emplace_back(Mesh(data, m_shader), pos, pos);
             }
         }
     }
