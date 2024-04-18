@@ -33,6 +33,9 @@ public:
     friend void ::handleKeyPress(SceneKey key, bool inverse);
     ~Scene();
 
+    void resize(int width, int height);
+    void changeCube(int type);
+
 private:
     explicit Scene(int width, int height, int size);
     void render();

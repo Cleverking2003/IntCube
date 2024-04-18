@@ -2,6 +2,7 @@ package com.example.intcube;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView;
+import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 public class CubeGLView extends GLSurfaceView {
@@ -11,8 +12,8 @@ public class CubeGLView extends GLSurfaceView {
 
     public native void handleMouseMovement(int x, int y);
 
-    public CubeGLView(Context context) {
-        super(context);
+    public CubeGLView(Context context, AttributeSet attrs) {
+        super(context, attrs);
         setEGLContextClientVersion(3);
 
         renderer = new CubeGLRenderer(context);
@@ -35,5 +36,18 @@ public class CubeGLView extends GLSurfaceView {
         prev_x = x;
         prev_y = y;
         return true;
+    }
+    public class CreateCube implements Runnable {
+        private int m_type;
+        public CreateCube(int type) {
+            m_type = type;
+        }
+        @Override
+        public void run() {
+            renderer.changeCube(m_type);
+        }
+    }
+    public void changeCube(int type) {
+        queueEvent(new CreateCube(type));
     }
 }

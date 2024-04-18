@@ -18,7 +18,6 @@
 static Scene* s_scene = nullptr;
 
 #ifdef __ANDROID__
-static JNIEnv * jni_env;
 static AAssetManager* s_mgr;
 #endif
 
@@ -33,12 +32,12 @@ int initGL() {
 static char* loadStringFromFile(const char* filename) {
 #ifdef __ANDROID__
     auto file = AAssetManager_open(s_mgr, filename, AASSET_MODE_BUFFER);
-    auto len = AAsset_getLength(file);
+    auto len = AAsset_getLength64(file);
     auto buf = new char[len + 1];
-    std::fill(buf, buf + len, 0);
-    char* src = (char*)AAsset_getBuffer(file);
-    std::copy(src, src + len, buf);
-    __android_log_print(ANDROID_LOG_DEBUG, "glsl", "%s\n", buf);
+    std::fill(buf, buf + len + 1, 0);
+    auto res = AAsset_read(file, buf, len);
+    AAsset_close(file);
+    __android_log_print(ANDROID_LOG_DEBUG, "glsl", "%d == %d\n", len, res);
     return buf;
 #else
     std::ifstream file(filename);
@@ -57,6 +56,8 @@ static char* loadStringFromFile(const char* filename) {
     return c_str;
 #endif
 }
+
+static char *vertex, *frag, *cube_vertex, *cube_frag;
 
 void initScene(int width, int height, int size) {
     // if (!s_scene)
@@ -88,14 +89,16 @@ Scene::Scene(int width, int height, int size)
     : m_view(glm::translate(glm::mat4(1.0), glm::vec3(0.0, 0.0, -5.0))),
     m_proj(glm::perspective(glm::radians(45.0f), (float)width/(float)height, 0.1f, 100.0f)),
     m_width(width), m_height(height) {
+#ifdef __ANDROID__
+    __android_log_print(ANDROID_LOG_ERROR, "scene", "init\n");
+#endif
 
-    auto vertex = loadStringFromFile("simple_vertex.glsl");
-    auto frag = loadStringFromFile("simple_fragment.glsl");
+    vertex = loadStringFromFile("simple_vertex.glsl");
+    frag = loadStringFromFile("simple_fragment.glsl");
     m_fb_shader = new ShaderProgram(&vertex, &frag);
 
-    auto cube_vertex = loadStringFromFile("piece_vertex.glsl");
-    std::cout << cube_vertex;
-    auto cube_frag = loadStringFromFile("piece_fragment.glsl");
+    cube_vertex = loadStringFromFile("piece_vertex.glsl");
+    cube_frag = loadStringFromFile("piece_fragment.glsl");
 
     if (size == 0) {
         m_cube = new AxisCube(&cube_vertex, &cube_frag);
@@ -144,6 +147,52 @@ Scene::Scene(int width, int height, int size)
 Scene::~Scene() {
     if (s_scene)
         s_scene = nullptr;
+}
+
+void Scene::resize(int width, int height) {
+    glDeleteFramebuffers(1, &m_fbo);
+    glDeleteRenderbuffers(1, &m_rbo);
+    glDeleteTextures(1, &m_texture);
+
+    m_width = width;
+    m_height = height;
+
+    m_proj = glm::perspective(glm::radians(45.0f), (float)width/(float)height, 0.1f, 100.0f);
+
+    glGenFramebuffers(1, &m_fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+
+    glGenTextures(1, &m_texture);
+    glBindTexture(GL_TEXTURE_2D, m_texture);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_width, m_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
+
+    glGenRenderbuffers(1, &m_rbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, m_rbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, m_width, m_height);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo);
+
+    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "yay\n";
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Scene::changeCube(int type) {
+    m_redraw = true;
+    delete m_cube;
+    if (type == 0) {
+        m_cube = new AxisCube(&cube_vertex, &cube_frag);
+    }
+    else {
+        m_cube = new Cube(type, &cube_vertex, &cube_frag);
+    }
+    m_rot = glm::mat4(1.0);
 }
 
 void Scene::render() {
@@ -215,11 +264,6 @@ void Scene::handleKeyPress(SceneKey key, bool inverse) {
 
 #ifdef __ANDROID__
 extern "C"
-JNIEXPORT jint JNICALL
-Java_com_example_intcube_CubeGLRenderer_initGL(JNIEnv *env, jobject thiz) {
-    return initGL();
-}
-extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_intcube_CubeGLRenderer_initScene(JNIEnv *env, jobject thiz, jint width,
                                                   jint height, jint size, jobject mgr) {
@@ -236,5 +280,15 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_intcube_CubeGLView_handleMouseMovement(JNIEnv *env, jobject thiz, jint x, jint y) {
     handleMouseMovement(x, y);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_intcube_CubeGLRenderer_resize(JNIEnv *env, jobject thiz, jint w, jint h) {
+    s_scene->resize(w, h);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_intcube_CubeGLRenderer_changeCube(JNIEnv *env, jobject thiz, jint type) {
+    s_scene->changeCube(type);
 }
 #endif

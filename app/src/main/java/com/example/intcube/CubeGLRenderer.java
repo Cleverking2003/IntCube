@@ -9,9 +9,10 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 public class CubeGLRenderer implements GLSurfaceView.Renderer {
-    public native int initGL();
     public native void initScene(int width, int height, int size, AssetManager mgr);
     public native void render();
+    public native void resize(int w, int h);
+    public native void changeCube(int type);
 
     private Context m_context;
 
@@ -22,13 +23,13 @@ public class CubeGLRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
-        initGL();
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        initScene(1000, 1000, 0, m_context.getAssets());
     }
 
     @Override
-    public void onSurfaceChanged(GL10 gl10, int i, int i1) {
-        initScene(i, i1, 0, m_context.getAssets());
+    public void onSurfaceChanged(GL10 gl10, int w, int h) {
+        resize(w, h);
     }
 
     @Override

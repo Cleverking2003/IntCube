@@ -113,46 +113,25 @@ ShaderProgram::~ShaderProgram() {
 }
 
 void ShaderProgram::setUniformMatrix4fv(char const* name, glm::mat4x4& mat) {
-#ifdef __ANDROID__
-    __android_log_print(ANDROID_LOG_ERROR, "program", "PROGRAM ID: %d\n", m_programId);
-#endif
-    GLenum err;
-#ifdef __ANDROID__
-    while ((err = glGetError()) != GL_NO_ERROR)
-        __android_log_print(ANDROID_LOG_ERROR, "gl", "OPENGL ERROR %x\n", err);
-#endif
-     glUseProgram(m_programId);
-#ifdef __ANDROID__
-    while ((err = glGetError()) != GL_NO_ERROR)
-        __android_log_print(ANDROID_LOG_ERROR, "gl_draw", "OPENGL ERROR %x\n", err);
-#endif
+    glUseProgram(m_programId);
     auto loc = glGetUniformLocation(m_programId, name);
-#ifdef __ANDROID__
-    __android_log_print(ANDROID_LOG_ERROR, "mat4_uniform", "UNIFORM LOCATION: %d\n", loc);
-#endif
     glUniformMatrix4fv(loc, 1, GL_FALSE, &mat[0][0]);
 }
 
 void ShaderProgram::setInt(char const* name, int value) {
-#ifdef __ANDROID__
-    __android_log_print(ANDROID_LOG_ERROR, "program", "PROGRAM ID: %d\n", m_programId);
-#endif
-     glUseProgram(m_programId);
+    glUseProgram(m_programId);
     auto loc = glGetUniformLocation(m_programId, name);
     glUniform1i(loc, value);
 }
 
 void ShaderProgram::setIntArray(char const* name, int* value, int count) {
-     glUseProgram(m_programId);
+    glUseProgram(m_programId);
     auto loc = glGetUniformLocation(m_programId, name);
     glUniform1iv(loc, count, value);
 }
 
 void ShaderProgram::setVec3(char const* name, glm::vec3 vec) {
-     glUseProgram(m_programId);
+    glUseProgram(m_programId);
     auto loc = glGetUniformLocation(m_programId, name);
-#ifdef __ANDROID__
-    __android_log_print(ANDROID_LOG_ERROR, "vec3_uniform", "UNIFORM LOCATION: %d\n", loc);
-#endif
     glUniform3fv(loc, 1, &vec[0]);
 }
