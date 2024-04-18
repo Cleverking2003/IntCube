@@ -4,8 +4,6 @@
 
 #include <glm/glm.hpp>
 
-int initGL();
-
 enum class SceneKey {
     U,
     D,
@@ -19,14 +17,26 @@ enum class SceneKey {
     Reset,
 };
 
+extern "C" {
+    int initGL();
+    void initScene(int width, int height, int size);
+    void render();
+    void handleMouseMovement(int x, int y);
+    void handleKeyPress(SceneKey key, bool inverse);
+}
+
 class Scene {
 public:
+    friend void ::initScene(int width, int height, int size);
+    friend void ::render();
+    friend void ::handleMouseMovement(int x, int y);
+    friend void ::handleKeyPress(SceneKey key, bool inverse);
+
+private:
     explicit Scene(int width, int height, int size);
     void render();
     void handleMouseMovement(glm::vec2 delta);
     void handleKeyPress(SceneKey key, bool inverse);
-
-private:
     unsigned int m_fbo, m_texture, m_rbo;
     Buffer m_vbo;
     VertexArray m_vao;

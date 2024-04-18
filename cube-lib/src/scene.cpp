@@ -6,8 +6,27 @@
 #include <SFML/Window/Context.hpp>
 #include <iostream>
 
+static Scene* s_scene;
+
 int initGL() {
     return gladLoadGL(sf::Context::getFunction);
+}
+
+void initScene(int width, int height, int size) {
+    if (!s_scene)
+        s_scene = new Scene(width, height, size);
+}
+
+void render() {
+    s_scene->render();
+}
+
+void handleMouseMovement(int x, int y) {
+    s_scene->handleMouseMovement(glm::vec2(x, y));
+}
+
+void handleKeyPress(SceneKey key, bool inverse) {
+    s_scene->handleKeyPress(key, inverse);
 }
 
 static float quadVertices[] = {

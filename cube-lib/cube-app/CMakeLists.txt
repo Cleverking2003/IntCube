@@ -22,5 +22,6 @@ if(WIN32)
         PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/src/simple_vertex.glsl $<TARGET_FILE_DIR:cube>
         PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/src/simple_fragment.glsl $<TARGET_FILE_DIR:cube>
         VERBATIM)
+endif()
 
 install(TARGETS cube)

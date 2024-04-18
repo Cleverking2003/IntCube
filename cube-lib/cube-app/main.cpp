@@ -16,9 +16,9 @@ int main()
     auto window = sf::Window{ { screen_width, screen_height }, "Cube"};
     window.setFramerateLimit(144);
     // auto res = gladLoadGL(sf::Context::getFunction);
-    std::cout << initGL();
+    initGL();
 
-    Scene scene(screen_width, screen_height, size);
+    initScene(screen_width, screen_height, size);
 
     glm::vec2 prev;
     bool is_moving = false;
@@ -37,47 +37,47 @@ int main()
             }
             else if (event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left) && is_moving) {
                 prev = glm::vec2(event.mouseMove.x, event.mouseMove.y) - prev;
-                scene.handleMouseMovement(prev);
+                handleMouseMovement(prev.x, prev.y);
                 prev = glm::vec2(event.mouseMove.x, event.mouseMove.y);
             }
             else if (event.type == sf::Event::KeyPressed) {
                 auto inverse = event.key.shift;
                 switch (event.key.code) {
                 case sf::Keyboard::L:
-                    scene.handleKeyPress(SceneKey::L, inverse);
+                    handleKeyPress(SceneKey::L, inverse);
                     break;
                 case sf::Keyboard::R:
                     if (event.key.control)
-                        scene.handleKeyPress(SceneKey::Reset, inverse);
+                        handleKeyPress(SceneKey::Reset, inverse);
                     else
-                        scene.handleKeyPress(SceneKey::R, inverse);
+                        handleKeyPress(SceneKey::R, inverse);
                     break;
                 case sf::Keyboard::D:
-                    scene.handleKeyPress(SceneKey::D, inverse);
+                    handleKeyPress(SceneKey::D, inverse);
                     break;
                 case sf::Keyboard::U:
-                    scene.handleKeyPress(SceneKey::U, inverse);
+                    handleKeyPress(SceneKey::U, inverse);
                     break;
                 case sf::Keyboard::B:
-                    scene.handleKeyPress(SceneKey::B, inverse);
+                    handleKeyPress(SceneKey::B, inverse);
                     break;
                 case sf::Keyboard::F:
-                    scene.handleKeyPress(SceneKey::F, inverse);
+                    handleKeyPress(SceneKey::F, inverse);
                     break;
                 case sf::Keyboard::M:
-                    scene.handleKeyPress(SceneKey::M, inverse);
+                    handleKeyPress(SceneKey::M, inverse);
                     break;
                 case sf::Keyboard::E:
-                    scene.handleKeyPress(SceneKey::E, inverse);
+                    handleKeyPress(SceneKey::E, inverse);
                     break;
                 case sf::Keyboard::S:
-                    scene.handleKeyPress(SceneKey::S, inverse);
+                    handleKeyPress(SceneKey::S, inverse);
                     break;
                 }
             }
         }
 
-        scene.render();
+        render();
         window.display();
     }
 }
