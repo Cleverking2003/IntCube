@@ -10,6 +10,8 @@ public class Cubie {
 	private boolean edge;
 	//Store the set of colors associated with a cubie; accessible to all subclasses
 	protected CubieColor[] colors;
+
+	private char centerDir;
 	
 	/**
 	 * Constructs a Cubie object
@@ -29,6 +31,17 @@ public class Cubie {
 		corner = isCorner;
 		edge = isEdge;
 		colors = nColors;
+	}
+
+	public Cubie (int xPos, int yPos, int zPos, CubieColor[] nColors, boolean isCorner,
+				  boolean isEdge, char centerDirAxis) {
+		x = xPos;
+		y = yPos;
+		z = zPos;
+		corner = isCorner;
+		edge = isEdge;
+		colors = nColors;
+		centerDir = centerDirAxis;
 	}
 	
 	/**
@@ -51,7 +64,12 @@ public class Cubie {
 	public int getZ() {
 		return z;
 	}
-	
+
+	public char getCenterDir() {
+		return centerDir;
+	}
+
+
 	/**
 	 * Finds and returns the direction of a particular color on any type of cubie
 	 * @param color The color for which the direction is being found

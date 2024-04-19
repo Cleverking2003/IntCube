@@ -38,6 +38,46 @@ public class Cube2x2 {
                 new CubieColor[]{new CubieColor('W', 'D'), new CubieColor('B', 'B'), new CubieColor('O', 'R')}, true, false);
     }
 
+    private boolean checkInfLoop(long startTime) {
+        long finish = System.currentTimeMillis();
+        long timeElapsed = finish - startTime;
+        return timeElapsed > 1000;
+    }
+
+    public boolean checkCubeIsSolved() {
+        char upColor = cubiePos[0][0][0].getColorOfDir('U');
+        char downColor = cubiePos[0][0][1].getColorOfDir('D');
+        char leftColor = cubiePos[0][0][0].getColorOfDir('L');
+        char rightColor = cubiePos[1][0][0].getColorOfDir('R');
+        char frontColor = cubiePos[0][0][0].getColorOfDir('F');
+        char backColor = cubiePos[0][1][0].getColorOfDir('B');
+        for (int x = 0; x < 2; x++) {
+            for (int y = 0; y < 2; y++) {
+                for (int z = 0; z < 2; z++) {
+                    if (cubiePos[x][y][0].getDirOfColor(upColor) != 'U') {
+                        return false;
+                    }
+                    if (cubiePos[x][y][1].getDirOfColor(downColor) != 'D') {
+                        return false;
+                    }
+                    if (cubiePos[0][y][z].getDirOfColor(leftColor) != 'L') {
+                        return false;
+                    }
+                    if (cubiePos[1][y][z].getDirOfColor(rightColor) != 'R') {
+                        return false;
+                    }
+                    if (cubiePos[x][0][z].getDirOfColor(frontColor) != 'F') {
+                        return false;
+                    }
+                    if (cubiePos[x][1][z].getDirOfColor(backColor) != 'B') {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
     /**
      * Вспомогательный метод для finishBottomLayer
      * Ищет деталь с такими же цветами, как нижний и передний у левой нижней детали,
@@ -83,7 +123,9 @@ public class Cube2x2 {
         }
 
         if (!(firstFaceSolved)) {
+            long startTime = System.currentTimeMillis();
             while (!(cubiePos[1][0][0].cornerHasColor(bottomColor) && cubiePos[1][0][0].cornerHasColor(frontColor))) {
+                if (checkInfLoop(startTime)) return "Wrong cube";
                 moves += performMoves("U ");
             }
             if (cubiePos[1][0][0].getDirOfColor(bottomColor) == 'R')
@@ -105,7 +147,11 @@ public class Cube2x2 {
         String moves = "";
         char bottomColor = cubiePos[0][0][1].getColorOfDir('D');
         for (int i = 0; i < 3; i++) {
-            moves += completeRightBottomCubie(bottomColor);
+            String res = completeRightBottomCubie(bottomColor);
+            if (res.equals("Wrong cube")) {
+                return res;
+            }
+            moves += res;
             moves += performMoves("y ");
         }
         return moves;
@@ -151,13 +197,50 @@ public class Cube2x2 {
      * @return шаги, чтоб правильно стоящие углы оказались слева
      */
     private String putCorrectCornersOnLeft() {
-        // Проверяем, что вторая совпавшая деталь находится слева
-        char colorOfCubieDownLeft1 = cubiePos[0][0][1].getColorOfDir('F');
-        char colorOfCubieDownLeft2 = cubiePos[0][0][1].getColorOfDir('L');
-        if (cubiePos[0][0][0].cornerHasColor(colorOfCubieDownLeft1) && cubiePos[0][0][0].cornerHasColor(colorOfCubieDownLeft2)) {
-            return performMoves("y ");
+        int posOfCubieX1 = -1;
+        int posOfCubieY1 = -1;
+        int posOfCubieX2 = -1;
+        int posOfCubieY2 = -1;
+        for (int x = 0; x < 2; x++) {
+            for (int y = 0; y < 2; y++) {
+                CubieColor[] colorsOfBottomCubie = cubiePos[x][y][1].getColors();
+                int numberOfEq = 0;
+                for (CubieColor color : colorsOfBottomCubie) {
+                    if (cubiePos[x][y][0].cornerHasColor(color.getColor())) {
+                        numberOfEq++;
+                    }
+                }
+                if (numberOfEq == 2) {
+                    if (posOfCubieX1 == -1) {
+                        posOfCubieX1 = x;
+                        posOfCubieY1 = y;
+                    }
+                    else {
+                        posOfCubieX2 = x;
+                        posOfCubieY2 = y;
+                    }
+                }
+            }
         }
-        // Иначе вторая деталь справа сзади
+
+        if ((posOfCubieX1 == 0) && (posOfCubieY1 == 0)) {
+            if ((posOfCubieX2 == 1) && (posOfCubieY2 == 0)) {
+                return performMoves("y ");
+            }
+            if ((posOfCubieX2 == 0) && (posOfCubieY2 == 1)) {
+                return "";
+            }
+        }
+        if ((posOfCubieX1 == 0) && (posOfCubieY1 == 1)) {
+            if ((posOfCubieX2 == 1) && (posOfCubieY2 == 1)) {
+                return performMoves("y' ");
+            }
+        }
+//        if ((posOfCubieX1 == 1) && (posOfCubieY1 == 0)) {
+//            if ((posOfCubieX2 == 1) && (posOfCubieY2 == 1)) {
+//                return performMoves("y2 ");
+//            }
+//        }
         return performMoves("y2 ");
     }
 
@@ -189,7 +272,9 @@ public class Cube2x2 {
         char frontColor = cubiePos[1][0][1].getColorOfDir('F');
         char sideColor = cubiePos[1][0][1].getColorOfDir('R');
         // Ставим угол сверху спереди справа
+        long startTime = System.currentTimeMillis();
         while (!(cubiePos[1][0][0].cornerHasColor(frontColor) && cubiePos[1][0][0].cornerHasColor(sideColor))) {
+            if (checkInfLoop(startTime)) return "Wrong cube";
             performMoves("U");
             countOfU++;
         }
@@ -215,25 +300,42 @@ public class Cube2x2 {
     public String putTopCorners() {
         String moves = "";
         // Ставим правый верхний угол в правильное место
-        moves += putRightCornerInCorrectPosition();
+        String res = putRightCornerInCorrectPosition();
+        if (res.equals("Wrong cube")) {
+            return res;
+        }
+        moves += res;
         int cornersInCorrectPositions = countCorrectCorners();
         if (cornersInCorrectPositions != 1) {
             moves += checkCorners(cornersInCorrectPositions);
-            moves += putRightCornerInCorrectPosition();
+            res = putRightCornerInCorrectPosition();
+            if (res.equals("Wrong cube")) {
+                return res;
+            }
+            moves += res;
             return moves;
         }
 
 
         // Ставим два угла на свое место
+        long startTime = System.currentTimeMillis();
         while (cornersInCorrectPositions < 2) {
+            if (checkInfLoop(startTime)) return "Wrong cube";
             moves += performMoves("y ");
-            moves += putRightCornerInCorrectPosition();
+            res = putRightCornerInCorrectPosition();
+            if (res.equals("Wrong cube")) {
+                return res;
+            }
+            moves += res;
             cornersInCorrectPositions = countCorrectCorners();
         }
 
         moves += checkCorners(cornersInCorrectPositions);
-        moves += putRightCornerInCorrectPosition();
-
+        res = putRightCornerInCorrectPosition();
+        if (res.equals("Wrong cube")) {
+            return res;
+        }
+        moves += res;
         return moves;
 
     }
@@ -264,8 +366,9 @@ public class Cube2x2 {
             }
             moves += performMoves("D' ");
         }
-        
+        long startTime = System.currentTimeMillis();
         while (cubiePos[0][0][0].getColorOfDir('F') != cubiePos[0][0][1].getColorOfDir('F')) {
+            if (checkInfLoop(startTime)) return "Wrong cube";
             moves += performMoves("D' ");
         }
         return moves;
