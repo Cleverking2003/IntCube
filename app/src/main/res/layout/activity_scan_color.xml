@@ -97,7 +97,7 @@
         android:id="@+id/upedge"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginEnd="156dp"
+        android:layout_marginEnd="153dp"
         android:layout_marginBottom="244dp"
         android:rotation="90"
         android:src="@drawable/two_color_edge_lda"
@@ -108,14 +108,14 @@
         android:id="@+id/rightupcorner"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginEnd="72dp"
+        android:layout_marginEnd="70dp"
         android:layout_marginBottom="244dp"
         android:src="@drawable/one_color_corner"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/center"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginStart="175dp"
@@ -127,7 +127,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView3"
+        android:id="@+id/leftedge"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginStart="70dp"
@@ -137,7 +137,7 @@
         app:layout_constraintStart_toStartOf="@+id/tutorial1_activity_java_surface_view" />
 
     <ImageView
-        android:id="@+id/imageView4"
+        android:id="@+id/rightedge"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginStart="239dp"
@@ -147,20 +147,20 @@
         app:layout_constraintStart_toStartOf="@+id/tutorial1_activity_java_surface_view" />
 
     <ImageView
-        android:id="@+id/imageView5"
+        android:id="@+id/rightdowncorner"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginEnd="73dp"
+        android:layout_marginEnd="70dp"
         android:layout_marginBottom="75dp"
         android:src="@drawable/one_color_corner_fv"
         app:layout_constraintBottom_toBottomOf="@+id/tutorial1_activity_java_surface_view"
         app:layout_constraintEnd_toEndOf="@+id/tutorial1_activity_java_surface_view" />
 
     <ImageView
-        android:id="@+id/imageView6"
+        android:id="@+id/downedge"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginEnd="156dp"
+        android:layout_marginEnd="153dp"
         android:layout_marginBottom="75dp"
         android:rotation="90"
         android:src="@drawable/two_color_edge_rda"
@@ -168,7 +168,7 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageView
-        android:id="@+id/imageView7"
+        android:id="@+id/leftdowncorner"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginStart="70dp"

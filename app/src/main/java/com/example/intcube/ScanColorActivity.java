@@ -2,39 +2,32 @@ package com.example.intcube;
 
 
 import android.content.Intent;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.LinearGradient;
+
+import android.graphics.PorterDuff;
 import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.PaintDrawable;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.VectorDrawable;
+
 import android.os.Bundle;
-import android.provider.CalendarContract;
+
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.SeekBar;
-import android.widget.TextView;
+
 import android.widget.Toast;
 
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.drawable.DrawableCompat;
-import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 
-import com.google.android.material.shape.ShapePathModel;
+import androidx.core.content.res.ResourcesCompat;
 
 import org.opencv.android.CameraActivity;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewListener2;
 import org.opencv.android.OpenCVLoader;
+
 import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
@@ -42,10 +35,11 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
-import java.io.Console;
+
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.MissingResourceException;
+
 
 public class ScanColorActivity extends CameraActivity implements CvCameraViewListener2 {
     private static final String TAG = "OCVSample::Activity";
@@ -53,8 +47,6 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
     private CameraBridgeViewBase mOpenCvCameraView;
 
     private SeekBar threshold1, threshold2;
-
-    private ImageView leftupcorner, upedge;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,12 +67,21 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
 
         threshold1 = findViewById(R.id.firstbar);
         threshold2 = findViewById(R.id.secondbar);
-        leftupcorner = findViewById(R.id.leftupcorner);
-        leftupcorner.setColorFilter(getResources().getColor(R.color.black));
+        ImageView leftupcorner = findViewById(R.id.leftupcorner);
+        ImageView upedge = findViewById(R.id.upedge);
+        ImageView rightupcorner = findViewById(R.id.rightupcorner);
+        ImageView leftedge = findViewById(R.id.leftedge);
+        ImageView center = findViewById(R.id.center);
+        ImageView rightedge = findViewById(R.id.rightedge);
+        ImageView leftdowncorner = findViewById(R.id.leftdowncorner);
+        ImageView downedge = findViewById(R.id.downedge);
+        ImageView rightdownedge = findViewById(R.id.rightdowncorner);
 
-        upedge = findViewById(R.id.upedge);
-
-
+        ImageView[][] preview = {
+            {leftupcorner, upedge, rightupcorner},
+            {rightedge, center, leftedge},
+            {leftdowncorner, downedge, rightdownedge}
+        };
 
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.tutorial1_activity_java_surface_view);
 
@@ -176,8 +177,11 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
             Mat lines = new Mat();
             Mat cdst = new Mat();
             Imgproc.Canny(usIMG, dst, threshold1.getProgress(), threshold2.getProgress());
-            Imgproc.HoughLines(dst, lines, 1, Math.PI / 180, 150); // runs the actual detection
+            Imgproc.HoughLines(dst, lines, 1, Math.PI / 180, 150);
             Imgproc.cvtColor(dst, cdst, Imgproc.COLOR_GRAY2BGR);
+
+
+            Scalar color = Core.mean(ROI);
 
             for (int x = 0; x < lines.rows(); x++) {
                 double rho = lines.get(x, 0)[0],
@@ -186,7 +190,7 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
                 double x0 = a * rho, y0 = b * rho;
                 Point pt1 = new Point(roi.x + Math.round(x0 + 1000 * (-b)), roi.y + Math.round(y0 + 1000 * (a)));
                 Point pt2 = new Point(roi.x + Math.round(x0 - 1000 * (-b)), roi.y + Math.round(y0 - 1000 * (a)));
-                Imgproc.line(mRgba, pt1, pt2, scalars[i], 2, Imgproc.LINE_AA, 0);
+                //Imgproc.line(mRgba, pt1, pt2, scalars[i], 2, Imgproc.LINE_AA, 0);
             }
         }
 
@@ -195,6 +199,168 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
 //        Imgproc.cvtColor(mRgba, gray, Imgproc.COLOR_BGR2GRAY);
 //        Imgproc.Canny(gray, dst, threshold1.getProgress(), threshold2.getProgress());
         return mRgba;
+    }
+
+
+    public Drawable GetCenter(String[] colors){
+        /*
+        @params colors: ["W", "O"] or ["W"]
+         */
+        List<String> listColors = Arrays.asList(colors);
+        if(listColors.contains("W") && listColors.contains("R")){
+            return ResourcesCompat.getDrawable(getResources(), R.drawable.wr_center, null);
+        }
+        else if(listColors.contains("W") && listColors.contains("G")){
+            return ResourcesCompat.getDrawable(getResources(), R.drawable.wg_center, null);
+        }
+        else if(listColors.contains("G") && listColors.contains("R")){
+            return ResourcesCompat.getDrawable(getResources(), R.drawable.rg_center, null);
+        }
+        else if(listColors.contains("B") && listColors.contains("O")){
+            return ResourcesCompat.getDrawable(getResources(), R.drawable.bo_center, null);
+        }
+        else if(listColors.contains("B") && listColors.contains("Y")){
+            return ResourcesCompat.getDrawable(getResources(), R.drawable.by_center, null);
+        }
+        else if(listColors.contains("Y") && listColors.contains("O")){
+            return ResourcesCompat.getDrawable(getResources(), R.drawable.yo_center, null);
+        }
+        else return ResourcesCompat.getDrawable(getResources(), R.drawable.center, null);
+    }
+
+    public Drawable GetEdge(String colors){
+        /*
+        @params colors: "WO" or "W"
+         */
+        if (colors.split(" ").length == 2){
+            return Get2ColorsEdge(colors.split(" "));
+        }
+        else{
+            return Get1ColorEdge(colors);
+        }
+    }
+
+    public Drawable GetCorner(String colors){
+        /*
+        @params colors: "WO" or "W"
+         */
+        if (colors.split(" ").length == 2){
+            return Get2ColorCorner(colors.split(" "));
+        }
+        else{
+            return Get1ColorCorner(colors);
+        }
+    }
+
+
+    public Drawable Get2ColorsEdge(String[] colors){
+        /*
+        @params colors: ["W", "O"] or ["W"]
+         */
+        List<String> listColors = Arrays.asList(colors);
+        if(listColors.contains("W") && listColors.contains("O")){
+            return ResourcesCompat.getDrawable(getResources(), R.drawable.wo_edge_lda, null);
+        }
+        else if(listColors.contains("W") && listColors.contains("B")){
+            return ResourcesCompat.getDrawable(getResources(), R.drawable.wb_edge_lda, null);
+        }
+        else if(listColors.contains("B") && listColors.contains("R")){
+            return ResourcesCompat.getDrawable(getResources(), R.drawable.br_edge_lda, null);
+        }
+        else if(listColors.contains("Y") && listColors.contains("R")){
+            return ResourcesCompat.getDrawable(getResources(), R.drawable.yr_edge_lda, null);
+        }
+        else if(listColors.contains("Y") && listColors.contains("G")){
+            return ResourcesCompat.getDrawable(getResources(), R.drawable.yg_edge_lda, null);
+        }
+        else if(listColors.contains("G") && listColors.contains("O")){
+            return ResourcesCompat.getDrawable(getResources(), R.drawable.go_edge_lda, null);
+        }
+        else return ResourcesCompat.getDrawable(getResources(), R.drawable.two_color_edge_lda, null);
+    }
+
+    public Drawable Get1ColorEdge(String color){
+        /*
+        @params colors: "W"
+         */
+        Drawable edge = ResourcesCompat.getDrawable(getResources(),
+                R.drawable.one_color_edge_lda,null);
+        if(edge != null) {
+            if (color.equals("W")) edge.setColorFilter(getColor(R.color.white),
+                    PorterDuff.Mode.MULTIPLY);
+            if (color.equals("B")) edge.setColorFilter(getColor(R.color.blue),
+                    PorterDuff.Mode.MULTIPLY);
+            if (color.equals("O")) edge.setColorFilter(getColor(R.color.orange),
+                    PorterDuff.Mode.MULTIPLY);
+            if (color.equals("Y")) edge.setColorFilter(getColor(R.color.yellow),
+                    PorterDuff.Mode.MULTIPLY);
+            if (color.equals("R")) edge.setColorFilter(getColor(R.color.red),
+                    PorterDuff.Mode.MULTIPLY);
+            if (color.equals("G")) edge.setColorFilter(getColor(R.color.green),
+                    PorterDuff.Mode.MULTIPLY);
+        }
+        return edge;
+    }
+
+    public Drawable Get1ColorCorner(String color){
+        /*
+        @params colors: "W"
+         */
+        Drawable corner = ResourcesCompat.getDrawable(getResources(),
+                R.drawable.one_color_corner,null);
+        if (corner != null){
+        if(color.equals("W")) corner.setColorFilter(getColor(R.color.white), PorterDuff.Mode.MULTIPLY);
+        if(color.equals("B")) corner.setColorFilter(getColor(R.color.blue), PorterDuff.Mode.MULTIPLY);
+        if(color.equals("O")) corner.setColorFilter(getColor(R.color.orange), PorterDuff.Mode.MULTIPLY);
+        if(color.equals("Y")) corner.setColorFilter(getColor(R.color.yellow), PorterDuff.Mode.MULTIPLY);
+        if(color.equals("R")) corner.setColorFilter(getColor(R.color.red), PorterDuff.Mode.MULTIPLY);
+        if(color.equals("G")) corner.setColorFilter(getColor(R.color.green), PorterDuff.Mode.MULTIPLY);
+        }
+        return corner;
+    }
+
+    public Drawable Get2ColorCorner(String[] colors){
+        List<String> listColors = Arrays.asList(colors);
+        if(listColors.contains("R") && listColors.contains("W")){
+            return ResourcesCompat.getDrawable(getResources(), R.drawable.rw_corner, null);
+        }
+        else if(listColors.contains("B") && listColors.contains("O")){
+            return ResourcesCompat.getDrawable(getResources(), R.drawable.bo_corner, null);
+        }
+        else if(listColors.contains("G") && listColors.contains("R")){
+            return ResourcesCompat.getDrawable(getResources(), R.drawable.gr_corner, null);
+        }
+        else if(listColors.contains("Y") && listColors.contains("O")){
+            return ResourcesCompat.getDrawable(getResources(), R.drawable.yo_corner, null);
+        }
+        else if(listColors.contains("G") && listColors.contains("W")){
+            return ResourcesCompat.getDrawable(getResources(), R.drawable.gw_corner, null);
+        }
+        else if(listColors.contains("Y") && listColors.contains("B")){
+            return ResourcesCompat.getDrawable(getResources(), R.drawable.yb_corner, null);
+        }
+        else return ResourcesCompat.getDrawable(getResources(), R.drawable.three_color_corner, null);
+    }
+
+    public String getColor(Scalar color) {
+        String tempString;
+
+        if (color.val[0] >= 100 && color.val[1] < 100 && color.val[2] < 100) {
+            tempString = "R";
+        } else if (color.val[0] < 100 && color.val[1] >= 100 && color.val[2] < 100) {
+            tempString = "G";
+        } else if (color.val[0] < 100 && color.val[1] < 100 && color.val[2] >= 50) {
+            tempString = "B";
+        } else if (color.val[0] >= 150 && color.val[1] >= 170 && color.val[2] < 100) {
+            tempString = "Y";
+        } else if (color.val[0] >= 150 && color.val[1] >= 80 && color.val[1]<=200  && color.val[2] < 100) {
+            tempString = "O";
+        } else if (color.val[0] > 150 && color.val[1] > 150 && color.val[2] > 150) {
+            tempString = "W";
+        } else {
+            tempString = "F";
+        }
+        return tempString;
     }
 
 
