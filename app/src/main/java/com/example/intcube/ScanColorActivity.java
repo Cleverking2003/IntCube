@@ -3,6 +3,7 @@ package com.example.intcube;
 
 import android.content.Intent;
 
+import android.graphics.BlurMaskFilter;
 import android.graphics.PorterDuff;
 import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
@@ -47,6 +48,11 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
     private CameraBridgeViewBase mOpenCvCameraView;
 
     private SeekBar threshold1, threshold2;
+    private ImageView leftupcorner, upedge, rightupcorner,
+            rightedge, center, leftedge,
+            leftdowncorner, downedge, rightdowncorner;
+
+    private ImageView[] preview;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,27 +73,15 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
 
         threshold1 = findViewById(R.id.firstbar);
         threshold2 = findViewById(R.id.secondbar);
-        ImageView leftupcorner = findViewById(R.id.leftupcorner);
-        ImageView upedge = findViewById(R.id.upedge);
-        ImageView rightupcorner = findViewById(R.id.rightupcorner);
-        ImageView leftedge = findViewById(R.id.leftedge);
-        ImageView center = findViewById(R.id.center);
-        ImageView rightedge = findViewById(R.id.rightedge);
-        ImageView leftdowncorner = findViewById(R.id.leftdowncorner);
-        ImageView downedge = findViewById(R.id.downedge);
-        ImageView rightdownedge = findViewById(R.id.rightdowncorner);
 
-        ImageView[][] preview = {
-            {leftupcorner, upedge, rightupcorner},
-            {rightedge, center, leftedge},
-            {leftdowncorner, downedge, rightdownedge}
-        };
 
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.tutorial1_activity_java_surface_view);
 
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
 
         mOpenCvCameraView.setCvCameraViewListener(this);
+
+
     }
 
     @Override
@@ -130,9 +124,23 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         Mat mRgba = inputFrame.rgba();
 
+
+        preview = new ImageView[]{
+                leftupcorner = findViewById(R.id.leftupcorner),
+                upedge = findViewById(R.id.upedge),
+                rightupcorner = findViewById(R.id.rightupcorner),
+                rightedge = findViewById(R.id.rightedge),
+                center = findViewById(R.id.center),
+                leftedge = findViewById(R.id.leftedge),
+                leftdowncorner = findViewById(R.id.leftdowncorner),
+                downedge = findViewById(R.id.downedge),
+                rightdowncorner = findViewById(R.id.rightdowncorner)
+        };
+
+
         int w = mRgba.width();
         int h = mRgba.height();
-        double min = (double)Math.min(w, h);
+        double min = (double) Math.min(w, h);
         double step = min * 0.15;
         Point stepCenter = new Point(w * 0.5 - step * 0.5 - step, h * 0.5 - step * 0.5);
         Rect[] rois = new Rect[9];
@@ -149,19 +157,20 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
         scalars[8] = new Scalar(255, 125, 125);
 
         int index = 0;
-        for (int i = -1; i <= 1; i++)
-            for (int j = -1; j <= 1; j++)
-            {
+        for (int i = -1; i <= 1; i++) {
+            for (int j = 1; j >= -1; j--) {
                 Point pt1 = new Point(stepCenter.x + step * i, stepCenter.y + step * j);
                 Point pt2 = new Point(stepCenter.x + step + step * i, stepCenter.y + step + step * j);
-                Imgproc.rectangle(mRgba,
-                        pt1,
-                        pt2,
-                        Scalar.all(255.0));
-                Imgproc.putText(mRgba, String.valueOf(index), pt1, 4, 2, scalars[index], 4);
+//                Imgproc.rectangle(mRgba,
+//                        pt1,
+//                        pt2,
+//                        Scalar.all(255.0));
+                //Imgproc.putText(mRgba, String.valueOf(index), pt1, 4, 2, scalars[index], 4);
                 rois[index] = new Rect(pt1, pt2);
                 index++;
             }
+        }
+
 
         Mat dsIMG = new Mat();
         Mat usIMG = new Mat();
@@ -170,18 +179,16 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
             Mat ROI = new Mat(mRgba, roi);
             Mat gray = new Mat();
             Imgproc.cvtColor(ROI, gray, Imgproc.COLOR_BGR2GRAY);
-            Imgproc.pyrDown(gray, dsIMG, new Size((double) gray.cols() / 2, (double) gray.rows() / 2));
-            Imgproc.pyrUp(dsIMG, usIMG, gray.size());
 
             Mat dst = new Mat();
             Mat lines = new Mat();
             Mat cdst = new Mat();
-            Imgproc.Canny(usIMG, dst, threshold1.getProgress(), threshold2.getProgress());
-            Imgproc.HoughLines(dst, lines, 1, Math.PI / 180, 150);
+            Imgproc.Canny(gray, dst, 10, 10, 3, false);
+            Imgproc.HoughLines(dst, lines, 1, Math.PI / 180, 120);
             Imgproc.cvtColor(dst, cdst, Imgproc.COLOR_GRAY2BGR);
 
+            ProcessingPreview(i, ROI, lines);
 
-            Scalar color = Core.mean(ROI);
 
             for (int x = 0; x < lines.rows(); x++) {
                 double rho = lines.get(x, 0)[0],
@@ -190,45 +197,77 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
                 double x0 = a * rho, y0 = b * rho;
                 Point pt1 = new Point(roi.x + Math.round(x0 + 1000 * (-b)), roi.y + Math.round(y0 + 1000 * (a)));
                 Point pt2 = new Point(roi.x + Math.round(x0 - 1000 * (-b)), roi.y + Math.round(y0 - 1000 * (a)));
-                //Imgproc.line(mRgba, pt1, pt2, scalars[i], 2, Imgproc.LINE_AA, 0);
+                Imgproc.line(mRgba, pt1, pt2, scalars[i], 2, Imgproc.LINE_AA, 0);
+                break;
             }
         }
 
-//        Mat gray = new Mat();
-//        Mat dst = new Mat();
-//        Imgproc.cvtColor(mRgba, gray, Imgproc.COLOR_BGR2GRAY);
-//        Imgproc.Canny(gray, dst, threshold1.getProgress(), threshold2.getProgress());
+        Imgproc.circle(mRgba, new Point((double) (rois[4].x + rois[6].x) / 2, (double) (rois[4].y + rois[6].y) / 2),100,new Scalar(150),4);
+
         return mRgba;
     }
 
 
-    public Drawable GetCenter(String[] colors){
+    public void ProcessingPreview(int i, Mat ROI, Mat lines){
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                if(i % 2 == 0){
+                    if(i == 4){
+                        preview[i].setImageResource(GetCenter(Get2Color(ROI).split("")));
+                    }
+                    if(lines.empty())
+                        preview[i].setImageResource(GetCorner(Get1Color(ROI)));
+                    else preview[i].setImageResource(GetCorner(Get2Color(ROI)));
+                }
+                else{
+                    if(lines.empty())
+                        preview[i].setImageResource(GetEdge(Get1Color(ROI)));
+                    else preview[i].setImageResource(GetEdge(Get2Color(ROI)));
+                }
+
+            }
+        });
+    }
+
+
+    public String Get1Color(Mat roi){
+        Scalar color = Core.mean(roi);
+        return getColor(color);
+    }
+
+    public String Get2Color(Mat roi){
+        return "WB";
+    }
+
+    public int GetCenter(String[] colors){
         /*
         @params colors: ["W", "O"] or ["W"]
          */
         List<String> listColors = Arrays.asList(colors);
         if(listColors.contains("W") && listColors.contains("R")){
-            return ResourcesCompat.getDrawable(getResources(), R.drawable.wr_center, null);
+            return R.drawable.wr_center;
         }
         else if(listColors.contains("W") && listColors.contains("G")){
-            return ResourcesCompat.getDrawable(getResources(), R.drawable.wg_center, null);
+            return R.drawable.wg_center;
         }
-        else if(listColors.contains("G") && listColors.contains("R")){
-            return ResourcesCompat.getDrawable(getResources(), R.drawable.rg_center, null);
+        else if(listColors.contains("R") && listColors.contains("G")){
+            return R.drawable.rg_center;
         }
         else if(listColors.contains("B") && listColors.contains("O")){
-            return ResourcesCompat.getDrawable(getResources(), R.drawable.bo_center, null);
+            return R.drawable.bo_center;
         }
         else if(listColors.contains("B") && listColors.contains("Y")){
-            return ResourcesCompat.getDrawable(getResources(), R.drawable.by_center, null);
+            return R.drawable.by_center;
         }
         else if(listColors.contains("Y") && listColors.contains("O")){
-            return ResourcesCompat.getDrawable(getResources(), R.drawable.yo_center, null);
+            return R.drawable.yo_center;
         }
-        else return ResourcesCompat.getDrawable(getResources(), R.drawable.center, null);
+        else return R.drawable.center;
     }
 
-    public Drawable GetEdge(String colors){
+    public int GetEdge(String colors){
         /*
         @params colors: "WO" or "W"
          */
@@ -240,7 +279,7 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
         }
     }
 
-    public Drawable GetCorner(String colors){
+    public int GetCorner(String colors){
         /*
         @params colors: "WO" or "W"
          */
@@ -253,33 +292,33 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
     }
 
 
-    public Drawable Get2ColorsEdge(String[] colors){
+    public int Get2ColorsEdge(String[] colors){
         /*
         @params colors: ["W", "O"] or ["W"]
          */
         List<String> listColors = Arrays.asList(colors);
         if(listColors.contains("W") && listColors.contains("O")){
-            return ResourcesCompat.getDrawable(getResources(), R.drawable.wo_edge_lda, null);
+            return R.drawable.wo_edge_lda;
         }
         else if(listColors.contains("W") && listColors.contains("B")){
-            return ResourcesCompat.getDrawable(getResources(), R.drawable.wb_edge_lda, null);
+            return R.drawable.wb_edge_lda;
         }
         else if(listColors.contains("B") && listColors.contains("R")){
-            return ResourcesCompat.getDrawable(getResources(), R.drawable.br_edge_lda, null);
+            return R.drawable.br_edge_lda;
         }
         else if(listColors.contains("Y") && listColors.contains("R")){
-            return ResourcesCompat.getDrawable(getResources(), R.drawable.yr_edge_lda, null);
+            return R.drawable.yr_edge_lda;
         }
         else if(listColors.contains("Y") && listColors.contains("G")){
-            return ResourcesCompat.getDrawable(getResources(), R.drawable.yg_edge_lda, null);
+            return R.drawable.yg_edge_lda;
         }
         else if(listColors.contains("G") && listColors.contains("O")){
-            return ResourcesCompat.getDrawable(getResources(), R.drawable.go_edge_lda, null);
+            return R.drawable.go_edge_lda;
         }
-        else return ResourcesCompat.getDrawable(getResources(), R.drawable.two_color_edge_lda, null);
+        else return R.drawable.two_color_edge_lda;
     }
 
-    public Drawable Get1ColorEdge(String color){
+    public int Get1ColorEdge(String color){
         /*
         @params colors: "W"
          */
@@ -299,10 +338,10 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
             if (color.equals("G")) edge.setColorFilter(getColor(R.color.green),
                     PorterDuff.Mode.MULTIPLY);
         }
-        return edge;
+        return R.drawable.one_color_edge_lda;
     }
 
-    public Drawable Get1ColorCorner(String color){
+    public int Get1ColorCorner(String color){
         /*
         @params colors: "W"
          */
@@ -316,30 +355,30 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
         if(color.equals("R")) corner.setColorFilter(getColor(R.color.red), PorterDuff.Mode.MULTIPLY);
         if(color.equals("G")) corner.setColorFilter(getColor(R.color.green), PorterDuff.Mode.MULTIPLY);
         }
-        return corner;
+        return R.drawable.one_color_corner;
     }
 
-    public Drawable Get2ColorCorner(String[] colors){
+    public int Get2ColorCorner(String[] colors){
         List<String> listColors = Arrays.asList(colors);
         if(listColors.contains("R") && listColors.contains("W")){
-            return ResourcesCompat.getDrawable(getResources(), R.drawable.rw_corner, null);
+            return R.drawable.rw_corner;
         }
         else if(listColors.contains("B") && listColors.contains("O")){
-            return ResourcesCompat.getDrawable(getResources(), R.drawable.bo_corner, null);
+            return R.drawable.bo_corner;
         }
         else if(listColors.contains("G") && listColors.contains("R")){
-            return ResourcesCompat.getDrawable(getResources(), R.drawable.gr_corner, null);
+            return R.drawable.gr_corner;
         }
         else if(listColors.contains("Y") && listColors.contains("O")){
-            return ResourcesCompat.getDrawable(getResources(), R.drawable.yo_corner, null);
+            return R.drawable.yo_corner;
         }
         else if(listColors.contains("G") && listColors.contains("W")){
-            return ResourcesCompat.getDrawable(getResources(), R.drawable.gw_corner, null);
+            return R.drawable.gw_corner;
         }
         else if(listColors.contains("Y") && listColors.contains("B")){
-            return ResourcesCompat.getDrawable(getResources(), R.drawable.yb_corner, null);
+            return R.drawable.yb_corner;
         }
-        else return ResourcesCompat.getDrawable(getResources(), R.drawable.three_color_corner, null);
+        else return R.drawable.three_color_corner;
     }
 
     public String getColor(Scalar color) {
