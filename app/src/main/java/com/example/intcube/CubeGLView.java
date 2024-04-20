@@ -47,7 +47,20 @@ public class CubeGLView extends GLSurfaceView {
             renderer.changeCube(m_type);
         }
     }
+    public class ExecuteMove implements Runnable {
+        private int m_type;
+        public ExecuteMove(int type) {
+            m_type = type;
+        }
+        @Override
+        public void run() {
+            renderer.executeMove(m_type, false);
+        }
+    }
     public void changeCube(int type) {
         queueEvent(new CreateCube(type));
+    }
+    public void executeMove(int type) {
+        queueEvent(new ExecuteMove(type));
     }
 }

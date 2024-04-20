@@ -35,12 +35,12 @@ public:
 
     void resize(int width, int height);
     void changeCube(int type);
-
-private:
-    explicit Scene(int width, int height, int size);
     void render();
     void handleMouseMovement(glm::vec2 delta);
     void handleKeyPress(SceneKey key, bool inverse);
+
+private:
+    explicit Scene(int width, int height, int size);
     unsigned int m_fbo, m_texture, m_rbo;
     Buffer m_vbo;
     VertexArray m_vao;

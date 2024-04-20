@@ -37,7 +37,6 @@ static char* loadStringFromFile(const char* filename) {
     std::fill(buf, buf + len + 1, 0);
     auto res = AAsset_read(file, buf, len);
     AAsset_close(file);
-    __android_log_print(ANDROID_LOG_DEBUG, "glsl", "%d == %d\n", len, res);
     return buf;
 #else
     std::ifstream file(filename);
@@ -290,5 +289,11 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_intcube_CubeGLRenderer_changeCube(JNIEnv *env, jobject thiz, jint type) {
     s_scene->changeCube(type);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_intcube_CubeGLRenderer_executeMove(JNIEnv *env, jobject thiz, jint move,
+                                                    jboolean inverse) {
+    s_scene->handleKeyPress((SceneKey)move, inverse);
 }
 #endif

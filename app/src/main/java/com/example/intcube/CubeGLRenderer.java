@@ -9,10 +9,15 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 public class CubeGLRenderer implements GLSurfaceView.Renderer {
+    public enum MoveTypes {
+        U,
+        D,
+    }
     public native void initScene(int width, int height, int size, AssetManager mgr);
     public native void render();
     public native void resize(int w, int h);
     public native void changeCube(int type);
+    public native void executeMove(int move, boolean inverse);
 
     private Context m_context;
 
