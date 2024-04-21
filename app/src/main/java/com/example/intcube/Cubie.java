@@ -110,6 +110,10 @@ public class Cubie {
 	public void setColors(CubieColor[] newColors) {
 		this.colors = newColors;
 	}
+
+	public void setCenterDir(char newDir) {
+		centerDir = newDir;
+	}
 	
 	/**
 	 * Changes the color in the given direction. 
@@ -138,7 +142,15 @@ public class Cubie {
 	public boolean isEdgeCubie() {
 		return edge;
 	}
-	
+
+	public boolean isCenterCubie() {
+		if (edge || corner || ((x == 1) && (y == 1) && (z == 1))) {
+			return false;
+		}
+		return true;
+	}
+
+
 	/**
 	 * Used to aid formation of the white cross
 	 * @param x the x position of the cubie
@@ -175,6 +187,13 @@ public class Cubie {
 	public boolean cornerHasColor(char color) {
 		if (corner) {
 			return (colors[0].getColor() == color || colors[1].getColor() == color || colors[2].getColor() == color);
+		}
+		return false;
+	}
+
+	public boolean edgeHasColor(char color) {
+		if (edge) {
+			return (colors[0].getColor() == color || colors[1].getColor() == color);
 		}
 		return false;
 	}

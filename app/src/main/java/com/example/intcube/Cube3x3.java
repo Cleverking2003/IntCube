@@ -1118,150 +1118,106 @@ public class Cube3x3 {
 		return false;
 	}
 
-	/**
-	 * Делает второй слой
-	 */
-	public String insertAllEdges() {
-		String moves = new String();
-		// Поместить на верхнюю грань детали без желтого и потом поставить их на место
-		String res = insertEdgesInU();
-		if (res.equals("Wrong cube")) {
-			return res;
+	public String putEdgeInSecondLayer(int x, int y) {
+		String moves = "";
+		if(y == 1) {
+			if(x == 0) {
+				moves += performMoves("U' ");
+			} else {
+				moves += performMoves("U ");
+			}
 		}
-		moves+=res;
-		moves+="\n";
-		// Если на втором слое деталь стоит неправильно, переставить
-		res = insertMisorientedEdges();
-		if (res.equals("Wrong cube")) {
-			return res;
+		else if(y == 2){
+			moves += performMoves("U2 ");
 		}
-		moves+=res;
-		moves+="\n";
+		int numUTurns = 0;
+		int yRotations = 0;
 		long startTime = System.currentTimeMillis();
-		while(nonYellowEdgesInU()) {
+		while(cubiePos[1][0][0].getColorOfDir('F') != cubiePos[1][0][1].getColorOfDir('F')) {
 			if (checkInfLoop(startTime)) return "Wrong cube";
-			res = insertEdgesInU();
-			if (res.equals("Wrong cube")) {
-				return res;
-			}
-			moves+=res;
-			moves+="\n";
-			res = insertMisorientedEdges();
-			if (res.equals("Wrong cube")) {
-				return res;
-			}
-			moves+=res;
-			moves+="\n";
+			performMoves("U y' "); numUTurns++; yRotations++;
 		}
-		return optimizeMoves(moves);
+
+		if(numUTurns == 1) {
+			moves += "U ";
+		} else if(numUTurns == 2) {
+			moves += "U2 ";
+		} else if(numUTurns == 3) {
+			moves += "U' ";
+		}
+		if (yRotations == 1) {
+			moves+="y' ";
+		} else if (yRotations == 2) {
+			moves += "y2 ";
+		} else if (yRotations == 3) {
+			moves += "y ";
+		}
+
+		// Ставим во второй слой в зависимости от верхнего цвета детали
+		if (cubiePos[1][0][0].getColorOfDir('U') == cubiePos[0][1][1].getColorOfDir('L')) {
+			moves += performMoves("U' L' U' L U y' R U R' U' ");
+		}
+		else if (cubiePos[1][0][0].getColorOfDir('U') == cubiePos[2][1][1].getColorOfDir('R')){
+			moves += performMoves("U R U R' U' y L' U' L U ");
+		}
+		return moves;
 	}
 
-	/**
-	 * Checks whether any non-yellow edges remain in the U layer.
-	 * (Any such edges need to be inserted into their respective slot in the second layer)
-	 * @return whether there is/are non-yellow edges in the U layer
-	 */
-	public boolean nonYellowEdgesInU() {
-		for(int i = 0; i<3; i++) {
-			for(int j = 0; j<3; j++) {
-				if(cubiePos[i][j][0].isEdgeCubie()) {
-					//If a cubie does not have a color, getDirOfColor returns 'A'
-					if(cubiePos[i][j][0].getDirOfColor('Y') == 'A')
-						return true;
+	private String checkEdgesInSecondLayer() {
+		int numYTurns = 0;
+		for (int i = 0; i < 4; i++) {
+			if ((cubiePos[0][0][1].getColorOfDir('F') != cubiePos[1][0][1].getColorOfDir('F')) ||
+					(cubiePos[0][0][1].getColorOfDir('L') != cubiePos[0][1][1].getColorOfDir('L'))) {
+				if (numYTurns == 1) {
+					return performMoves("y L' U' L U y' R U R' U' ");
+				}
+				else if (numYTurns == 2) {
+					return performMoves("y2 L' U' L U y' R U R' U' ");
+				}
+				else if (numYTurns == 3) {
+					return performMoves("y' L' U' L U y' R U R' U' ");
 				}
 			}
+			else if ((cubiePos[2][0][1].getColorOfDir('F') != cubiePos[1][0][1].getColorOfDir('F')) ||
+					(cubiePos[2][0][1].getColorOfDir('R') != cubiePos[2][1][1].getColorOfDir('R'))) {
+				if (numYTurns == 1) {
+					return performMoves("y R U R' U' y L' U' L U ");
+				}
+				else if (numYTurns == 2) {
+					return performMoves("y2 R U R' U' y L' U' L U ");
+				}
+				else if (numYTurns == 3) {
+					return performMoves("y' R U R' U' y L' U' L U ");
+				}
+			}
+			performMoves("y ");
+			numYTurns++;
 		}
-		return false;
+		return "";
 	}
 
-	/**
-	 * Помещает все детали без желтого на верхний слой на правильное место,
-	 * затем помещает на нужное место во втором слое
-	 */
-	public String insertEdgesInU() {
-		String moves = new String();
-		for(int i = 0; i<3; i++) {
-			for(int j = 0; j<3; j++) {
-				// Если ребро на верхнем слое не желтое
-				if(cubiePos[i][j][0].isEdgeCubie() && cubiePos[i][j][0].getDirOfColor('Y') == 'A') {
-					// Крутим U, чтоб поставить спереди справа
-					if(j==1) {
-						if(i==0) {
-							moves+=performMoves("U' ");
-						} else {
-							moves+=performMoves("U ");
-						}
+	private String checkEdgesInYellowLayer() {
+		String moves = "";
+		for (int x = 0; x < 3; x++) {
+			for (int y = 0; y < 3; y++) {
+				if (cubiePos[x][y][0].isEdgeCubie()) {
+					if (!(cubiePos[x][y][0].edgeHasColor('Y'))) {
+						moves += putEdgeInSecondLayer(x, y);
 					}
-					else if(j==2){
-						moves+=performMoves("U2 ");
-					}
-
-					// Крутим U и поворачиваем кубик направо, пока деталь не встанет на грани с правильным центром
-					int numUTurns = 0;
-					int yRotations = 0;
-					long startTime = System.currentTimeMillis();
-					while(cubiePos[1][0][0].getColorOfDir('F') != cubiePos[1][0][1].getColors()[0].getColor()) {
-						if (checkInfLoop(startTime)) return "Wrong cube";
-						performMoves("U y' "); numUTurns++; yRotations++;
-					}
-
-					if(numUTurns == 1) {
-						moves += "U ";
-					} else if(numUTurns == 2) {
-						moves += "U2 ";
-					} else if(numUTurns == 3) {
-						moves += "U' ";
-					}
-					if(yRotations == 1) {
-						moves+="y' ";
-					} else if(yRotations == 2) {
-						moves += "y2 ";
-					} else if(yRotations == 3) {
-						moves += "y ";
-					}
-
-					// Ставим во второй слой в зависимости от верхнего цвета детали
-					if(cubiePos[1][0][0].getColorOfDir('U') == cubiePos[0][1][1].getColors()[0].getColor()) {
-						moves += performMoves("U' L' U L U F U' F' ");
-					}
-					else if(cubiePos[1][0][0].getColorOfDir('U') == cubiePos[2][1][1].getColors()[0].getColor()){
-						moves += performMoves("U R U' R' U' F' U F ");
-					}
-
-					i = 0; j = 0;
 				}
 			}
 		}
 		return moves;
 	}
 
-	/**
-	 * Проверяет, правильно ли стоит ребро во втором слое и переставляет при необходимости
-	 */
-	public String insertMisorientedEdges() {
-		String moves = new String();
-		for(int i = 0; i<4; i++) {
-			moves += performMoves("y ");
-			// Если во втором слое фронтальный цвет ребра не совпадает с цветом центра
-			if(cubiePos[2][0][1].getDirOfColor('Y') == 'A' &&
-					cubiePos[2][0][1].getColorOfDir('F') != cubiePos[1][0][1].getColors()[0].getColor()) {
-				// Если фронтальный цвет ребра совпадает с цветом центра на правой грани
-				// (т.е. деталь стоит верно, но неправильно повернута)
-				if(cubiePos[2][0][1].getColorOfDir('F') == cubiePos[2][1][1].getColors()[0].getColor() &&
-						cubiePos[2][0][1].getColorOfDir('R') == cubiePos[1][0][1].getColors()[0].getColor()) {
-					moves += performMoves("R U R' U2 R U2 R' U F' U' F ");
-				}
-				else {
-					// Иначе деталь не на своем месте. Помещаем наверх и вызываем функцию,
-					// которая ставит верхние ребра во второй слой
-					moves+=performMoves("R U R' U' F' U' F ");
-					String res = insertEdgesInU();
-					if (res.equals("Wrong cube")) {
-						return res;
-					}
-					moves+=res;
-				}
-			}
+
+	public String solveSecondLayer() {
+		String moves = "";
+		String movesSecondLayer = checkEdgesInSecondLayer();
+		while (!(movesSecondLayer.isEmpty())) {
+			moves += movesSecondLayer;
+			moves += checkEdgesInYellowLayer();
+			movesSecondLayer = checkEdgesInSecondLayer();
 		}
 		return moves;
 	}
@@ -1275,21 +1231,6 @@ public class Cube3x3 {
 		for(int i = 0; i<3; i++) {
 			for(int j = 0; j<3; j++) {
 				if(cubiePos[i][j][0].isEdgeCubie() && cubiePos[i][j][0].getDirOfColor('Y') == 'U')
-					numOriented++;
-			}
-		}
-		return numOriented;
-	}
-
-	/**
-	 * Utility method for orientLastLayer()
-	 * @return the number of yellow corners that are already oriented in the U layer
-	 */
-	public int numYellowCornersOriented(){
-		int numOriented = 0;
-		for(int i = 0; i<3; i++) {
-			for(int j = 0; j<3; j++) {
-				if(cubiePos[i][j][0].isCornerCubie() && cubiePos[i][j][0].getDirOfColor('Y') == 'U')
 					numOriented++;
 			}
 		}
@@ -1365,108 +1306,165 @@ public class Cube3x3 {
 		return optimizeMoves(moves);
 	}
 
-	/**
-	 * Расставляет углы на верхнем слое
-	 */
-	public String orientLastLayer() {
+
+
+	public String orientYellowCross() {
 		String moves = new String();
-		int numOriented = numYellowCornersOriented();
+		int numOriented = numYellowEdgesOrientedCorrectly();
 		long startTime = System.currentTimeMillis();
-		while(numOriented != 4) {
+		while (numOriented != 4) {
 			if (checkInfLoop(startTime)) return "Wrong cube";
-			if(numOriented == 0){
+			if (numOriented < 2) {
 				// Пока на левой детали желтый не смотрит налево, делаем U
-				long startTime2 = System.currentTimeMillis();
-				while(cubiePos[0][0][0].getDirOfColor('Y') != 'L') {
-					if (checkInfLoop(startTime2)) return "Wrong cube";
-					moves += performMoves("U ");
+				String res = putYellowEdgeAndOrient();
+				if (res.equals("Wrong cube")) {
+					return res;
 				}
-				// Ставим первый угол
-				moves += performMoves("R U R' U R U2 R' ");
+				moves += res;
 			}
-			else if(numOriented == 1){
-				// Ставим правильно поставленный угол слева спереди
-				long startTime2 = System.currentTimeMillis();
-				while(cubiePos[0][0][0].getDirOfColor('Y') != 'U') {
-					if (checkInfLoop(startTime2)) return "Wrong cube";
-					moves += performMoves("U ");
-				}
-				moves += performMoves("R U R' U R U2 R' ");
-			}
-			else if(numOriented == 2){
+			else {
 				// Ставим деталь с желтым сверху слева спереди
 				long startTime2 = System.currentTimeMillis();
-				while(cubiePos[0][0][0].getDirOfColor('Y') != 'F') {
+				int tryNum = 0;
+				while (!((cubiePos[2][1][0].getColorOfDir('R') == cubiePos[2][1][1].getColorOfDir('R')) &&
+						((cubiePos[1][2][0].getColorOfDir('B') == cubiePos[1][2][1].getColorOfDir('B'))))) {
 					if (checkInfLoop(startTime2)) return "Wrong cube";
-					moves += performMoves("U ");
+					performMoves("y ");
+					tryNum++;
+					if (tryNum == 4) break;
 				}
-				moves += performMoves("R U R' U R U2 R' ");
+				if (tryNum == 1) {
+					moves += "y ";
+				}
+				else if (tryNum == 2) {
+					moves += "y2 ";
+				}
+				else if (tryNum == 3) {
+					moves += "y' ";
+				}
+				else if (tryNum == 4) {
+					moves += performMoves("y ");
+				}
+				String res = putYellowEdgeAndOrient();
+				if (res.equals("Wrong cube")) {
+					return res;
+				}
+				moves += res;
 			}
-			numOriented = numYellowCornersOriented();
+			numOriented = numYellowEdgesOrientedCorrectly();
 		}
 		return optimizeMoves(moves);
 	}
 
-	/**
-	 * Правильно разворачивает углы на верхнем слое
-	 * @return the moves used to permute the last layer
-	 */
-	public String permuteLastLayer() {
-		String moves = new String();
-		// numHeadlights - количество углов, у которых фронтальные цвета совпадают
-		int numHeadlights = 0;
-		for(int i = 0; i<4; i++) {
-			turn("y");
-			if(cubiePos[0][0][0].getColorOfDir('F') == cubiePos[2][0][0].getColorOfDir('F'))
-				numHeadlights++;
-		}
-
-		if(numHeadlights == 0){
-			// Правильно ставим первый угол
-			moves += performMoves("R' F R' B2 R F' R' B2 R2 ");
-			numHeadlights = 1;
-		}
-		if(numHeadlights == 1) {
-			// Ставим правильно стоящие углы назад
-			long startTime = System.currentTimeMillis();
-			while(cubiePos[0][2][0].getColorOfDir('B') != cubiePos[2][2][0].getColorOfDir('B')) {
-				if (checkInfLoop(startTime)) return "Wrong cube";
-				moves += performMoves("U ");
+	public int numYellowEdgesOrientedCorrectly() {
+		int numOriented = 0;
+		for (int i = 0; i < 4; i++) {
+			if (cubiePos[1][0][0].getColorOfDir('F') == cubiePos[1][0][1].getColorOfDir('F')) {
+				numOriented++;
 			}
-			moves += performMoves("R' F R' B2 R F' R' B2 R2 ");
+			performMoves("y ");
 		}
+		return numOriented;
+	}
 
-		// Считаем, сколько углов стоят на нужной грани
-		int numSolved = 0;
-		for(int i = 0; i<4; i++) {
-			turn("y");
-			if(cubiePos[0][0][0].getColorOfDir('F') == cubiePos[1][0][0].getColorOfDir('F'))
-				numSolved++;
+	public String putYellowEdgeAndOrient() {
+		String moves = "";
+		int uTurns = 0;
+		moves += performMoves("R U R' U R U2 R' ");
+		int numOr = numYellowEdgesOrientedCorrectly();
+		long startTime = System.currentTimeMillis();
+		while (numOr == 0) {
+			if (checkInfLoop(startTime)) return "Wrong cube";
+			performMoves("U ");
+			uTurns++;
+			numOr = numYellowEdgesOrientedCorrectly();
 		}
-		if(numSolved == 0) {
-			moves += performMoves("R2 U R U R' U' R' U' R' U R' ");
-			numSolved = 1;
+		if (uTurns == 1) {
+			moves += "U ";
 		}
-		if(numSolved == 1){
-			long startTime = System.currentTimeMillis();
-			while(cubiePos[0][2][0].getColorOfDir('B') != cubiePos[1][2][0].getColorOfDir('B')) {
-				if (checkInfLoop(startTime)) return "Wrong cube";
-				moves += performMoves("U ");
+		else if (uTurns == 2) {
+			moves += "U2 ";
+		}
+		else if (uTurns == 3) {
+			moves += "U' ";
+		}
+		return moves;
+	}
+
+	private int countCorrectCorners() {
+		int num = 0;
+		for (int i = 0; i < 4; i++) {
+			char sideColor = cubiePos[0][1][1].getColorOfDir('L');
+			char frontColor = cubiePos[1][0][1].getColorOfDir('F');
+			if (cubiePos[0][0][0].cornerHasColor(sideColor) && cubiePos[0][0][0].cornerHasColor(frontColor)) {
+				num++;
 			}
-			if(cubiePos[1][0][0].getColorOfDir('F') == cubiePos[0][0][0].getColorOfDir('L')) {
-				moves += performMoves("R2 U R U R' U' R' U' R' U R' ");
+			performMoves("y ");
+		}
+		return num;
+	}
+
+
+	public String putYellowCorners() {
+		if (checkCubeIsSolved()) {
+			return "";
+		}
+		String moves = "";
+		int numOfCorrectCorners = countCorrectCorners();
+		long startTime = System.currentTimeMillis();
+		while (numOfCorrectCorners != 4) {
+			if (checkInfLoop(startTime)) return "Wrong cube";
+			if (numOfCorrectCorners == 0) {
+				moves += performMoves("R U' L' U R' U' L U ");
 			}
 			else {
-				moves += performMoves("R U' R U R U R U' R' U' R2 ");
+				char sideColor = cubiePos[0][1][1].getColorOfDir('L');
+				char frontColor = cubiePos[1][0][1].getColorOfDir('F');
+
+				int yTurns = 0;
+
+				long startTime2 = System.currentTimeMillis();
+				while (true) {
+					if (checkInfLoop(startTime2)) return "Wrong cube";
+					if (cubiePos[0][0][0].cornerHasColor(sideColor) && cubiePos[0][0][0].cornerHasColor(frontColor)) {
+						break;
+					}
+					else {
+						performMoves("y ");
+						yTurns++;
+						sideColor = cubiePos[0][1][1].getColorOfDir('L');
+						frontColor = cubiePos[1][0][1].getColorOfDir('F');
+					}
+				}
+
+				if (yTurns == 1) {
+					moves += "y ";
+				}
+				else if (yTurns == 2) {
+					moves += "y2 ";
+				}
+				else if (yTurns == 3) {
+					moves += "y' ";
+				}
+				moves += performMoves("R U' L' U R' U' L U ");
 			}
+			numOfCorrectCorners = countCorrectCorners();
+		}
+		moves += performMoves("x2 ");
+		for (int i = 0; i < 4; i++) {
+			long startTime2 = System.currentTimeMillis();
+			while (cubiePos[2][0][2].getDirOfColor('Y') != 'D') {
+				if (checkInfLoop(startTime2)) return "Wrong cube";
+				moves += performMoves("R U R' U' ");
+			}
+			moves += performMoves("D ");
 		}
 
-		long startTime = System.currentTimeMillis();
-		while(cubiePos[0][0][0].getColorOfDir('F') != cubiePos[1][0][1].getColors()[0].getColor()) {
-			if (checkInfLoop(startTime)) return "Wrong cube";
-			moves += performMoves("U ");
+		long startTime2 = System.currentTimeMillis();
+		while (cubiePos[0][0][2].getColorOfDir('F') != cubiePos[1][0][1].getColorOfDir('F')) {
+			if (checkInfLoop(startTime2)) return "Wrong cube";
+			moves += performMoves("D ");
 		}
-
-		return optimizeMoves(moves);
+		return moves;
 	}
 }
