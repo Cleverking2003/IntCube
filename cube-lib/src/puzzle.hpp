@@ -96,8 +96,7 @@ public:
             }
         }
         if (index == -1) return;
-
-        auto angle = glm::orientedAngle(glm::normalize(c1), glm::normalize(c2), std::get<0>(m_axes[index]));
+        auto angle = glm::orientedAngle(glm::normalize(p1), glm::normalize(p2), std::get<0>(m_axes[index]));
         execute_move(index, c1[index], angle < 0);
     }
 
