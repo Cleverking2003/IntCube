@@ -149,17 +149,6 @@ static MeshData transform_cube_mesh(glm::mat4 transform) {
     return data;
 }
 
-Cube::Cube(int size) : Puzzle(), m_size(size) {
-    m_axes = {
-        std::pair { glm::vec3(1.0, 0.0, 0.0), 4 },
-        std::pair { glm::vec3(0.0, 1.0, 0.0), 4 },
-        std::pair { glm::vec3(0.0, 0.0, 1.0), 4 },
-    };
-
-    fill_cubies();
-    fill_moves();
-}
-
 Cube::Cube(int size, char** vertexShader, char** fragmentShader) : Puzzle(vertexShader, fragmentShader), m_size(size) {
     m_axes = {
             std::pair { glm::vec3(1.0, 0.0, 0.0), 4 },
@@ -217,13 +206,8 @@ void Cube::fill_cubies() {
 
 void Cube::fill_moves() {
     for (int i = 0; i < 3; i++) {
-        for (int j = -m_size/2; j <= m_size/2; j++) {
-            if (m_size % 2 == 0 && j == 0) continue;
-            auto [axis, angle] = m_axes[i];
-            if (j > 0) axis *= -1;
-            auto mat = glm::rotate(glm::mat4(1.0), glm::two_pi<float>() / angle, axis);
-            m_moves[{ i, j }] = mat;
-        }
+        auto [axis, angle] = m_axes[i];
+        m_moves[i] = glm::rotate(glm::mat4(1.0), glm::two_pi<float>() / angle, axis);
     }
 }
 

@@ -6,8 +6,8 @@
 
 #include "scene.hpp"
 
-const int screen_width = 1920;
-const int screen_height = 1080;
+const int screen_width = 800;
+const int screen_height = 600;
 
 int main()
 {
@@ -15,7 +15,6 @@ int main()
     std::cin >> size;
     auto window = sf::Window{ { screen_width, screen_height }, "Cube"};
     window.setFramerateLimit(144);
-    // auto res = gladLoadGL(sf::Context::getFunction);
     initGL();
 
     initScene(screen_width, screen_height, size);
@@ -31,14 +30,14 @@ int main()
             {
                 window.close();
             }
-            else if ((event.type == sf::Event::MouseButtonPressed || event.type == sf::Event::MouseButtonReleased) && event.mouseButton.button == sf::Mouse::Left) {
-                prev = glm::vec2(event.mouseButton.x, event.mouseButton.y);
-                is_moving = event.type == sf::Event::MouseButtonPressed;
+            else if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left) {
+                handleDragStart(event.mouseButton.x, event.mouseButton.y);
             }
-            else if (event.type == sf::Event::MouseMoved && sf::Mouse::isButtonPressed(sf::Mouse::Left) && is_moving) {
-                prev = glm::vec2(event.mouseMove.x, event.mouseMove.y) - prev;
-                handleMouseMovement(prev.x, prev.y);
-                prev = glm::vec2(event.mouseMove.x, event.mouseMove.y);
+            else if (event.type == sf::Event::MouseMoved) {
+                handleMouseMovement(event.mouseMove.x, event.mouseMove.y);
+            }
+            else if (event.type == sf::Event::MouseButtonReleased && event.mouseButton.button == sf::Mouse::Left) {
+                handleDragStop(event.mouseButton.x, event.mouseButton.y);
             }
             else if (event.type == sf::Event::KeyPressed) {
                 auto inverse = event.key.shift;

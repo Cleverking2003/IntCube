@@ -26,6 +26,8 @@ public:
     void play_rotate_animation(glm::vec3 axis, float angle, std::chrono::milliseconds time);
 
     void draw(glm::mat4, glm::mat4);
+    bool ray_intersect(glm::vec3 origin, glm::vec3 dir, glm::vec3& crossing, float& dist);
+
     glm::mat4 model_mat { 1.0 };
     bool in_animation { false };
 

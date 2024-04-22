@@ -1201,46 +1201,6 @@ MeshData ewo = {
     }
 };
 
-AxisCube::AxisCube() : Cube(3) {
-    m_axes = {
-        std::pair { glm::vec3(0.25, -0.5, -0.5), 4 },
-        { glm::vec3(0.5, 0.5, -0.25), 4 },
-        { glm::vec3(0.5, -0.25, 0.5), 4 },
-    };
-
-//    m_cubies.clear();
-//    m_cubies.emplace_back(zwr, glm::vec3(0, 1, 0), glm::vec3(0, 1, 0));
-//    m_cubies.emplace_back(zrg, glm::vec3(0, 0, 1), glm::vec3(0, 0, 1));
-//    m_cubies.emplace_back(zyb, glm::vec3(1, 0, 0), glm::vec3(1, 0, 0));
-//    m_cubies.emplace_back(zyo, glm::vec3(0, -1, 0), glm::vec3(0, -1, 0));
-//    m_cubies.emplace_back(zob, glm::vec3(0, 0, -1), glm::vec3(0, 0, -1));
-//    m_cubies.emplace_back(zwg, glm::vec3(-1, 0, 0), glm::vec3(-1, 0, 0));
-//
-//    m_cubies.emplace_back(cwrg, glm::vec3(-1, 1, 1), glm::vec3(-1, 1, 1));
-//    m_cubies.emplace_back(cyob, glm::vec3(1, -1, -1), glm::vec3(1, -1, -1));
-//
-//    m_cubies.emplace_back(cw, glm::vec3(-1, 1, -1), glm::vec3(-1, 1, -1));
-//    m_cubies.emplace_back(cy, glm::vec3(1, -1, 1), glm::vec3(1, -1, 1));
-//    m_cubies.emplace_back(cr, glm::vec3(1, 1, 1), glm::vec3(1, 1, 1));
-//    m_cubies.emplace_back(co, glm::vec3(-1, -1, -1), glm::vec3(-1, -1, -1));
-//    m_cubies.emplace_back(cg, glm::vec3(-1, -1, 1), glm::vec3(-1, -1, 1));
-//    m_cubies.emplace_back(cb, glm::vec3(1, 1, -1), glm::vec3(1, 1, -1));
-//
-//    m_cubies.emplace_back(ew, glm::vec3(-1, 1, 0), glm::vec3(-1, 1, 0));
-//    m_cubies.emplace_back(ey, glm::vec3(1, -1, 0), glm::vec3(1, -1, 0));
-//    m_cubies.emplace_back(er, glm::vec3(0, 1, 1), glm::vec3(0, 1, 1));
-//    m_cubies.emplace_back(eo, glm::vec3(0, -1, -1), glm::vec3(0, -1, -1));
-//    m_cubies.emplace_back(eg, glm::vec3(-1, 0, 1), glm::vec3(-1, 0, 1));
-//    m_cubies.emplace_back(eb, glm::vec3(1, 0, -1), glm::vec3(1, 0, -1));
-//
-//    m_cubies.emplace_back(ewo, glm::vec3(-1, 0, -1), glm::vec3(-1, 0, -1));
-//    m_cubies.emplace_back(eyr, glm::vec3(1, 0, 1), glm::vec3(1, 0, 1));
-//    m_cubies.emplace_back(erb, glm::vec3(1, 1, 0), glm::vec3(1, 1, 0));
-//    m_cubies.emplace_back(eog, glm::vec3(-1, -1, 0), glm::vec3(-1, -1, 0));
-//    m_cubies.emplace_back(eyg, glm::vec3(0, -1, 1), glm::vec3(0, -1, 1));
-//    m_cubies.emplace_back(ewb, glm::vec3(0, 1, -1), glm::vec3(0, 1, -1));
-}
-
 AxisCube::AxisCube(char** vertexShader, char** fragmentShader) : Cube(3, vertexShader, fragmentShader) {
     m_axes = {
             std::pair { glm::vec3(0.25, -0.5, -0.5), 4 },

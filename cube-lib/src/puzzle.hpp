@@ -1,24 +1,18 @@
 #pragma once
 
 #include <array>
+#include <iostream>
 #include <map>
 #include <vector>
 #include "mesh.hpp"
 
 #include <glm/gtc/matrix_transform.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/vector_angle.hpp>
 
 template<int N>
 class Puzzle {
 public:
-    Puzzle() {
-
-        if (!m_shader)
-            m_shader = std::make_shared<ShaderProgram>("piece_vertex.glsl", "piece_fragment.glsl");
-
-        fill_cubies();
-        fill_moves();
-    }
-
     Puzzle(char** vertexShader, char** fragmentShader) {
 
         if (!m_shader)
@@ -35,21 +29,22 @@ public:
     }
 
     void execute_move(int axis, int coord, bool inverse = false) {
-        if (is_in_animation() || m_moves.find({ axis, coord }) == m_moves.end()) return;
-        auto coord_mat = m_moves[{ axis, coord }];
+        if (is_in_animation()) return;
+        auto coord_mat = m_moves[axis];
         if (inverse)
             coord_mat = glm::inverse(coord_mat);
 
+        auto [axis_vec, axis_part] = m_axes[axis];
+        if (inverse) axis_vec *= -1;
+
         for (auto& [c, pos, orig_pos] : m_cubies) {
 
-            if (glm::round(pos[axis]) != coord) continue;
+            if (pos[axis] != coord) continue;
 
             pos = coord_mat * pos;
+            pos = glm::vec3(glm::round(pos.x), glm::round(pos.y), glm::round(pos.z));
 
-            auto [axis_vec, axis_part] = m_axes[axis];
-            if (coord > 0) axis_vec *= -1;
-            if (inverse) axis_vec *= -1;
-            c.play_rotate_animation(axis_vec, glm::two_pi<float>() / axis_part, 250ms);
+            c.play_rotate_animation(axis_vec, glm::two_pi<float>() / axis_part, 100ms);
         }
     }
 
@@ -60,8 +55,64 @@ public:
         return false;
     }
 
+    bool intersect(glm::vec3 origin, glm::vec3 dir, glm::vec<N, float>& closest_piece_coord, glm::vec3& closest_cross) {
+        float dist = INFINITY;
+        bool res = false;
+
+        for (auto& [piece, pos, orig] : m_cubies) {
+            glm::vec3 cross;
+            float new_dist;
+            if (piece.ray_intersect(origin, dir, cross, new_dist)) {
+                res = true;
+                if (new_dist < dist) {
+                    dist = new_dist;
+                    closest_piece_coord = pos;
+                    closest_cross = cross;
+                }
+            }
+        }
+        return res;
+    }
+
+    void execute_move_between_points(glm::vec3 o1, glm::vec3 d1, glm::vec3 o2, glm::vec3 d2) {
+        glm::vec3 p1, p2;
+        glm::vec<N, float> c1, c2;
+        if (!intersect(o1, d1, c1, p1) || !intersect(o2, d2, c2, p2)) return;
+
+        if (c1 == c2) return;
+
+        auto delta_c = c2 - c1;
+        int zero_count = 0, index = -1;
+        for (int i = 0; i < N; i++) {
+            if (delta_c[i] == 0) {
+                zero_count++;
+                index = i;
+            }
+        }
+
+        if (zero_count == 0) return;
+
+        if (zero_count == 2) {
+            float max_dist = 0;
+            for (int i = 0; i < N; i++) {
+                if (delta_c[i] != 0 && i != index) continue;
+                auto r1 = glm::vec3(0.0);
+                auto r2 = p1;
+                auto n = glm::cross(std::get<0>(m_axes[i]), p2 - p1);
+                float dist = glm::abs(glm::dot(n, (r2 - r1))) / n.length();
+                if (dist > max_dist) {
+                    max_dist = dist;
+                    index = i;
+                }
+            }
+        }
+
+        auto angle = glm::orientedAngle(glm::normalize(c1), glm::normalize(c2), std::get<0>(m_axes[index]));
+        execute_move(index, c1[index], angle < 0);
+    }
+
     std::array<std::pair<glm::vec3, int>, N> m_axes;
-    std::map<std::pair<int, int>, glm::mat<N, N, float>> m_moves;
+    std::array<glm::mat<N, N, float>, N> m_moves;
 
 protected:
     virtual void fill_cubies() {};

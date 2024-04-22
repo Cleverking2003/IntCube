@@ -67,12 +67,24 @@ void render() {
     s_scene->render();
 }
 
+void handleDragStart(int x, int y) {
+    s_scene->handleDragStart(x, y);
+}
+
 void handleMouseMovement(int x, int y) {
-    s_scene->handleMouseMovement(glm::vec2(x, y));
+    s_scene->handleMouseMovement(x, y);
+}
+
+void handleDragStop(int x, int y) {
+    s_scene->handleDragStop(x, y);
 }
 
 void handleKeyPress(SceneKey key, bool inverse) {
     s_scene->handleKeyPress(key, inverse);
+}
+
+void resize(int width, int height) {
+    s_scene->resize(width, height);
 }
 
 static float quadVertices[] = {
@@ -88,9 +100,6 @@ Scene::Scene(int width, int height, int size)
     : m_view(glm::translate(glm::mat4(1.0), glm::vec3(0.0, 0.0, -5.0))),
     m_proj(glm::perspective(glm::radians(45.0f), (float)width/(float)height, 0.1f, 100.0f)),
     m_width(width), m_height(height) {
-#ifdef __ANDROID__
-    __android_log_print(ANDROID_LOG_ERROR, "scene", "init\n");
-#endif
 
     vertex = loadStringFromFile("simple_vertex.glsl");
     frag = loadStringFromFile("simple_fragment.glsl");
@@ -180,6 +189,7 @@ void Scene::resize(int width, int height) {
     if(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE)
         std::cout << "yay\n";
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    m_redraw = true;
 }
 
 void Scene::changeCube(int type) {
@@ -219,10 +229,13 @@ void Scene::render() {
     glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
-void Scene::handleMouseMovement(glm::vec2 delta) {
+void Scene::handleMouseMovement(int x, int y) {
+    if (!m_in_drag || m_in_cube_move) return;
+    auto delta = glm::vec2(x, y) - m_drag_start;
     m_redraw = true;
     auto angles = delta / glm::vec2(m_width, m_height) * 360.0f;
     m_rot = glm::yawPitchRoll(glm::radians(angles.x), glm::radians(angles.y), 0.0f) * m_rot;
+    m_drag_start = glm::vec2(x, y);
 }
 
 void Scene::handleKeyPress(SceneKey key, bool inverse) {
@@ -232,19 +245,19 @@ void Scene::handleKeyPress(SceneKey key, bool inverse) {
         m_cube->execute_move(0, -1, inverse);
         break;
     case SceneKey::R:
-        m_cube->execute_move(0, 1, inverse);
+        m_cube->execute_move(0, 1, !inverse);
         break;
     case SceneKey::D:
         m_cube->execute_move(1, -1, inverse);
         break;
     case SceneKey::U:
-        m_cube->execute_move(1, 1, inverse);
+        m_cube->execute_move(1, 1, !inverse);
         break;
     case SceneKey::B:
         m_cube->execute_move(2, -1, inverse);
         break;
     case SceneKey::F:
-        m_cube->execute_move(2, 1, inverse);
+        m_cube->execute_move(2, 1, !inverse);
         break;
     case SceneKey::M:
         m_cube->execute_move(0, 0, inverse);
@@ -261,13 +274,65 @@ void Scene::handleKeyPress(SceneKey key, bool inverse) {
     }
 }
 
+void Scene::handleDragStart(int x, int y) {
+    m_in_drag = true;
+
+    glm::mat4 inverse_transform = glm::inverse(m_view * m_rot);
+    glm::mat4 inverse_proj = glm::inverse(m_proj);
+    glm::vec2 pos = glm::vec2(
+        ((float)x / (float)m_width - 0.5) * 2.0,
+        -((float)y / (float)m_height - 0.5) * 2.0
+    );
+    glm::vec4 orig = inverse_proj * glm::vec4(pos, -1, 1);
+    orig /= orig.w;
+    orig = inverse_transform * orig;
+    glm::vec4 dir = inverse_proj * glm::vec4(pos, 1, 1);
+    dir /= dir.w;
+    dir = inverse_transform * dir;
+    dir -= orig;
+    dir = glm::normalize(dir);
+    glm::vec3 c, p;
+
+    if (m_cube->intersect(orig, dir, c, p)) {
+        m_in_cube_move = true;
+        m_orig_1 = orig;
+        m_dir_1 = dir;
+    }
+    else {
+        m_drag_start = glm::vec2(x, y);
+    }
+}
+
+void Scene::handleDragStop(int x, int y) {
+    m_in_drag = false;
+    if (!m_in_cube_move) return;
+
+    glm::mat4 inverse_transform = glm::inverse(m_view * m_rot);
+    glm::mat4 inverse_proj = glm::inverse(m_proj);
+    glm::vec2 pos = glm::vec2(
+        ((float)x / (float)m_width - 0.5) * 2.0,
+        -((float)y / (float)m_height - 0.5) * 2.0
+    );
+    glm::vec4 orig = inverse_proj * glm::vec4(pos, -1, 1);
+    orig /= orig.w;
+    orig = inverse_transform * orig;
+    glm::vec4 dir = inverse_proj * glm::vec4(pos, 1, 1);
+    dir /= dir.w;
+    dir = inverse_transform * dir;
+    dir -= orig;
+    dir = glm::normalize(dir);
+    glm::vec3 c, p;
+
+    m_cube->execute_move_between_points(m_orig_1, m_dir_1, orig, dir);
+    m_in_cube_move = false;
+}
+
 #ifdef __ANDROID__
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_intcube_CubeGLRenderer_initScene(JNIEnv *env, jobject thiz, jint width,
                                                   jint height, jint size, jobject mgr) {
     s_mgr = AAssetManager_fromJava(env, mgr);
-    __android_log_print(ANDROID_LOG_DEBUG, "glsl", "SCREEN SIZE %d %d\n", width, height);
     initScene(width, height, size);
 }
 extern "C"
@@ -295,5 +360,15 @@ JNIEXPORT void JNICALL
 Java_com_example_intcube_CubeGLRenderer_executeMove(JNIEnv *env, jobject thiz, jint move,
                                                     jboolean inverse) {
     s_scene->handleKeyPress((SceneKey)move, inverse);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_intcube_CubeGLView_handleDragStart(JNIEnv *env, jobject thiz, jint x, jint y) {
+    s_scene->handleDragStart(x, y);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_intcube_CubeGLView_handleDragStop(JNIEnv *env, jobject thiz, jint x, jint y) {
+    s_scene->handleDragStop(x, y);
 }
 #endif

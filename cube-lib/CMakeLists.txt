@@ -5,10 +5,13 @@ project(cube LANGUAGES CXX C)
 #option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 
 include(FetchContent)
+
+if(NOT ANDROID)
 FetchContent_Declare(SFML
     GIT_REPOSITORY https://github.com/SFML/SFML.git
     GIT_TAG 2.6.x)
 FetchContent_MakeAvailable(SFML)
+endif()
 
 FetchContent_Declare(
 	glm
@@ -23,7 +26,7 @@ endif()
 
 include_directories(src/include)
 add_library(libcube SHARED src/axis_cube.cpp src/cube.cpp src/mesh.cpp src/scene.cpp src/gl_helpers.cpp src/gl.c)
-target_link_libraries(libcube PRIVATE glm::glm sfml-window)
+target_link_libraries(libcube PRIVATE glm::glm)
 if(ANDROID)
 	find_library(GLES-lib
 			GLESv3)
@@ -32,6 +35,8 @@ if(ANDROID)
 	find_library(log-lib
 			log)
 	target_link_libraries(libcube PRIVATE ${GLES-lib} ${android-lib} ${log-lib})
+else()
+    target_link_libraries(libcube PRIVATE sfml-window)
 endif()
 target_compile_features(libcube PRIVATE cxx_std_20)
 
@@ -39,6 +44,7 @@ if(BUILD_CUBE_APP)
     add_subdirectory(cube-app)
 endif()
 
+if(NOT ANDROID)
 add_custom_command(
         TARGET libcube
         COMMENT "Copy shader files"
@@ -47,3 +53,4 @@ add_custom_command(
         PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/src/simple_vertex.glsl $<TARGET_FILE_DIR:libcube>
         PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_SOURCE_DIR}/src/simple_fragment.glsl $<TARGET_FILE_DIR:libcube>
         VERBATIM)
+endif()

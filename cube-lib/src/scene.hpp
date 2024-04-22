@@ -23,6 +23,9 @@ extern "C" {
     void render();
     void handleMouseMovement(int x, int y);
     void handleKeyPress(SceneKey key, bool inverse);
+    void handleDragStart(int x, int y);
+    void handleDragStop(int x, int y);
+    void resize(int width, int height);
 }
 
 class Scene {
@@ -36,8 +39,11 @@ public:
     void resize(int width, int height);
     void changeCube(int type);
     void render();
-    void handleMouseMovement(glm::vec2 delta);
+    void handleMouseMovement(int x, int y);
     void handleKeyPress(SceneKey key, bool inverse);
+
+    void handleDragStart(int x, int y);
+    void handleDragStop(int x, int y);
 
 private:
     explicit Scene(int width, int height, int size);
@@ -49,6 +55,9 @@ private:
     glm::mat4 m_rot { 1.0 };
     int m_width, m_height;
     bool m_redraw { true };
+    bool m_in_drag { false }, m_in_cube_move { false };
+    glm::vec2 m_drag_start;
+    glm::vec3 m_orig_1, m_dir_1;
 
     Cube* m_cube;
 };
