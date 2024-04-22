@@ -14,6 +14,9 @@ enum class SceneKey {
     M,
     E,
     S,
+    X,
+    Y,
+    Z,
     Reset,
 };
 

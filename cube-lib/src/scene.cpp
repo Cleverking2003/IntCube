@@ -268,6 +268,15 @@ void Scene::handleKeyPress(SceneKey key, bool inverse) {
     case SceneKey::S:
         m_cube->execute_move(2, 0, !inverse);
         break;
+    case SceneKey::X:
+        m_cube->rotate_around_axis(0, inverse);
+        break;
+    case SceneKey::Y:
+        m_cube->rotate_around_axis(1, !inverse);
+        break;
+    case SceneKey::Z:
+        m_cube->rotate_around_axis(2, inverse);
+        break;
     case SceneKey::Reset:
         m_cube->reset();
         break;

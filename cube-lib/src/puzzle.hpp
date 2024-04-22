@@ -100,6 +100,50 @@ public:
         execute_move(index, c1[index], angle < 0);
     }
 
+    void rotate_around_axis(int axis, bool inverse) {
+        if (is_in_animation()) return;
+        auto mat = m_moves[axis];
+        auto [axis_vec, axis_part] = m_axes[axis];
+        if (inverse) axis_vec *= -1;
+        for (auto& [c, pos, orig_pos] : m_cubies) {
+            pos = mat * pos;
+            pos = glm::vec3(glm::round(pos.x), glm::round(pos.y), glm::round(pos.z));
+            c.play_rotate_animation(axis_vec, glm::half_pi<float>(), 200ms);
+        }
+    }
+
+    void apply_move(int axis, int coord, bool inverse) {
+        if (is_in_animation()) return;
+        auto coord_mat = m_moves[axis];
+        if (inverse)
+            coord_mat = glm::inverse(coord_mat);
+
+        auto [axis_vec, axis_part] = m_axes[axis];
+        if (inverse) axis_vec *= -1;
+
+        for (auto& [c, pos, orig_pos] : m_cubies) {
+
+            if (pos[axis] != coord) continue;
+
+            pos = coord_mat * pos;
+            pos = glm::vec3(glm::round(pos.x), glm::round(pos.y), glm::round(pos.z));
+
+            c.model_mat = glm::rotate(glm::mat4(1.0), glm::half_pi<float>(), axis_vec) * c.model_mat;
+        }
+    }
+
+    void apply_rot(int axis, bool inverse) {
+        if (is_in_animation()) return;
+        auto mat = m_moves[axis];
+        auto [axis_vec, axis_part] = m_axes[axis];
+        if (inverse) axis_vec *= -1;
+        for (auto& [c, pos, orig_pos] : m_cubies) {
+            pos = mat * pos;
+            pos = glm::vec3(glm::round(pos.x), glm::round(pos.y), glm::round(pos.z));
+            c.model_mat = glm::rotate(glm::mat4(1.0), glm::half_pi<float>(), axis_vec) * c.model_mat;
+        }
+    }
+
     std::array<std::pair<glm::vec3, int>, N> m_axes;
     std::array<glm::mat<N, N, float>, N> m_moves;
 

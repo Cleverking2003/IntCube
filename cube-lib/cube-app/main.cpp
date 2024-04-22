@@ -72,6 +72,15 @@ int main()
                 case sf::Keyboard::S:
                     handleKeyPress(SceneKey::S, inverse);
                     break;
+                case sf::Keyboard::X:
+                    handleKeyPress(SceneKey::X, inverse);
+                    break;
+                case sf::Keyboard::Y:
+                    handleKeyPress(SceneKey::Y, inverse);
+                    break;
+                case sf::Keyboard::Z:
+                    handleKeyPress(SceneKey::Z, inverse);
+                    break;
                 }
             }
         }
