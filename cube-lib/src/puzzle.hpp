@@ -82,30 +82,20 @@ public:
         if (c1 == c2) return;
 
         auto delta_c = c2 - c1;
-        int zero_count = 0, index = -1;
+        int index = -1;
+        float max_dist = 0;
         for (int i = 0; i < N; i++) {
-            if (delta_c[i] == 0) {
-                zero_count++;
+            if (delta_c[i] != 0) continue;
+            auto r1 = glm::vec3(0.0);
+            auto r2 = p1;
+            auto n = glm::cross(std::get<0>(m_axes[i]), p2 - p1);
+            float dist = glm::abs(glm::dot(n, (r2 - r1))) / n.length();
+            if (dist > max_dist) {
+                max_dist = dist;
                 index = i;
             }
         }
-
-        if (zero_count == 0) return;
-
-        if (zero_count == 2) {
-            float max_dist = 0;
-            for (int i = 0; i < N; i++) {
-                if (delta_c[i] != 0 && i != index) continue;
-                auto r1 = glm::vec3(0.0);
-                auto r2 = p1;
-                auto n = glm::cross(std::get<0>(m_axes[i]), p2 - p1);
-                float dist = glm::abs(glm::dot(n, (r2 - r1))) / n.length();
-                if (dist > max_dist) {
-                    max_dist = dist;
-                    index = i;
-                }
-            }
-        }
+        if (index == -1) return;
 
         auto angle = glm::orientedAngle(glm::normalize(c1), glm::normalize(c2), std::get<0>(m_axes[index]));
         execute_move(index, c1[index], angle < 0);
