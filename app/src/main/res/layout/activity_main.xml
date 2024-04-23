@@ -34,6 +34,18 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
+        android:id="@+id/buttonToScan"
+        android:layout_width="52dp"
+        android:layout_height="248dp"
+        android:layout_marginBottom="312dp"
+        android:onClick="startActivityScanSqr"
+        android:text="@string/textToScanButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.942"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
         android:id="@+id/buttonToGuide"
         android:layout_width="380dp"
         android:layout_height="57dp"

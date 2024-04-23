@@ -36,6 +36,9 @@
             android:name=".ScanColorActivity"
             android:exported="false" />
         <activity
+            android:name=".ScanColorSqrActivity"
+            android:exported="false" />
+        <activity
             android:name=".SelectColorsActivity"
             android:exported="false" />
         <activity

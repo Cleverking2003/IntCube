@@ -33,6 +33,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void startActivityScanSqr(View v){
+        Intent intent = new Intent(this, ScanColorSqrActivity.class);
+        startActivity(intent);
+    }
+
     public void startActivityGuide(View v){
         Intent intent = new Intent(this, GuideActivity.class);
         startActivity(intent);
