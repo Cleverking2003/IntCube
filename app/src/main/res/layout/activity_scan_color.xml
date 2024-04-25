@@ -89,7 +89,7 @@
         android:layout_height="100dp"
         android:layout_marginStart="70dp"
         android:layout_marginBottom="244dp"
-        android:src="@drawable/three_color_corner"
+        android:src="@drawable/one_color_corner"
         app:layout_constraintBottom_toBottomOf="@+id/tutorial1_activity_java_surface_view"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -110,6 +110,7 @@
         android:layout_height="100dp"
         android:layout_marginEnd="70dp"
         android:layout_marginBottom="244dp"
+        android:rotation="90"
         android:src="@drawable/one_color_corner"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -142,7 +143,8 @@
         android:layout_height="100dp"
         android:layout_marginStart="239dp"
         android:layout_marginBottom="160dp"
-        android:src="@drawable/one_color_edge_rda"
+        android:rotation="180"
+        android:src="@drawable/one_color_edge_lda"
         app:layout_constraintBottom_toBottomOf="@+id/tutorial1_activity_java_surface_view"
         app:layout_constraintStart_toStartOf="@+id/tutorial1_activity_java_surface_view" />
 
@@ -152,7 +154,8 @@
         android:layout_height="100dp"
         android:layout_marginEnd="70dp"
         android:layout_marginBottom="75dp"
-        android:src="@drawable/one_color_corner_fv"
+        android:rotation="180"
+        android:src="@drawable/one_color_corner"
         app:layout_constraintBottom_toBottomOf="@+id/tutorial1_activity_java_surface_view"
         app:layout_constraintEnd_toEndOf="@+id/tutorial1_activity_java_surface_view" />
 
@@ -162,8 +165,8 @@
         android:layout_height="100dp"
         android:layout_marginEnd="153dp"
         android:layout_marginBottom="75dp"
-        android:rotation="90"
-        android:src="@drawable/two_color_edge_rda"
+        android:rotation="270"
+        android:src="@drawable/two_color_edge_lda"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -173,7 +176,7 @@
         android:layout_height="100dp"
         android:layout_marginStart="70dp"
         android:layout_marginBottom="75dp"
-        android:rotation="180"
+        android:rotation="270"
         android:src="@drawable/one_color_corner"
         app:layout_constraintBottom_toBottomOf="@+id/tutorial1_activity_java_surface_view"
         app:layout_constraintStart_toStartOf="@+id/tutorial1_activity_java_surface_view" />

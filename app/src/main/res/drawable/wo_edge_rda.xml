@@ -6,20 +6,21 @@
     android:viewportWidth="180"
     android:viewportHeight="110">
     <path
-        android:pathData="M134 0L180 110H0V0h134Z">
+        android:pathData="M45 110L0 0h180v110H45Z">
         <aapt:attr name="android:fillColor">
             <gradient
                 android:type="linear"
-                android:startX="135"
-                android:startY="110.0"
-                android:endX="160"
-                android:endY="69.5">
+                android:startX="45"
+                android:startY="-2.4"
+                android:endX="18.5"
+                android:endY="41">
                 <item
                     android:color="#FFFFFFFF"
                     android:offset="0"/>
                 <item
-                    android:color="#FFFFFCFC"
+                    android:color="#FFFFFFFF"
                     android:offset="0.5"/>
+
                 <item
                     android:color="#FFFF7A00"
                     android:offset="0.5"/>
