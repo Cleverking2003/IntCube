@@ -81,7 +81,17 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
 
         mOpenCvCameraView.setCvCameraViewListener(this);
 
-
+        preview = new ImageView[]{
+                leftupcorner = findViewById(R.id.leftupcorner),
+                upedge = findViewById(R.id.upedge),
+                rightupcorner = findViewById(R.id.rightupcorner),
+                rightedge = findViewById(R.id.rightedge),
+                center = findViewById(R.id.center),
+                leftedge = findViewById(R.id.leftedge),
+                leftdowncorner = findViewById(R.id.leftdowncorner),
+                downedge = findViewById(R.id.downedge),
+                rightdowncorner = findViewById(R.id.rightdowncorner)
+        };
     }
 
     @Override
@@ -123,20 +133,6 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
     @Override
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         Mat mRgba = inputFrame.rgba();
-
-
-        preview = new ImageView[]{
-                leftupcorner = findViewById(R.id.leftupcorner),
-                upedge = findViewById(R.id.upedge),
-                rightupcorner = findViewById(R.id.rightupcorner),
-                rightedge = findViewById(R.id.rightedge),
-                center = findViewById(R.id.center),
-                leftedge = findViewById(R.id.leftedge),
-                leftdowncorner = findViewById(R.id.leftdowncorner),
-                downedge = findViewById(R.id.downedge),
-                rightdowncorner = findViewById(R.id.rightdowncorner)
-        };
-
 
         int w = mRgba.width();
         int h = mRgba.height();
@@ -209,26 +205,25 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
 
 
     public void ProcessingPreview(int i, Mat ROI, Mat lines){
-        runOnUiThread(new Runnable() {
-
-            @Override
-            public void run() {
-                if(i % 2 == 0){
-                    if(i == 4){
-                        preview[i].setImageResource(GetCenter(Get2Color(ROI).split("")));
-                    }
-                    if(lines.empty())
-                        preview[i].setImageResource(GetCorner(Get1Color(ROI)));
-                    else preview[i].setImageResource(GetCorner(Get2Color(ROI)));
-                }
-                else{
-                    if(lines.empty())
-                        preview[i].setImageResource(GetEdge(Get1Color(ROI)));
-                    else preview[i].setImageResource(GetEdge(Get2Color(ROI)));
-                }
-
+        if(i % 2 == 0){
+            if(i == 4){
+                ProcessingPreview2(i, GetCenter(Get2Color(ROI).split("")));
+                return;
             }
-        });
+            if(lines.empty())
+                ProcessingPreview2(i, GetCorner(Get1Color(ROI), i));
+            else ProcessingPreview2(i, GetCorner(Get2Color(ROI), i));
+        }
+        else{
+            if(lines.empty())
+                ProcessingPreview2(i, GetEdge(Get1Color(ROI)));
+            else ProcessingPreview2(i, GetEdge(Get2Color(ROI)));
+        }
+    }
+
+    public void ProcessingPreview2(int i, int resId)
+    {
+        runOnUiThread(() -> preview[i].setImageResource(resId));
     }
 
 
@@ -279,7 +274,7 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
         }
     }
 
-    public int GetCorner(String colors){
+    public int GetCorner(String colors, int index){
         /*
         @params colors: "WO" or "W"
          */
@@ -287,8 +282,9 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
             return Get2ColorCorner(colors.split(" "));
         }
         else{
-            return Get1ColorCorner(colors);
+            Get1ColorCorner(colors, index);
         }
+        return 1;
     }
 
 
@@ -341,21 +337,21 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
         return R.drawable.one_color_edge_lda;
     }
 
-    public int Get1ColorCorner(String color){
+    public void Get1ColorCorner(String color, int index){
         /*
         @params colors: "W"
          */
-        Drawable corner = ResourcesCompat.getDrawable(getResources(),
-                R.drawable.one_color_corner,null);
-        if (corner != null){
-        if(color.equals("W")) corner.setColorFilter(getColor(R.color.white), PorterDuff.Mode.MULTIPLY);
-        if(color.equals("B")) corner.setColorFilter(getColor(R.color.blue), PorterDuff.Mode.MULTIPLY);
-        if(color.equals("O")) corner.setColorFilter(getColor(R.color.orange), PorterDuff.Mode.MULTIPLY);
-        if(color.equals("Y")) corner.setColorFilter(getColor(R.color.yellow), PorterDuff.Mode.MULTIPLY);
-        if(color.equals("R")) corner.setColorFilter(getColor(R.color.red), PorterDuff.Mode.MULTIPLY);
-        if(color.equals("G")) corner.setColorFilter(getColor(R.color.green), PorterDuff.Mode.MULTIPLY);
+        if(index % 2 == 0){
+            if(index == 4) {
+                //
+            }
+            else preview[index].setColorFilter(getColor(R.color.orange),
+                    PorterDuff.Mode.MULTIPLY);
         }
-        return R.drawable.one_color_corner;
+        else{
+            preview[index].setColorFilter(getColor(R.color.orange),
+                    PorterDuff.Mode.MULTIPLY);
+        }
     }
 
     public int Get2ColorCorner(String[] colors){
