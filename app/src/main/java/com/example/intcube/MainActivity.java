@@ -52,4 +52,14 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, CubeActivity.class);
         startActivity(intent);
     }
+
+    public void startActivitySettings(View v){
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
+    public void startActivitySelectType(View v) {
+        Intent intent = new Intent(this, SelectTypeActivity.class);
+        startActivity(intent);
+    }
 }
