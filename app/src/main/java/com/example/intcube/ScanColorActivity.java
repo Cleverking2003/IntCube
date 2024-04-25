@@ -3,11 +3,6 @@ package com.example.intcube;
 
 import android.content.Intent;
 
-import android.graphics.BlurMaskFilter;
-import android.graphics.PorterDuff;
-import android.graphics.Shader;
-import android.graphics.drawable.Drawable;
-
 import android.os.Bundle;
 
 import android.util.Log;
@@ -21,7 +16,6 @@ import android.widget.Toast;
 
 
 import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 
 import org.opencv.android.CameraActivity;
@@ -35,7 +29,6 @@ import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
-import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 
@@ -49,10 +42,16 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
 
     private CameraBridgeViewBase mOpenCvCameraView;
 
-    private SeekBar threshold1, threshold2;
-    private ImageView leftupcorner, upedge, rightupcorner,
-            rightedge, center, leftedge,
-            leftdowncorner, downedge, rightdowncorner;
+    private ImageView leftupcorner;
+    private ImageView upedge;
+    private ImageView rightupcorner;
+    private ImageView rightedge;
+    private ImageView center;
+    private ImageView leftedge;
+    private ImageView leftdowncorner;
+    private ImageView rightdowncorner;
+
+    private ImageView downedge;
 
     private ImageView[] preview;
 
@@ -73,8 +72,8 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
 
         setContentView(R.layout.activity_scan_color);
 
-        threshold1 = findViewById(R.id.firstbar);
-        threshold2 = findViewById(R.id.secondbar);
+         SeekBar firstbar = findViewById(R.id.firstbar);
+         SeekBar secondbar = findViewById(R.id.secondbar);
 
 
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.tutorial1_activity_java_surface_view);
@@ -135,13 +134,6 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
     @Override
     public Mat onCameraFrame(CvCameraViewFrame inputFrame) {
         Mat mRgba = inputFrame.rgba();
-
-        int w = mRgba.width();
-        int h = mRgba.height();
-        double min = (double) Math.min(w, h);
-        double step = min * 0.15;
-        Point stepCenter = new Point(w * 0.5 - step * 0.5 - step, h * 0.5 - step * 0.5);
-        Rect[] rois = new Rect[9];
         Scalar[] scalars = new Scalar[9];
 
         scalars[0] = new Scalar(255, 255, 255);
@@ -154,29 +146,10 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
         scalars[7] = new Scalar(125, 125, 255);
         scalars[8] = new Scalar(255, 125, 125);
 
-        int index = 0;
-        for (int i = -1; i <= 1; i++) {
-            for (int j = 1; j >= -1; j--) {
-                Point pt1 = new Point(stepCenter.x + step * i, stepCenter.y + step * j);
-                Point pt2 = new Point(stepCenter.x + step + step * i, stepCenter.y + step + step * j);
-                Imgproc.rectangle(mRgba,
-                        pt1,
-                        pt2,
-                        Scalar.all(255.0));
-                //Imgproc.putText(mRgba, String.valueOf(index), pt1, 4, 2, scalars[index], 4);
-                pt1.x += 1; pt1.y += 1;
-                pt2.x -= 1; pt2.y -= 1;
-                rois[index] = new Rect(pt1, pt2);
-                index++;
-            }
-        }
+        Rect[] rois = DisplayGrid(mRgba);
 
-
-        Mat dsIMG = new Mat();
-        Mat usIMG = new Mat();
         for (int i = 0; i < 9; i++) {
-            Rect roi = rois[i];
-            Mat ROI = new Mat(mRgba, roi);
+            Mat ROI = new Mat(mRgba, rois[i]);
             Mat gray = new Mat();
             Imgproc.cvtColor(ROI, gray, Imgproc.COLOR_BGR2GRAY);
 
@@ -190,13 +163,14 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
             ProcessingPreview(i, ROI, lines);
 
 
-            for (int x = 0; x < lines.rows(); x++) {
+            // Отрисовка линий
+            for(int x = 0; x < lines.rows();x++){
                 double rho = lines.get(x, 0)[0],
                         theta = lines.get(x, 0)[1];
                 double a = Math.cos(theta), b = Math.sin(theta);
                 double x0 = a * rho, y0 = b * rho;
-                Point pt1 = new Point(roi.x + Math.round(x0 + 1000 * (-b)), roi.y + Math.round(y0 + 1000 * (a)));
-                Point pt2 = new Point(roi.x + Math.round(x0 - 1000 * (-b)), roi.y + Math.round(y0 - 1000 * (a)));
+                Point pt1 = new Point(rois[i].x + Math.round(x0 + 1000 * (-b)), rois[i].y + Math.round(y0 + 1000 * (a)));
+                Point pt2 = new Point(rois[i].x + Math.round(x0 - 1000 * (-b)), rois[i].y + Math.round(y0 - 1000 * (a)));
                 Imgproc.line(mRgba, pt1, pt2, scalars[i], 2, Imgproc.LINE_AA, 0);
                 break;
             }
@@ -205,30 +179,64 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
     }
 
 
+    public Rect[] DisplayGrid(Mat view){
+        Rect[] rois = new Rect[9];
+        int w = view.width();
+        int h = view.height();
+        double min = (double) Math.min(w, h);
+        double step = min * 0.15;
+        Point stepCenter = new Point(w * 0.5 - step * 0.5 - step, h * 0.5 - step * 0.5);
+        int index = 0;
+        for (int i = -1; i <= 1; i++) {
+            for (int j = 1; j >= -1; j--) {
+                Point pt1 = new Point(stepCenter.x + step * i, stepCenter.y + step * j);
+                Point pt2 = new Point(stepCenter.x + step + step * i, stepCenter.y + step + step * j);
+                Imgproc.rectangle(view,
+                        pt1,
+                        pt2,
+                        Scalar.all(255.0));
+                //Imgproc.putText(mRgba, String.valueOf(index), pt1, 4, 2, scalars[index], 4);
+                pt1.x += 1; pt1.y += 1;
+                pt2.x -= 1; pt2.y -= 1;
+                rois[index] = new Rect(pt1, pt2);
+                index++;
+            }
+        }
+        return rois;
+    }
+
+
     public void ProcessingPreview(int i, Mat ROI, Mat lines){
+        /*
+        * Функция вывода превью сканирования
+        *
+         */
         if(i % 2 == 0){
             if(i == 4){
-                runOnUiThread(() -> preview[i].setImageResource(GetCenter(Get2Color(ROI, lines).split("")))); //todo
+                runOnUiThread(() -> preview[i].setImageResource(
+                        GetCenter(Get2Color(ROI, lines).split("")))); //todo
                 return;
             }
             if(lines.empty())
                 runOnUiThread(() ->
                 {
                     preview[i].setImageResource(R.drawable.one_color_corner);
-                    DrawableCompat.setTint(preview[i].getDrawable(), ContextCompat.getColor(getApplicationContext(), getColor(ROI)));
+                    DrawableCompat.setTint(preview[i].getDrawable(),
+                            ContextCompat.getColor(getApplicationContext(), getColor(ROI)));
                 });
-            else runOnUiThread(() -> preview[i].setImageResource(Get2ColorsCorner(Get2Color(ROI, lines).split(""))));
+            else runOnUiThread(() -> preview[i].setImageResource(
+                    Get2ColorsCorner(Get2Color(ROI, lines).split(""))));
         }
         else{
             if(lines.empty())
                 runOnUiThread(() ->
                 {
                     preview[i].setImageResource(R.drawable.one_color_edge_lda);
-                    DrawableCompat.setTint(preview[i].getDrawable(), ContextCompat.getColor(getApplicationContext(), getColor(ROI)));
+                    DrawableCompat.setTint(preview[i].getDrawable(),
+                            ContextCompat.getColor(getApplicationContext(), getColor(ROI)));
                 });
             else runOnUiThread(() ->{
                 preview[i].setImageResource(Get2ColorsEdge(Get2Color(ROI, lines).split("")));
-                if(i == 2 || i == 6) preview[i].setRotation(90);
             });
         }
     }
