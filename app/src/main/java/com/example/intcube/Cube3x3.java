@@ -932,13 +932,13 @@ public class Cube3x3 {
 	public String finishWhiteLayer() {
 		String moves = new String();
 		moves+=insertCornersInU();
-		moves+="\n";
+//		moves+="\n";
 		String res = insertMisorientedCorners();
 		if (res.equals("Wrong cube")) {
 			return res;
 		}
 		moves+=res;
-		moves+="\n";
+//		moves+="\n";
 		long startTime = System.currentTimeMillis();
 		while(whiteCornerinU()) {
 			if (checkInfLoop(startTime)) return "Wrong cube";
@@ -947,13 +947,13 @@ public class Cube3x3 {
 				return res;
 			}
 			moves+=res;
-			moves+="\n";
+//			moves+="\n";
 			res = insertMisorientedCorners();
 			if (res.equals("Wrong cube")) {
 				return res;
 			}
 			moves+=res;
-			moves+="\n";
+//			moves+="\n";
 		}
 		return optimizeMoves(moves);
 	}
