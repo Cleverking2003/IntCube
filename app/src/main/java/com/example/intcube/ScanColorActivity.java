@@ -18,6 +18,7 @@ import android.widget.Toast;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 
+
 import org.opencv.android.CameraActivity;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.CameraBridgeViewBase.CvCameraViewFrame;
@@ -37,6 +38,32 @@ import java.util.Collections;
 import java.util.List;
 
 
+class RetValue{
+    private boolean isCorrectLine;
+    private Point pt1;
+    private Point pt2;
+
+    public boolean IsCorrect(){
+        return isCorrectLine;
+    }
+
+    public Point[] GetPoints(){
+        return new Point[]{pt1, pt2};
+    }
+
+    public RetValue(boolean result, Point firstPoint, Point secondPoint){
+        isCorrectLine = result;
+        pt1 = firstPoint;
+        pt2 = secondPoint;
+    }
+
+    public RetValue(boolean result){
+        isCorrectLine = result;
+        pt1 = new Point(0,0);
+        pt2 = new Point(0,0);
+    }
+}
+
 public class ScanColorActivity extends CameraActivity implements CvCameraViewListener2 {
     private static final String TAG = "OCVSample::Activity";
 
@@ -54,6 +81,8 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
     private ImageView downedge;
 
     private ImageView[] preview;
+
+    Rect[] rois;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -146,7 +175,7 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
         scalars[7] = new Scalar(125, 125, 255);
         scalars[8] = new Scalar(255, 125, 125);
 
-        Rect[] rois = DisplayGrid(mRgba);
+        rois = DisplayGrid(mRgba, scalars);
 
         for (int i = 0; i < 9; i++) {
             Mat ROI = new Mat(mRgba, rois[i]);
@@ -163,7 +192,7 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
             ProcessingPreview(i, ROI, lines);
 
 
-            // Отрисовка линий
+            //Отрисовка линий
             for(int x = 0; x < lines.rows();x++){
                 double rho = lines.get(x, 0)[0],
                         theta = lines.get(x, 0)[1];
@@ -179,7 +208,7 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
     }
 
 
-    public Rect[] DisplayGrid(Mat view){
+    public Rect[] DisplayGrid(Mat view, Scalar[] scalars){
         Rect[] rois = new Rect[9];
         int w = view.width();
         int h = view.height();
@@ -195,11 +224,30 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
                         pt1,
                         pt2,
                         Scalar.all(255.0));
-                //Imgproc.putText(mRgba, String.valueOf(index), pt1, 4, 2, scalars[index], 4);
+                Imgproc.putText(view, String.valueOf(index), pt1, 4, 2, scalars[index], 4);
                 pt1.x += 1; pt1.y += 1;
                 pt2.x -= 1; pt2.y -= 1;
                 rois[index] = new Rect(pt1, pt2);
                 index++;
+            }
+        }
+//        Определение pt1 в квадратиках
+        for (int i = 0; i < 9; i++) {
+            if (i == 0){
+                Point pt = new Point(rois[i].tl().x + rois[i].width, rois[i].tl().y);
+                Imgproc.circle(view, pt, 5, new Scalar(0, 255, 255),4);
+            }
+            if (i == 2){
+                Point pt = new Point(rois[i].tl().x + rois[i].width, rois[i].tl().y + rois[i].width);
+                Imgproc.circle(view, pt, 5, new Scalar(0, 255, 255),4);
+            }
+            if (i == 6){
+                Point pt = new Point(rois[i].tl().x, rois[i].tl().y);
+                Imgproc.circle(view, pt, 5, new Scalar(0, 255, 255),4);
+            }
+            if (i == 8){
+                Point pt = new Point(rois[i].tl().x, rois[i].tl().y + rois[i].width);
+                Imgproc.circle(view, pt, 5, new Scalar(0, 255, 255),4);
             }
         }
         return rois;
@@ -213,8 +261,9 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
          */
         if(i % 2 == 0){
             if(i == 4){
+                RetValue ret = IsCorrectline(ROI, lines, i);
                 runOnUiThread(() -> preview[i].setImageResource(
-                        GetCenter(Get2Color(ROI, lines).split("")))); //todo
+                        GetCenter(Get2Color(ROI, ret.GetPoints(), i))));
                 return;
             }
             if(lines.empty())
@@ -224,8 +273,11 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
                     DrawableCompat.setTint(preview[i].getDrawable(),
                             ContextCompat.getColor(getApplicationContext(), getColor(ROI)));
                 });
-            else runOnUiThread(() -> preview[i].setImageResource(
-                    Get2ColorsCorner(Get2Color(ROI, lines).split(""))));
+            else {
+                RetValue ret = IsCorrectline(ROI, lines, i);
+                if (ret.IsCorrect()) runOnUiThread(() -> preview[i].setImageResource(
+                        Get2ColorsCorner(Get2Color(ROI, ret.GetPoints(), i))));
+            }
         }
         else{
             if(lines.empty())
@@ -235,15 +287,102 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
                     DrawableCompat.setTint(preview[i].getDrawable(),
                             ContextCompat.getColor(getApplicationContext(), getColor(ROI)));
                 });
-            else runOnUiThread(() ->{
-                preview[i].setImageResource(Get2ColorsEdge(Get2Color(ROI, lines).split("")));
-            });
+            else {
+                RetValue ret = IsCorrectline(ROI, lines, i);
+                if (ret.IsCorrect()) runOnUiThread(() -> {
+                    preview[i].setImageResource(Get2ColorsEdge(Get2Color(ROI, ret.GetPoints(), i)));
+                });
+            }
         }
     }
 
 
-    public String Get2Color(Mat roi, Mat lines){
-        return "WR";
+    public RetValue IsCorrectline(Mat roi, Mat lines, int i){ //TODO сделать сравнение точки пересечения 2 прямых
+        Mat dst;
+        double minDistance = 400;
+        double distance1;
+        double distance2;
+        for(int x = 0; x < lines.rows();x++){
+            double rho = lines.get(x, 0)[0],
+                    theta = lines.get(x, 0)[1];
+            double a = Math.cos(theta), b = Math.sin(theta);
+            double x0 = a * rho, y0 = b * rho;
+            //Проблема в точках они выходят за рамки roi!!!
+            Point pt1 = new Point(rois[i].x + Math.round(x0 + 1000 * (-b)), rois[i].y + Math.round(y0 + 1000 * (a)));
+            Point pt2 = new Point(rois[i].x + Math.round(x0 - 1000 * (-b)), rois[i].y + Math.round(y0 - 1000 * (a)));
+            //Imgproc.line(mRgba, pt1, pt2, scalars[i], 2, Imgproc.LINE_AA, 0);
+            switch (i) {
+                case 0: {
+                    //Поиск расстояния для определения прямых являющихся деталями, а не рандомными прямыми
+                    distance1 = Math.sqrt(Math.pow(rois[i].tl().x - pt1.x + rois[i].width, 2)
+                            + Math.pow(rois[i].tl().y - pt1.y, 2));
+                    distance2 = Math.sqrt(Math.pow(rois[i].tl().x - pt2.x + rois[i].width, 2)
+                            + Math.pow(rois[i].tl().y - pt2.y, 2));
+                    minDistance = Math.min(distance1, distance2);
+                    Imgproc.circle(roi, new Point(rois[i].tl().x + rois[i].width, rois[i].tl().y), 5, new Scalar(0, 255, 255),4);
+                    break;
+                }
+                case 2: {
+                    distance1 = Math.sqrt(Math.pow(rois[i].tl().x
+                            + rois[i].width - pt1.x, 2) + Math.pow(rois[i].tl().y - pt1.y + rois[i].height, 2));
+                    distance2 = Math.sqrt(Math.pow(rois[i].tl().x
+                            + rois[i].width - pt2.x, 2) + Math.pow(rois[i].tl().y - pt2.y + rois[i].height, 2));
+                    minDistance = Math.min(distance1, distance2);
+                    Imgproc.circle(roi, new Point(rois[i].tl().x, rois[i].tl().y  + rois[i].width), 5, new Scalar(0, 255, 255),4);
+                    break;
+                }
+                case 6: {
+                    distance1 = Math.sqrt(Math.pow(rois[i].tl().x - pt1.x, 2)
+                            + Math.pow(rois[i].tl().y - pt1.y + rois[i].height, 2));
+                    distance2 = Math.sqrt(Math.pow(rois[i].tl().x - pt2.x, 2)
+                            + Math.pow(rois[i].tl().y - pt2.y + rois[i].height, 2));
+                    minDistance = Math.min(distance1, distance2);
+                    break;
+                }
+                case 8: {
+                    distance1 = Math.sqrt(Math.pow(rois[i].tl().x - pt1.x - rois[i].width, 2)
+                            + Math.pow(rois[i].tl().y - pt1.y + rois[i].height, 2));
+                    distance2 = Math.sqrt(Math.pow(rois[i].tl().x - pt2.x - rois[i].width, 2)
+                            + Math.pow(rois[i].tl().y - pt2.y + rois[i].height, 2));
+                    minDistance = Math.min(distance1, distance2);
+                    break;
+                }
+            }
+            if (minDistance > 900){
+                return new RetValue(false);
+            }
+            else{
+                return new RetValue(true, pt1, pt2);
+            }
+        }
+        return new RetValue(false);
+    }
+
+    public String[] Get2Color(Mat roi, Point[] pts, int i){
+        Point pt1 = pts[0];
+        Point pt2 = pts[1];
+        if(pt1.x == pt2.x & pt1.y == pt2.y) return new String[]{"W", "B"};
+        Point midpoint = GetMidPointInRoiByLine(i, pt1, pt2);
+        Point pt2subroi1 = new Point(rois[i].x - 1,
+                rois[i].y  - 1);
+        Point pt2subroi2 = new Point(rois[i].x + rois[i].width - 1,
+                rois[i].y + rois[i].width - 1);
+
+        Rect rect1 = new Rect(midpoint, pt2subroi1);
+        Rect rect2 = new Rect(midpoint, pt2subroi1);
+        Mat subroi1 = new Mat(roi, rect1);
+        Mat subroi2 = new Mat(roi, rect2);
+
+        return new String[]{ColorInterface(getColor(subroi1)), ColorInterface(getColor(subroi2))};
+
+    }
+
+    public Point GetMidPointInRoiByLine(int i, Point pt1, Point pt2){
+        double k = (pt2.y - pt1.y) / (pt2.x - pt1.x);
+        double b = ((pt1.x * (pt2.y - pt1.y)) / (pt2.x - pt1.y)) - pt1.x;
+        double x = (rois[i].tl().x + k*rois[i].tl().y - k*b) / (k*k+1);
+        double y = k*x + b;
+        return new Point(x, y);
     }
 
     public int GetCenter(String[] colors){
@@ -339,6 +478,25 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
             return R.color.white;
         }
         return R.color.white;
+    }
+
+    public String ColorInterface(int Rvalue){
+        switch (Rvalue)
+        {
+            case R.color.red:
+                return "R";
+            case R.color.green:
+                return "G";
+            case R.color.blue:
+                return "B";
+            case R.color.orange:
+                return "O";
+            case R.color.yellow:
+                return "Y";
+            case R.color.white:
+                return "W";
+        }
+        return "W";
     }
 
 
