@@ -7,18 +7,66 @@
     android:layout_height="match_parent"
     tools:context=".SolutionActivity">
 
+<!--    <com.google.android.material.appbar.AppBarLayout-->
+<!--        android:id="@+id/appBarLayout"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent">-->
+
+<!--        <com.google.android.material.appbar.MaterialToolbar-->
+<!--            android:id="@+id/topAppBar"-->
+<!--            style="@style/Widget.MaterialComponents.Toolbar.Primary"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="?attr/actionBarSize"-->
+<!--            app:menu="@menu/menu_moves"-->
+<!--            app:title="IntCube" />-->
+
+<!--    </com.google.android.material.appbar.AppBarLayout>-->
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/toggleGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginEnd="4dp"
+        app:checkedButton="@id/btn_full_desc"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:singleSelection="true">
+
+        <Button
+            android:id="@+id/btn_full_desc"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Полное описание" />
+
+        <Button
+            android:id="@+id/btn_lang_of_turns"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Язык вращений" />
+
+    </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <TextView
         android:id="@+id/stageText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="30dp"
         android:textAlignment="center"
         android:textSize="30sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/toggleGroup"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/toggleGroup" />
 
     <Button
         android:id="@+id/buttonPrev"
@@ -44,6 +92,8 @@
         android:id="@+id/moveText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="6dp"
         android:layout_marginBottom="176dp"
         android:textAlignment="center"
         android:textSize="25sp"

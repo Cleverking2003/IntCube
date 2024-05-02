@@ -12,6 +12,7 @@ import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class SolutionActivity extends AppCompatActivity {
 
@@ -19,9 +20,12 @@ public class SolutionActivity extends AppCompatActivity {
     TextView moveText;
     Button nextButton;
     Button prevButton;
+    Button fullDescription;
+    Button langOfTurns;
     static String solution;
     private int currentStep = 0;
     private String[] moves;
+    int flagMoves = 0;
     HashMap<String, String> movesAlternative = new HashMap<String, String>(Map.ofEntries(
             new AbstractMap.SimpleEntry<String, String>("R", "Поверните правую грань вверх"),
             new AbstractMap.SimpleEntry<String, String>("R'", "Поверните правую грань вниз"),
@@ -49,6 +53,8 @@ public class SolutionActivity extends AppCompatActivity {
         moveText = findViewById(R.id.moveText);
         nextButton = findViewById(R.id.buttonNext);
         prevButton = findViewById(R.id.buttonPrev);
+        fullDescription = findViewById(R.id.btn_full_desc);
+        langOfTurns = findViewById(R.id.btn_lang_of_turns);
         solve();
 
         moves = solution.trim().split("\\s+");
@@ -56,6 +62,8 @@ public class SolutionActivity extends AppCompatActivity {
         onNextStepClicked();
         nextButton.setOnClickListener(v -> onNextStepClicked());
         prevButton.setOnClickListener(v -> onPreviousStepClicked());
+        fullDescription.setOnClickListener(v -> onFullDescriptionClicked());
+        langOfTurns.setOnClickListener(v -> onLangOfTUrnsClicked());
     }
 
 
@@ -65,13 +73,7 @@ public class SolutionActivity extends AppCompatActivity {
         if (currentStep < moves.length - 1) {
             currentStep++;
             String currentMove = moves[currentStep];
-            if (currentMove.length() > 1 && currentMove.charAt(1) == '2') {
-                String text = movesAlternative.get(currentMove.substring(0,1)) + " дважды";
-                moveText.setText(text);
-            }
-            else {
-                moveText.setText(movesAlternative.get(currentMove));
-            }
+            setMove(currentMove);
             if (stages.containsValue(currentStep)) {
                 setStage(currentStep);
             }
@@ -83,17 +85,62 @@ public class SolutionActivity extends AppCompatActivity {
         if (currentStep > 1) {
             currentStep--;
             String currentMove = moves[currentStep];
-            if (currentMove.length() > 1 && currentMove.charAt(1) == '2') {
-                String text = movesAlternative.get(currentMove.substring(0,1)) + " дважды";
-                moveText.setText(text);
-            }
-            else {
-                moveText.setText(movesAlternative.get(currentMove));
-            }
+            setMove(currentMove);
             if (stages.containsValue(currentStep + 1)) {
                 setStage(currentStep);
             }
         }
+    }
+
+    private void setMove(String move) {
+        if (flagMoves == 1) {
+            moveText.setText(move);
+        }
+        else {
+            if (move.length() > 1 && move.charAt(1) == '2') {
+                String text = movesAlternative.get(move.substring(0,1)) + " дважды";
+                moveText.setText(text);
+            }
+            else {
+                moveText.setText(movesAlternative.get(move.substring(0,1)));
+            }
+        }
+    }
+
+    public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
+        for (Map.Entry<T, E> entry : map.entrySet()) {
+            if (Objects.equals(value, entry.getValue())) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
+    private void onLangOfTUrnsClicked() {
+        if (flagMoves != 1) {
+            flagMoves = 1;
+            String currentMove = moveText.getText().toString();
+            String sub = currentMove.substring(currentMove.length() - 6);
+            if (currentMove.substring(currentMove.length() - 6).equals("дважды")) {
+                currentMove = currentMove.substring(0, currentMove.length() - 7);
+                String moveInLangOfTurns = getKeyByValue(movesAlternative, currentMove);
+                String text = moveInLangOfTurns + "2";
+                setMove(text);
+            }
+            else {
+                String moveInLangOfTurns = getKeyByValue(movesAlternative, currentMove);
+                setMove(moveInLangOfTurns);
+            }
+        }
+    }
+
+    private void onFullDescriptionClicked() {
+        if (flagMoves != 0) {
+            flagMoves = 0;
+            String currentMove = moveText.getText().toString();
+            setMove(currentMove);
+        }
+
     }
 
     private void setStage(int currentStep) {
