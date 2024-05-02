@@ -189,9 +189,6 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
             Imgproc.HoughLines(dst, lines, 1, Math.PI / 180, 120);
             Imgproc.cvtColor(dst, cdst, Imgproc.COLOR_GRAY2BGR);
 
-            ProcessingPreview(i, ROI, lines);
-
-
             //Отрисовка линий
             for(int x = 0; x < lines.rows();x++){
                 double rho = lines.get(x, 0)[0],
@@ -203,6 +200,8 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
                 Imgproc.line(mRgba, pt1, pt2, scalars[i], 2, Imgproc.LINE_AA, 0);
                 break;
             }
+
+            ProcessingPreview(i, ROI, lines);
         }
         return mRgba;
     }
@@ -363,24 +362,34 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
         Point pt2 = pts[1];
         if(pt1.x == pt2.x & pt1.y == pt2.y) return new String[]{"W", "B"};
         Point midpoint = GetMidPointInRoiByLine(i, pt1, pt2);
-        Point pt2subroi1 = new Point(rois[i].x - 1,
-                rois[i].y  - 1);
-        Point pt2subroi2 = new Point(rois[i].x + rois[i].width - 1,
-                rois[i].y + rois[i].width - 1);
+        Point pt2subroi1 = new Point(0,
+                0);
+        Point pt2subroi2 = new Point(rois[i].width - 1,
+                rois[i].height - 1);
 
-        Rect rect1 = new Rect(midpoint, pt2subroi1);
-        Rect rect2 = new Rect(midpoint, pt2subroi1);
-        Mat subroi1 = new Mat(roi, rect1);
-        Mat subroi2 = new Mat(roi, rect2);
+        midpoint.x -= rois[i].x;
+        midpoint.y -= rois[i].y;
 
-        return new String[]{ColorInterface(getColor(subroi1)), ColorInterface(getColor(subroi2))};
+        if(midpoint.y > rois[i].y && midpoint.y < rois[i].y + rois[i].height &&
+                midpoint.x > rois[i].x && midpoint.x < rois[i].x + rois[i].width) {
+            Rect rect1 = new Rect(midpoint, pt2subroi1);
+            Rect rect2 = new Rect(midpoint, pt2subroi2);
+            Mat subroi = roi.clone();
+            Mat subroi1 = new Mat(roi, rect1);
+            Mat subroi2 = new Mat(roi, rect2);
 
+            return new String[]{ColorInterface(getColor(subroi1)), ColorInterface(getColor(subroi2))};
+        }
+        else
+        {
+            return new String[]{"W", "Y"};
+        }
     }
 
     public Point GetMidPointInRoiByLine(int i, Point pt1, Point pt2){
         double k = (pt2.y - pt1.y) / (pt2.x - pt1.x);
-        double b = ((pt1.x * (pt2.y - pt1.y)) / (pt2.x - pt1.y)) - pt1.x;
-        double x = (rois[i].tl().x + k*rois[i].tl().y - k*b) / (k*k+1);
+        double b = pt1.y - k*pt1.x;
+        double x = rois[i].tl().x + (double) rois[i].width / 2;
         double y = k*x + b;
         return new Point(x, y);
     }
