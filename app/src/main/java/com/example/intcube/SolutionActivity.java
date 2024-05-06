@@ -1,5 +1,6 @@
 package com.example.intcube;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -26,6 +27,7 @@ public class SolutionActivity extends AppCompatActivity {
     private int currentStep = 0;
     private String[] moves;
     int flagMoves = 0;
+    private CubeGLView cubeView;
     HashMap<String, String> movesAlternative = new HashMap<String, String>(Map.ofEntries(
             new AbstractMap.SimpleEntry<String, String>("R", "Поверните правую грань вверх"),
             new AbstractMap.SimpleEntry<String, String>("R'", "Поверните правую грань вниз"),
@@ -55,24 +57,65 @@ public class SolutionActivity extends AppCompatActivity {
         prevButton = findViewById(R.id.buttonPrev);
         fullDescription = findViewById(R.id.btn_full_desc);
         langOfTurns = findViewById(R.id.btn_lang_of_turns);
+        cubeView = findViewById(R.id.solutionCubeView);
         solve();
 
         moves = solution.trim().split("\\s+");
 
-        onNextStepClicked();
+//        onNextStepClicked();
+        setMove(moves[currentStep]);
+        if (stages.containsValue(currentStep)) {
+            setStage(currentStep);
+        }
         nextButton.setOnClickListener(v -> onNextStepClicked());
         prevButton.setOnClickListener(v -> onPreviousStepClicked());
         fullDescription.setOnClickListener(v -> onFullDescriptionClicked());
         langOfTurns.setOnClickListener(v -> onLangOfTUrnsClicked());
     }
 
-
-
+    private int moveToInt(char move) {
+        switch (move) {
+            case 'U':
+                return 0;
+            case 'D':
+                return 1;
+            case 'L':
+                return 2;
+            case 'R':
+                return 3;
+            case 'F':
+                return 4;
+            case 'B':
+                return 5;
+            case 'M':
+                return 6;
+            case 'E':
+                return 7;
+            case 'S':
+                return 8;
+            case 'x':
+                return 9;
+            case 'y':
+                return 10;
+            case 'z':
+                return 11;
+            default:
+                return 12;
+        }
+    }
 
     private void onNextStepClicked() {
         if (currentStep < moves.length - 1) {
-            currentStep++;
             String currentMove = moves[currentStep];
+            int move = moveToInt(currentMove.charAt(0));
+            boolean inverse = false;
+            if (currentMove.length() > 1 && currentMove.charAt(1) == '\'')
+                inverse = true;
+            cubeView.executeMove(move, inverse);
+            if (currentMove.length() > 1 && currentMove.charAt(1) == '2')
+                cubeView.executeMove(move, inverse);
+            currentStep++;
+            currentMove = moves[currentStep];
             setMove(currentMove);
             if (stages.containsValue(currentStep)) {
                 setStage(currentStep);
@@ -89,6 +132,13 @@ public class SolutionActivity extends AppCompatActivity {
             if (stages.containsValue(currentStep + 1)) {
                 setStage(currentStep);
             }
+            int move = moveToInt(currentMove.charAt(0));
+            boolean inverse = true;
+            if (currentMove.length() > 1 && currentMove.charAt(1) == '\'')
+                inverse = false;
+            cubeView.executeMove(move, inverse);
+            if (currentMove.length() > 1 && currentMove.charAt(1) == '2')
+                cubeView.executeMove(move, inverse);
         }
     }
 

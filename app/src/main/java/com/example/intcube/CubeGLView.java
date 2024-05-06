@@ -61,18 +61,35 @@ public class CubeGLView extends GLSurfaceView {
     }
     public class ExecuteMove implements Runnable {
         private int m_type;
-        public ExecuteMove(int type) {
+        private boolean m_inverse;
+        public ExecuteMove(int type, boolean inverse) {
             m_type = type;
+            m_inverse = inverse;
         }
         @Override
         public void run() {
-            renderer.executeMove(m_type, false);
+            renderer.executeMove(m_type, m_inverse);
+        }
+    }
+    public class ApplyMove implements Runnable {
+        private int m_type;
+        private boolean m_inverse;
+        public ApplyMove(int type, boolean inverse) {
+            m_type = type;
+            m_inverse = inverse;
+        }
+        @Override
+        public void run() {
+            renderer.applyMove(m_type, m_inverse);
         }
     }
     public void changeCube(int type) {
         queueEvent(new CreateCube(type));
     }
-    public void executeMove(int type) {
-        queueEvent(new ExecuteMove(type));
+    public void executeMove(int type, boolean inverse) {
+        queueEvent(new ExecuteMove(type, inverse));
+    }
+    public void applyMove(int type, boolean inverse) {
+        queueEvent(new ApplyMove(type, inverse));
     }
 }

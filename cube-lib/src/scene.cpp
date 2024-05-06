@@ -205,6 +205,11 @@ void Scene::changeCube(int type) {
 }
 
 void Scene::render() {
+    if (!m_cube->is_in_animation() && !move_queue.empty()) {
+        auto [move, inverse] = move_queue.front();
+        move_queue.pop();
+        handleKeyPress((SceneKey)move, inverse);
+    }
     if (m_redraw || m_cube->is_in_animation()) {
         m_redraw = false;
         glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);  
@@ -238,7 +243,8 @@ void Scene::handleMouseMovement(int x, int y) {
     m_drag_start = glm::vec2(x, y);
 }
 
-void Scene::handleKeyPress(SceneKey key, bool inverse) {
+bool Scene::handleKeyPress(SceneKey key, bool inverse) {
+    if (m_cube->is_in_animation() && key != SceneKey::Reset) return false;
     m_redraw = true;
     switch (key) {
     case SceneKey::L:
@@ -280,6 +286,52 @@ void Scene::handleKeyPress(SceneKey key, bool inverse) {
     case SceneKey::Reset:
         m_cube->reset();
         break;
+    }
+    return true;
+}
+
+void Scene::apply_move(SceneKey key, bool inverse) {
+    m_redraw = true;
+    switch (key) {
+        case SceneKey::L:
+            m_cube->apply_move(0, -1, inverse);
+            break;
+        case SceneKey::R:
+            m_cube->apply_move(0, 1, !inverse);
+            break;
+        case SceneKey::D:
+            m_cube->apply_move(1, -1, inverse);
+            break;
+        case SceneKey::U:
+            m_cube->apply_move(1, 1, !inverse);
+            break;
+        case SceneKey::B:
+            m_cube->apply_move(2, -1, inverse);
+            break;
+        case SceneKey::F:
+            m_cube->apply_move(2, 1, !inverse);
+            break;
+        case SceneKey::M:
+            m_cube->apply_move(0, 0, inverse);
+            break;
+        case SceneKey::E:
+            m_cube->apply_move(1, 0, inverse);
+            break;
+        case SceneKey::S:
+            m_cube->apply_move(2, 0, !inverse);
+            break;
+        case SceneKey::X:
+            m_cube->apply_rot(0, inverse);
+            break;
+        case SceneKey::Y:
+            m_cube->apply_rot(1, !inverse);
+            break;
+        case SceneKey::Z:
+            m_cube->apply_rot(2, inverse);
+            break;
+        case SceneKey::Reset:
+            m_cube->reset();
+            break;
     }
 }
 
@@ -368,7 +420,8 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_intcube_CubeGLRenderer_executeMove(JNIEnv *env, jobject thiz, jint move,
                                                     jboolean inverse) {
-    s_scene->handleKeyPress((SceneKey)move, inverse);
+    s_scene->move_queue.push({move, inverse});
+//    s_scene->handleKeyPress((SceneKey)move, inverse);
 }
 extern "C"
 JNIEXPORT void JNICALL
@@ -379,5 +432,11 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_intcube_CubeGLView_handleDragStop(JNIEnv *env, jobject thiz, jint x, jint y) {
     s_scene->handleDragStop(x, y);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_intcube_CubeGLRenderer_applyMove(JNIEnv *env, jobject thiz, jint move,
+                                                  jboolean inverse) {
+    s_scene->apply_move((SceneKey)move, inverse);
 }
 #endif

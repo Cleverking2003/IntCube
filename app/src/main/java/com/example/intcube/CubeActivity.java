@@ -27,6 +27,6 @@ public class CubeActivity extends AppCompatActivity {
     }
     public void moveReset(View view) {
         CubeGLView cube_view = findViewById(R.id.cubeGLView2);
-        cube_view.executeMove(9);
+        cube_view.executeMove(9, false);
     }
 }

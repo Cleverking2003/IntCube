@@ -3,6 +3,7 @@
 #include "cube.hpp"
 
 #include <glm/glm.hpp>
+#include <queue>
 
 enum class SceneKey {
     U,
@@ -43,10 +44,13 @@ public:
     void changeCube(int type);
     void render();
     void handleMouseMovement(int x, int y);
-    void handleKeyPress(SceneKey key, bool inverse);
+    bool handleKeyPress(SceneKey key, bool inverse);
+    void apply_move(SceneKey key, bool inverse);
 
     void handleDragStart(int x, int y);
     void handleDragStop(int x, int y);
+
+    std::queue<std::pair<int, bool>> move_queue;
 
 private:
     explicit Scene(int width, int height, int size);

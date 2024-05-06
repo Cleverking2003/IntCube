@@ -14,6 +14,7 @@ public class CubeGLRenderer implements GLSurfaceView.Renderer {
     public native void resize(int w, int h);
     public native void changeCube(int type);
     public native void executeMove(int move, boolean inverse);
+    public native void applyMove(int move, boolean inverse);
 
     private Context m_context;
 
@@ -25,7 +26,7 @@ public class CubeGLRenderer implements GLSurfaceView.Renderer {
     @Override
     public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
         GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        initScene(1000, 1000, 0, m_context.getAssets());
+        initScene(1000, 1000, 2, m_context.getAssets());
     }
 
     @Override

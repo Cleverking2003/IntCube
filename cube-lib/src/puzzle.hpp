@@ -105,6 +105,8 @@ public:
         auto mat = m_moves[axis];
         auto [axis_vec, axis_part] = m_axes[axis];
         if (inverse) axis_vec *= -1;
+        if (inverse)
+            mat = glm::inverse(mat);
         for (auto& [c, pos, orig_pos] : m_cubies) {
             pos = mat * pos;
             pos = glm::vec3(glm::round(pos.x), glm::round(pos.y), glm::round(pos.z));
