@@ -9,7 +9,7 @@
 
 
     <org.opencv.android.JavaCameraView
-        android:id="@+id/tutorial1_activity_java_surface_view"
+        android:id="@+id/CameraView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:visibility="visible"
@@ -90,7 +90,7 @@
         android:layout_marginStart="70dp"
         android:layout_marginBottom="244dp"
         android:src="@drawable/one_color_corner"
-        app:layout_constraintBottom_toBottomOf="@+id/tutorial1_activity_java_surface_view"
+        app:layout_constraintBottom_toBottomOf="@+id/CameraView"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
@@ -101,7 +101,7 @@
         android:layout_marginBottom="244dp"
         android:rotation="90"
         android:src="@drawable/two_color_edge_lda"
-        app:layout_constraintBottom_toBottomOf="@+id/tutorial1_activity_java_surface_view"
+        app:layout_constraintBottom_toBottomOf="@+id/CameraView"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageView
@@ -134,8 +134,8 @@
         android:layout_marginStart="70dp"
         android:layout_marginBottom="160dp"
         android:src="@drawable/one_color_edge_lda"
-        app:layout_constraintBottom_toBottomOf="@+id/tutorial1_activity_java_surface_view"
-        app:layout_constraintStart_toStartOf="@+id/tutorial1_activity_java_surface_view" />
+        app:layout_constraintBottom_toBottomOf="@+id/CameraView"
+        app:layout_constraintStart_toStartOf="@+id/CameraView" />
 
     <ImageView
         android:id="@+id/rightedge"
@@ -145,8 +145,8 @@
         android:layout_marginBottom="160dp"
         android:rotation="180"
         android:src="@drawable/one_color_edge_lda"
-        app:layout_constraintBottom_toBottomOf="@+id/tutorial1_activity_java_surface_view"
-        app:layout_constraintStart_toStartOf="@+id/tutorial1_activity_java_surface_view" />
+        app:layout_constraintBottom_toBottomOf="@+id/CameraView"
+        app:layout_constraintStart_toStartOf="@+id/CameraView" />
 
     <ImageView
         android:id="@+id/rightdowncorner"
@@ -156,8 +156,8 @@
         android:layout_marginBottom="75dp"
         android:rotation="180"
         android:src="@drawable/one_color_corner"
-        app:layout_constraintBottom_toBottomOf="@+id/tutorial1_activity_java_surface_view"
-        app:layout_constraintEnd_toEndOf="@+id/tutorial1_activity_java_surface_view" />
+        app:layout_constraintBottom_toBottomOf="@+id/CameraView"
+        app:layout_constraintEnd_toEndOf="@+id/CameraView" />
 
     <ImageView
         android:id="@+id/downedge"
@@ -178,7 +178,7 @@
         android:layout_marginBottom="75dp"
         android:rotation="270"
         android:src="@drawable/one_color_corner"
-        app:layout_constraintBottom_toBottomOf="@+id/tutorial1_activity_java_surface_view"
-        app:layout_constraintStart_toStartOf="@+id/tutorial1_activity_java_surface_view" />
+        app:layout_constraintBottom_toBottomOf="@+id/CameraView"
+        app:layout_constraintStart_toStartOf="@+id/CameraView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

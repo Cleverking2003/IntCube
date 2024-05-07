@@ -82,6 +82,9 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
 
     private ImageView[] preview;
 
+    private Scalar[] referenceColors;
+
+    private int[] colors;
     Rect[] rois;
 
     @Override
@@ -105,7 +108,7 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
          SeekBar secondbar = findViewById(R.id.secondbar);
 
 
-        mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.tutorial1_activity_java_surface_view);
+        mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.CameraView);
 
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
 
@@ -122,6 +125,28 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
                 downedge = findViewById(R.id.downedge),
                 rightdowncorner = findViewById(R.id.rightdowncorner)
         };
+
+        referenceColors = new Scalar[6];
+
+        referenceColors[0] = new Scalar(255, 255, 255); // Белый
+        referenceColors[1] = new Scalar(255, 255, 60); // Желтый
+
+        referenceColors[2] = new Scalar(255, 0, 0); // Красный
+        referenceColors[3] = new Scalar(255, 125, 0); // Оранжевый
+
+        referenceColors[4] = new Scalar(0, 0, 200); // Синий
+        referenceColors[5] = new Scalar(0, 255, 0); // Зеленый
+
+        colors = new int[6];
+
+        colors[0] = R.color.white;
+        colors[1] = R.color.yellow;
+        colors[2] = R.color.red;
+        colors[3] = R.color.orange;
+        colors[4] = R.color.blue;
+        colors[5] = R.color.green;
+
+
     }
 
     @Override
@@ -288,7 +313,8 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
                 });
             else {
                 RetValue ret = IsCorrectline(ROI, lines, i);
-                if (ret.IsCorrect()) runOnUiThread(() -> {
+                if (ret.IsCorrect())
+                    runOnUiThread(() -> {
                     preview[i].setImageResource(Get2ColorsEdge(Get2Color(ROI, ret.GetPoints(), i)));
                 });
             }
@@ -296,58 +322,39 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
     }
 
 
-    public RetValue IsCorrectline(Mat roi, Mat lines, int i){ //TODO сделать сравнение точки пересечения 2 прямых
+    public RetValue IsCorrectline(Mat roi, Mat lines, int i){
         Mat dst;
         double minDistance = 400;
         double distance1;
         double distance2;
-        for(int x = 0; x < lines.rows();x++){
+        boolean flag = false;
+        for(int x = 0; x < lines.rows(); x++){
             double rho = lines.get(x, 0)[0],
                     theta = lines.get(x, 0)[1];
             double a = Math.cos(theta), b = Math.sin(theta);
             double x0 = a * rho, y0 = b * rho;
-            //Проблема в точках они выходят за рамки roi!!!
             Point pt1 = new Point(rois[i].x + Math.round(x0 + 1000 * (-b)), rois[i].y + Math.round(y0 + 1000 * (a)));
             Point pt2 = new Point(rois[i].x + Math.round(x0 - 1000 * (-b)), rois[i].y + Math.round(y0 - 1000 * (a)));
-            //Imgproc.line(mRgba, pt1, pt2, scalars[i], 2, Imgproc.LINE_AA, 0);
+            double k = (pt2.y - pt1.y) / (pt2.x - pt1.x);
             switch (i) {
-                case 0: {
-                    //Поиск расстояния для определения прямых являющихся деталями, а не рандомными прямыми
-                    distance1 = Math.sqrt(Math.pow(rois[i].tl().x - pt1.x + rois[i].width, 2)
-                            + Math.pow(rois[i].tl().y - pt1.y, 2));
-                    distance2 = Math.sqrt(Math.pow(rois[i].tl().x - pt2.x + rois[i].width, 2)
-                            + Math.pow(rois[i].tl().y - pt2.y, 2));
-                    minDistance = Math.min(distance1, distance2);
-                    Imgproc.circle(roi, new Point(rois[i].tl().x + rois[i].width, rois[i].tl().y), 5, new Scalar(0, 255, 255),4);
-                    break;
-                }
-                case 2: {
-                    distance1 = Math.sqrt(Math.pow(rois[i].tl().x
-                            + rois[i].width - pt1.x, 2) + Math.pow(rois[i].tl().y - pt1.y + rois[i].height, 2));
-                    distance2 = Math.sqrt(Math.pow(rois[i].tl().x
-                            + rois[i].width - pt2.x, 2) + Math.pow(rois[i].tl().y - pt2.y + rois[i].height, 2));
-                    minDistance = Math.min(distance1, distance2);
-                    Imgproc.circle(roi, new Point(rois[i].tl().x, rois[i].tl().y  + rois[i].width), 5, new Scalar(0, 255, 255),4);
-                    break;
-                }
-                case 6: {
-                    distance1 = Math.sqrt(Math.pow(rois[i].tl().x - pt1.x, 2)
-                            + Math.pow(rois[i].tl().y - pt1.y + rois[i].height, 2));
-                    distance2 = Math.sqrt(Math.pow(rois[i].tl().x - pt2.x, 2)
-                            + Math.pow(rois[i].tl().y - pt2.y + rois[i].height, 2));
-                    minDistance = Math.min(distance1, distance2);
-                    break;
-                }
+                case 0:
                 case 8: {
-                    distance1 = Math.sqrt(Math.pow(rois[i].tl().x - pt1.x - rois[i].width, 2)
-                            + Math.pow(rois[i].tl().y - pt1.y + rois[i].height, 2));
-                    distance2 = Math.sqrt(Math.pow(rois[i].tl().x - pt2.x - rois[i].width, 2)
-                            + Math.pow(rois[i].tl().y - pt2.y + rois[i].height, 2));
-                    minDistance = Math.min(distance1, distance2);
+                    if(Double.compare(k,-1) == 0) flag = true;
                     break;
                 }
+                case 2:
+                case 6: {
+                    if(Double.compare(k,1) == 0) flag = true;
+                    break;
+                }
+                case 1:
+                case 7:
+                case 3:
+                case 5:
+                    flag = true;
+
             }
-            if (minDistance > 900){
+            if (!flag){
                 return new RetValue(false);
             }
             else{
@@ -472,21 +479,21 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
     }
 
     public int getColor(Mat roi) {
-        Scalar color = Core.mean(roi);
-        if (color.val[0] >= 100 && color.val[1] < 100 && color.val[2] < 100) {
-            return R.color.red;
-        } else if (color.val[0] < 100 && color.val[1] >= 100 && color.val[2] < 100) {
-            return R.color.green;
-        } else if (color.val[0] < 100 && color.val[1] < 100 && color.val[2] >= 50) {
-            return R.color.blue;
-        } else if (color.val[0] >= 150 && color.val[1] >= 170 && color.val[2] < 100) {
-            return R.color.yellow;
-        } else if (color.val[0] >= 150 && color.val[1] >= 80 && color.val[1]<=200  && color.val[2] < 100) {
-            return R.color.orange;
-        } else if (color.val[0] > 150 && color.val[1] > 150 && color.val[2] > 150) {
-            return R.color.white;
+        Scalar mean = Core.mean(roi);
+        double maxDiff = 999;
+        int bestColor = 0;
+        for (int j = 0; j < 6; j++) {
+            Scalar color = referenceColors[j];
+            double diff =
+                    Math.abs(color.val[0] - mean.val[0])
+                            + Math.abs(color.val[1] - mean.val[1])
+                            + Math.abs(color.val[2] - mean.val[2]);
+            if (diff < maxDiff) {
+                maxDiff = diff;
+                bestColor = j;
+            }
         }
-        return R.color.white;
+        return colors[bestColor];
     }
 
     public String ColorInterface(int Rvalue){
