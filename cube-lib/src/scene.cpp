@@ -97,7 +97,7 @@ static float quadVertices[] = {
 };
 
 Scene::Scene(int width, int height, int size)
-    : m_view(glm::translate(glm::mat4(1.0), glm::vec3(0.0, 0.0, -5.0))),
+    : m_view(glm::translate(glm::mat4(1.0), glm::vec3(0.0, 0.0, -4.0))),
     m_proj(glm::perspective(glm::radians(45.0f), (float)width/(float)height, 0.1f, 100.0f)),
     m_width(width), m_height(height) {
 
@@ -222,7 +222,7 @@ void Scene::render() {
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glClearColor(0, 0.5, 0.5, 1);
+    glClearColor(0, 0.5, 0.5, 0);
     glClear(GL_COLOR_BUFFER_BIT);
     glDisable(GL_DEPTH_TEST);
     glActiveTexture(GL_TEXTURE0);
