@@ -48,19 +48,6 @@
         tools:visibility="gone" />
 
     <Button
-        android:id="@+id/buttonBackToMain"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="BackActivityScanType"
-        android:text="@string/textBackButton"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.049"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.019" />
-
-    <Button
         android:id="@+id/buttonScanType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -76,7 +63,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="28dp"
-        android:onClick="StartActivitySolution"
+        android:onClick="startActivitySolution"
         android:text="@string/textToSolveButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -181,4 +168,14 @@
         app:layout_constraintBottom_toBottomOf="@+id/CameraView"
         app:layout_constraintStart_toStartOf="@+id/CameraView" />
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

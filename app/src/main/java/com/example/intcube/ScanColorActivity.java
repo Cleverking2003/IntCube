@@ -64,7 +64,7 @@ class RetValue{
     }
 }
 
-public class ScanColorActivity extends CameraActivity implements CvCameraViewListener2 {
+public class ScanColorActivity extends CameraActivity implements CvCameraViewListener2{
     private static final String TAG = "OCVSample::Activity";
 
     private CameraBridgeViewBase mOpenCvCameraView;
@@ -145,8 +145,6 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
         colors[3] = R.color.orange;
         colors[4] = R.color.blue;
         colors[5] = R.color.green;
-
-
     }
 
     @Override
@@ -200,7 +198,7 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
         scalars[7] = new Scalar(125, 125, 255);
         scalars[8] = new Scalar(255, 125, 125);
 
-        rois = DisplayGrid(mRgba, scalars);
+        rois = displayGrid(mRgba, scalars);
 
         for (int i = 0; i < 9; i++) {
             Mat ROI = new Mat(mRgba, rois[i]);
@@ -226,13 +224,13 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
                 break;
             }
 
-            ProcessingPreview(i, ROI, lines);
+            processingPreview(i, ROI, lines);
         }
         return mRgba;
     }
 
 
-    public Rect[] DisplayGrid(Mat view, Scalar[] scalars){
+    public Rect[] displayGrid(Mat view, Scalar[] scalars){
         Rect[] rois = new Rect[9];
         int w = view.width();
         int h = view.height();
@@ -278,16 +276,16 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
     }
 
 
-    public void ProcessingPreview(int i, Mat ROI, Mat lines){
+    public void processingPreview(int i, Mat ROI, Mat lines){
         /*
         * Функция вывода превью сканирования
         *
          */
         if(i % 2 == 0){
             if(i == 4){
-                RetValue ret = IsCorrectline(ROI, lines, i);
+                RetValue ret = isCorrectline(ROI, lines, i);
                 runOnUiThread(() -> preview[i].setImageResource(
-                        GetCenter(Get2Color(ROI, ret.GetPoints(), i))));
+                        GetCenter(get2Color(ROI, ret.GetPoints(), i))));
                 return;
             }
             if(lines.empty())
@@ -298,9 +296,9 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
                             ContextCompat.getColor(getApplicationContext(), getColor(ROI)));
                 });
             else {
-                RetValue ret = IsCorrectline(ROI, lines, i);
+                RetValue ret = isCorrectline(ROI, lines, i);
                 if (ret.IsCorrect()) runOnUiThread(() -> preview[i].setImageResource(
-                        Get2ColorsCorner(Get2Color(ROI, ret.GetPoints(), i))));
+                        Get2ColorsCorner(get2Color(ROI, ret.GetPoints(), i))));
             }
         }
         else{
@@ -312,17 +310,17 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
                             ContextCompat.getColor(getApplicationContext(), getColor(ROI)));
                 });
             else {
-                RetValue ret = IsCorrectline(ROI, lines, i);
+                RetValue ret = isCorrectline(ROI, lines, i);
                 if (ret.IsCorrect())
                     runOnUiThread(() -> {
-                    preview[i].setImageResource(Get2ColorsEdge(Get2Color(ROI, ret.GetPoints(), i)));
+                    preview[i].setImageResource(Get2ColorsEdge(get2Color(ROI, ret.GetPoints(), i)));
                 });
             }
         }
     }
 
 
-    public RetValue IsCorrectline(Mat roi, Mat lines, int i){
+    public RetValue isCorrectline(Mat roi, Mat lines, int i){
         Mat dst;
         double minDistance = 400;
         double distance1;
@@ -364,7 +362,7 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
         return new RetValue(false);
     }
 
-    public String[] Get2Color(Mat roi, Point[] pts, int i){
+    public String[] get2Color(Mat roi, Point[] pts, int i){
         Point pt1 = pts[0];
         Point pt2 = pts[1];
         if(pt1.x == pt2.x & pt1.y == pt2.y) return new String[]{"W", "B"};
@@ -385,7 +383,7 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
             Mat subroi1 = new Mat(roi, rect1);
             Mat subroi2 = new Mat(roi, rect2);
 
-            return new String[]{ColorInterface(getColor(subroi1)), ColorInterface(getColor(subroi2))};
+            return new String[]{colorInterface(getColor(subroi1)), colorInterface(getColor(subroi2))};
         }
         else
         {
@@ -496,7 +494,7 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
         return colors[bestColor];
     }
 
-    public String ColorInterface(int Rvalue){
+    public String colorInterface(int Rvalue){
         switch (Rvalue)
         {
             case R.color.red:
@@ -516,12 +514,12 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
     }
 
 
-    public void BackActivityScanType(View v){
+    public void backActivityScanType(View v){
         Intent intent = new Intent(this, ScanTypeActivity.class);
         startActivity(intent);
     }
 
-    public void StartActivitySolution(View v){
+    public void startActivitySolution(View v){
         Intent intent = new Intent(this, SolutionActivity.class);
         startActivity(intent);
     }
