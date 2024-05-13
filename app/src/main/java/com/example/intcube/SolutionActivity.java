@@ -71,6 +71,7 @@ public class SolutionActivity extends AppCompatActivity {
         prevButton.setOnClickListener(v -> onPreviousStepClicked());
         fullDescription.setOnClickListener(v -> onFullDescriptionClicked());
         langOfTurns.setOnClickListener(v -> onLangOfTUrnsClicked());
+        cubeView.disableTouch();
     }
 
     private int moveToInt(char move) {

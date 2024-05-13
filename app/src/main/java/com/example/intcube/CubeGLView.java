@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 public class CubeGLView extends GLSurfaceView {
 
     private CubeGLRenderer renderer;
+    private boolean mDisableTouch = false;
     public native void handleDragStart(int x, int y);
 
     public native void handleMouseMovement(int x, int y);
@@ -31,6 +32,7 @@ public class CubeGLView extends GLSurfaceView {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if (mDisableTouch) return true;
         float x = event.getX();
         float y = event.getY();
 
@@ -49,6 +51,9 @@ public class CubeGLView extends GLSurfaceView {
         return true;
     }
 
+    void disableTouch() {
+        mDisableTouch = true;
+    }
     public class CreateCube implements Runnable {
         private int m_type;
         public CreateCube(int type) {
