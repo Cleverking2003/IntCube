@@ -6,8 +6,8 @@
 
 #include "scene.hpp"
 
-const int screen_width = 800;
-const int screen_height = 600;
+const int screen_width = 1366;
+const int screen_height = 768;
 
 int main()
 {

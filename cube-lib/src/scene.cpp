@@ -214,7 +214,8 @@ void Scene::render() {
         m_redraw = false;
         glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);  
         glEnable(GL_DEPTH_TEST);
-        glClearColor(0, 0.1, 0.5, 1);
+//        glClearColor(0, 0.1, 0.5, 1);
+        glClearColor(1, 1, 1, 1);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         auto new_view = m_view * m_rot;
@@ -222,7 +223,7 @@ void Scene::render() {
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glClearColor(0, 0.5, 0.5, 0);
+    glClearColor(1, 1, 1, 1);
     glClear(GL_COLOR_BUFFER_BIT);
     glDisable(GL_DEPTH_TEST);
     glActiveTexture(GL_TEXTURE0);

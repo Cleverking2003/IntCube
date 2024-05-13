@@ -3,13 +3,20 @@ package com.example.intcube;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.ImageDecoder;
+import android.graphics.drawable.AnimatedImageDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.view.View;
+import android.widget.ImageView;
 
 import org.opencv.android.OpenCVLoader;
+
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,6 +33,20 @@ public class MainActivity extends AppCompatActivity {
         }
 
         System.loadLibrary("libcube");
+
+        ImageView image = findViewById(R.id.imageView);
+        ImageDecoder.Source src = ImageDecoder.createSource(getResources(), R.drawable.cube);
+        try {
+            @SuppressLint("WrongThread") Drawable draw = ImageDecoder.decodeDrawable(src);
+            image.setImageDrawable(draw);
+            if (draw instanceof AnimatedImageDrawable) {
+                ((AnimatedImageDrawable) draw).start();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
     }
 
     public void startActivityScan(View v){
