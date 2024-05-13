@@ -22,7 +22,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/buttonToScan"
+        android:id="@+id/buttonToScan1"
         android:layout_width="380dp"
         android:layout_height="57dp"
         android:layout_marginBottom="220dp"
@@ -34,7 +34,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/buttonToScan"
+        android:id="@+id/buttonToScan2"
         android:layout_width="52dp"
         android:layout_height="248dp"
         android:layout_marginBottom="312dp"

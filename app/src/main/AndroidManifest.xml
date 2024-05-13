@@ -27,6 +27,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.IntCube"
         tools:targetApi="31">
+        <activity android:name=".ScanColorsPresetActivity"
+            android:exported="false"/>
         <activity
             android:name=".CubeActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
