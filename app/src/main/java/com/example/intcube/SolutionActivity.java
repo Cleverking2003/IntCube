@@ -59,9 +59,17 @@ public class SolutionActivity extends AppCompatActivity {
         fullDescription = findViewById(R.id.btn_full_desc);
         langOfTurns = findViewById(R.id.btn_lang_of_turns);
         cubeView = findViewById(R.id.solutionCubeView);
-        solve();
 
+        Bundle extras = getIntent().getExtras();
+
+        assert extras != null;
+        int type = extras.getInt("type");
+        char[][][] colors = (char[][][]) extras.getSerializable("colors");
+
+        assert colors != null;
+        solve(type, colors);
         moves = solution.trim().split("\\s+");
+
 
 //        onNextStepClicked();
         setMove(moves[currentStep]);
@@ -74,15 +82,8 @@ public class SolutionActivity extends AppCompatActivity {
         langOfTurns.setOnClickListener(v -> onLangOfTUrnsClicked());
         cubeView.disableTouch();
 
-        Bundle extras = getIntent().getExtras();
-
-        assert extras != null;
-        int type = extras.getInt("type");
-        char[][][] colors = (char[][][]) extras.getSerializable("colors");
-
-        assert colors != null;
-        Cube3x3 cube = new Cube3x3(colors);
-        Log.i(getClass().toString(), solve3x3Cube(cube));
+//        Cube3x3 cube = new Cube3x3(colors);
+//        Log.i(getClass().toString(), solve3x3Cube(cube));
     }
 
     private int moveToInt(char move) {
@@ -164,7 +165,7 @@ public class SolutionActivity extends AppCompatActivity {
                 moveText.setText(text);
             }
             else {
-                moveText.setText(movesAlternative.get(move.substring(0,1)));
+                moveText.setText(movesAlternative.get(move));
             }
         }
     }
@@ -236,29 +237,19 @@ public class SolutionActivity extends AppCompatActivity {
      * Будет получать тип кубика и массив с отсканированными цветами
      * Будет возвращать строку для решения
      */
-    public void solve() {
-        String scramble = "R U ";
-        int type = 1;
-        if (type == 1) {
+    public void solve(int type, char[][][] colors) {
+        if (type == 0) {
             Cube2x2 cube2x2 = new Cube2x2();
-            cube2x2.performMoves(scramble);
             solution = solve2x2Cube(cube2x2);
         }
-        else if (type == 2) {
-            Cube3x3 cube3x3 = new Cube3x3(null); // TODO: почини!!!
+        else if (type == 1) {
+            Cube3x3 cube3x3 = new Cube3x3(colors);
             solution = solve3x3Cube(cube3x3);
         }
         else if (type == 3) {
             AxisCube axisCube = new AxisCube();
             solution = solveAxisCube(axisCube);
         }
-//        cube2x2.performMoves(scramble);
-//        cube3x3.performMoves(scramble);
-//        axisCube.performMoves(scramble);
-//        solution = solve3x3Cube(cube3x3);
-//        String solution2x2 = solve2x2Cube(cube2x2);
-//        String solution3x3 = solve3x3Cube(cube3x3);
-//        String solutionAxisCube = solveAxisCube(axisCube);
     }
 
 
@@ -301,9 +292,9 @@ public class SolutionActivity extends AppCompatActivity {
         }
         int numOfSteps1 = movesFinishBottomLayer.trim().split("\\s+").length;
         int numOfSteps2 = movesPutTopCorners.trim().split("\\s+").length + numOfSteps1;
-        stages.put("Сборка нижнего слоя", 1);
-        stages.put("Постановка верхних углов", numOfSteps1 + 1);
-        stages.put("Переворачивание углов", numOfSteps2 + 1);
+        stages.put("Сборка нижнего слоя", 0);
+        stages.put("Постановка верхних углов", numOfSteps1);
+        stages.put("Переворачивание углов", numOfSteps2);
         return solution;
     }
 
@@ -375,13 +366,13 @@ public class SolutionActivity extends AppCompatActivity {
         int numOfSteps4 = movesInsertAllEdges.trim().split("\\s+").length + numOfSteps3;
         int numOfSteps5 = movesMakeYellowCross.trim().split("\\s+").length + numOfSteps4;
         int numOfSteps6 = movesOrientLastLayer.trim().split("\\s+").length + numOfSteps5;
-        stages.put("Сборка ромашки", 1);
-        stages.put("Сборка белого креста", numOfSteps1 + 1);
-        stages.put("Сборка белого слоя", numOfSteps2 + 1);
-        stages.put("Сборка второго слоя", numOfSteps3 + 1);
-        stages.put("Сборка желтого креста", numOfSteps4 + 1);
-        stages.put("Ориентирование желтого креста", numOfSteps5 + 1);
-        stages.put("Постановка желтых углов", numOfSteps6 + 1);
+        stages.put("Сборка ромашки", 0);
+        stages.put("Сборка белого креста", numOfSteps1);
+        stages.put("Сборка белого слоя", numOfSteps2);
+        stages.put("Сборка второго слоя", numOfSteps3);
+        stages.put("Сборка желтого креста", numOfSteps4);
+        stages.put("Ориентирование желтого креста", numOfSteps5);
+        stages.put("Постановка желтых углов", numOfSteps6);
         return solution;
     }
 
@@ -469,15 +460,15 @@ public class SolutionActivity extends AppCompatActivity {
         int numOfSteps6 = movesYellowCross.trim().split("\\s+").length + numOfSteps5;
         int numOfSteps7 = movesOrientCross.trim().split("\\s+").length + numOfSteps6;
         int numOfSteps8 = movesOrientYellowCenter.trim().split("\\s+").length + numOfSteps7;
-        stages.put("Сборка ромашки", 1);
-        stages.put("Сборка белого креста", numOfSteps1 + 1);
-        stages.put("Сборка белого слоя", numOfSteps2 + 1);
-        stages.put("Поворот вертикальных углов", numOfSteps3 + 1);
-        stages.put("Сборка второго слоя", numOfSteps4 + 1);
-        stages.put("Сборка желтого креста", numOfSteps5 + 1);
-        stages.put("Ориентирование желтого креста", numOfSteps6 + 1);
-        stages.put("Ориентирование желтого центра", numOfSteps7 + 1);
-        stages.put("Постановка углов", numOfSteps8 + 1);
+        stages.put("Сборка ромашки", 0);
+        stages.put("Сборка белого креста", numOfSteps1);
+        stages.put("Сборка белого слоя", numOfSteps2);
+        stages.put("Поворот вертикальных углов", numOfSteps3);
+        stages.put("Сборка второго слоя", numOfSteps4);
+        stages.put("Сборка желтого креста", numOfSteps5);
+        stages.put("Ориентирование желтого креста", numOfSteps6);
+        stages.put("Ориентирование желтого центра", numOfSteps7);
+        stages.put("Постановка углов", numOfSteps8);
         return solution;
     }
 }
