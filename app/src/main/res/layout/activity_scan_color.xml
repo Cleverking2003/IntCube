@@ -22,53 +22,17 @@
         opencv:camera_id="any"
         opencv:show_fps="false" />
 
-    <SeekBar
-        android:id="@+id/secondbar"
-        android:layout_width="405dp"
-        android:layout_height="100dp"
-        android:layout_marginBottom="48dp"
-        android:max="255"
-        android:progress="128"
-        app:layout_constraintBottom_toTopOf="@+id/buttonScanType"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:visibility="gone" />
-
-    <SeekBar
-        android:id="@+id/firstbar"
-        android:layout_width="405dp"
-        android:layout_height="100dp"
-        android:layout_marginBottom="96dp"
-        android:max="255"
-        android:progress="40"
-        app:layout_constraintBottom_toTopOf="@+id/buttonScanType"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:visibility="gone" />
-
     <Button
         android:id="@+id/buttonScanType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="88dp"
+        android:onClick="scanSide"
         android:text="@string/textScanButton"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/buttonToScanColors"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.996" />
-
-    <Button
-        android:id="@+id/buttonToScanColors"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="28dp"
-        android:onClick="startActivitySolution"
-        android:text="@string/textToSolveButton"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.998" />
+        app:layout_constraintVertical_bias="0.973" />
 
     <ImageView
         android:id="@+id/leftupcorner"
@@ -112,6 +76,24 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/rightcenter"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="180dp"
+        android:src="@drawable/center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <ImageView
+        android:id="@+id/leftcenter"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="180dp"
+        android:src="@drawable/center"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
@@ -168,14 +150,4 @@
         app:layout_constraintBottom_toBottomOf="@+id/CameraView"
         app:layout_constraintStart_toStartOf="@+id/CameraView" />
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

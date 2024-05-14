@@ -1,6 +1,7 @@
 package com.example.intcube;
 
 
+import android.app.AlertDialog;
 import android.content.Intent;
 
 import android.os.Bundle;
@@ -80,12 +81,17 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
 
     private ImageView downedge;
 
+    ImageView leftcenter;
+    ImageView rightcenter;
+
     private ImageView[] preview;
 
     private Scalar[] referenceColors;
 
     private int[] colors;
     Rect[] rois;
+
+    int global_counter = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -104,15 +110,14 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
 
         setContentView(R.layout.activity_scan_color);
 
-         SeekBar firstbar = findViewById(R.id.firstbar);
-         SeekBar secondbar = findViewById(R.id.secondbar);
-
-
         mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.CameraView);
 
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
 
         mOpenCvCameraView.setCvCameraViewListener(this);
+
+        leftcenter = findViewById(R.id.leftcenter);
+        rightcenter = findViewById(R.id.rightcenter);
 
         preview = new ImageView[]{
                 leftupcorner = findViewById(R.id.leftupcorner),
@@ -145,6 +150,7 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
         colors[3] = R.color.orange;
         colors[4] = R.color.blue;
         colors[5] = R.color.green;
+        showDialog();
     }
 
     @Override
@@ -213,16 +219,16 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
             Imgproc.cvtColor(dst, cdst, Imgproc.COLOR_GRAY2BGR);
 
             //Отрисовка линий
-            for(int x = 0; x < lines.rows();x++){
-                double rho = lines.get(x, 0)[0],
-                        theta = lines.get(x, 0)[1];
-                double a = Math.cos(theta), b = Math.sin(theta);
-                double x0 = a * rho, y0 = b * rho;
-                Point pt1 = new Point(rois[i].x + Math.round(x0 + 1000 * (-b)), rois[i].y + Math.round(y0 + 1000 * (a)));
-                Point pt2 = new Point(rois[i].x + Math.round(x0 - 1000 * (-b)), rois[i].y + Math.round(y0 - 1000 * (a)));
-                Imgproc.line(mRgba, pt1, pt2, scalars[i], 2, Imgproc.LINE_AA, 0);
-                break;
-            }
+//            for(int x = 0; x < lines.rows();x++){
+//                double rho = lines.get(x, 0)[0],
+//                        theta = lines.get(x, 0)[1];
+//                double a = Math.cos(theta), b = Math.sin(theta);
+//                double x0 = a * rho, y0 = b * rho;
+//                Point pt1 = new Point(rois[i].x + Math.round(x0 + 1000 * (-b)), rois[i].y + Math.round(y0 + 1000 * (a)));
+//                Point pt2 = new Point(rois[i].x + Math.round(x0 - 1000 * (-b)), rois[i].y + Math.round(y0 - 1000 * (a)));
+//                Imgproc.line(mRgba, pt1, pt2, scalars[i], 2, Imgproc.LINE_AA, 0);
+//                break;
+//            }
 
             processingPreview(i, ROI, lines);
         }
@@ -246,7 +252,7 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
                         pt1,
                         pt2,
                         Scalar.all(255.0));
-                Imgproc.putText(view, String.valueOf(index), pt1, 4, 2, scalars[index], 4);
+                //Imgproc.putText(view, String.valueOf(index), pt1, 4, 2, scalars[index], 4);
                 pt1.x += 1; pt1.y += 1;
                 pt2.x -= 1; pt2.y -= 1;
                 rois[index] = new Rect(pt1, pt2);
@@ -254,24 +260,24 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
             }
         }
 //        Определение pt1 в квадратиках
-        for (int i = 0; i < 9; i++) {
-            if (i == 0){
-                Point pt = new Point(rois[i].tl().x + rois[i].width, rois[i].tl().y);
-                Imgproc.circle(view, pt, 5, new Scalar(0, 255, 255),4);
-            }
-            if (i == 2){
-                Point pt = new Point(rois[i].tl().x + rois[i].width, rois[i].tl().y + rois[i].width);
-                Imgproc.circle(view, pt, 5, new Scalar(0, 255, 255),4);
-            }
-            if (i == 6){
-                Point pt = new Point(rois[i].tl().x, rois[i].tl().y);
-                Imgproc.circle(view, pt, 5, new Scalar(0, 255, 255),4);
-            }
-            if (i == 8){
-                Point pt = new Point(rois[i].tl().x, rois[i].tl().y + rois[i].width);
-                Imgproc.circle(view, pt, 5, new Scalar(0, 255, 255),4);
-            }
-        }
+//        for (int i = 0; i < 9; i++) {
+//            if (i == 0){
+//                Point pt = new Point(rois[i].tl().x + rois[i].width, rois[i].tl().y);
+//                Imgproc.circle(view, pt, 5, new Scalar(0, 255, 255),4);
+//            }
+//            if (i == 2){
+//                Point pt = new Point(rois[i].tl().x + rois[i].width, rois[i].tl().y + rois[i].width);
+//                Imgproc.circle(view, pt, 5, new Scalar(0, 255, 255),4);
+//            }
+//            if (i == 6){
+//                Point pt = new Point(rois[i].tl().x, rois[i].tl().y);
+//                Imgproc.circle(view, pt, 5, new Scalar(0, 255, 255),4);
+//            }
+//            if (i == 8){
+//                Point pt = new Point(rois[i].tl().x, rois[i].tl().y + rois[i].width);
+//                Imgproc.circle(view, pt, 5, new Scalar(0, 255, 255),4);
+//            }
+//        }
         return rois;
     }
 
@@ -284,8 +290,12 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
         if(i % 2 == 0){
             if(i == 4){
                 RetValue ret = isCorrectline(ROI, lines, i);
-                runOnUiThread(() -> preview[i].setImageResource(
-                        GetCenter(get2Color(ROI, ret.GetPoints(), i))));
+                runOnUiThread(() -> {
+                    int[] centers = getCenter(global_counter);
+                    preview[i].setImageResource(centers[1]);
+                    leftcenter.setImageResource(centers[0]);
+                    rightcenter.setImageResource(centers[2]);
+                });
                 return;
             }
             if(lines.empty())
@@ -366,7 +376,7 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
         Point pt1 = pts[0];
         Point pt2 = pts[1];
         if(pt1.x == pt2.x & pt1.y == pt2.y) return new String[]{"W", "B"};
-        Point midpoint = GetMidPointInRoiByLine(i, pt1, pt2);
+        Point midpoint = getMidPointInRoiByLine(i, pt1, pt2);
         Point pt2subroi1 = new Point(0,
                 0);
         Point pt2subroi2 = new Point(rois[i].width - 1,
@@ -391,7 +401,8 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
         }
     }
 
-    public Point GetMidPointInRoiByLine(int i, Point pt1, Point pt2){
+    public Point getMidPointInRoiByLine(int i, Point pt1, Point pt2){
+        if(pt1.x == pt2.x) return new Point(pt1.x, pt1.y);
         double k = (pt2.y - pt1.y) / (pt2.x - pt1.x);
         double b = pt1.y - k*pt1.x;
         double x = rois[i].tl().x + (double) rois[i].width / 2;
@@ -399,30 +410,27 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
         return new Point(x, y);
     }
 
-    public int GetCenter(String[] colors){
+    public int[] getCenter(int counter){
         /*
         @params colors: ["W", "O"] or ["W"]
          */
-        List<String> listColors = Arrays.asList(colors);
-        if(listColors.contains("W") && listColors.contains("R")){
-            return R.drawable.wr_center;
+
+        switch(counter){
+            case 0:
+                return new int[]{R.drawable.by_center, R.drawable.wr_center, R.drawable.wg_center};
+            case 1:
+                return new int[]{R.drawable.wr_center, R.drawable.wg_center, R.drawable.yo_center};
+            case 2:
+                return new int[]{R.drawable.wg_center, R.drawable.yo_center, R.drawable.by_center};
+            case 3:
+                return new int[]{R.drawable.yo_center, R.drawable.by_center, R.drawable.wr_center};
+            case 4:
+                return new int[]{R.drawable.yo_center, R.drawable.rg_center, R.drawable.wr_center};
+            case 5:
+                return new int[]{R.drawable.yo_center, R.drawable.bo_center, R.drawable.wr_center};
+            default:
+                return new int[] {R.drawable.center, R.drawable.center, R.drawable.center};
         }
-        else if(listColors.contains("W") && listColors.contains("G")){
-            return R.drawable.wg_center;
-        }
-        else if(listColors.contains("R") && listColors.contains("G")){
-            return R.drawable.rg_center;
-        }
-        else if(listColors.contains("B") && listColors.contains("O")){
-            return R.drawable.bo_center;
-        }
-        else if(listColors.contains("B") && listColors.contains("Y")){
-            return R.drawable.by_center;
-        }
-        else if(listColors.contains("Y") && listColors.contains("O")){
-            return R.drawable.yo_center;
-        }
-        else return R.drawable.center;
     }
 
 
@@ -513,14 +521,35 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
         return "W";
     }
 
+    private void showDialog()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-    public void backActivityScanType(View v){
-        Intent intent = new Intent(this, ScanTypeActivity.class);
-        startActivity(intent);
+        builder.setTitle("Предупреждение");
+
+        builder.setMessage("Сканирование производится в полуручном режиме");
+
+        builder.setPositiveButton("Подтвердить", (dialog, id) -> closeContextMenu());
+
+        builder.setNeutralButton("Ручной ввод", (dialog, id) -> toManualinput());
+
+        AlertDialog dialog = builder.create();
+
+        dialog.show();
     }
 
-    public void startActivitySolution(View v){
-        Intent intent = new Intent(this, SolutionActivity.class);
+
+    public void scanSide(View v){
+        global_counter++;
+        //Intent intent = new Intent(this, ScanTypeActivity.class);
+        //startActivity(intent);
+    }
+
+    public void toManualinput(){
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
+    }
+    public void backScanType(View v){
+
     }
 }
