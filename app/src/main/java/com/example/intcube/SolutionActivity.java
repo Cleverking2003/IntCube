@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -72,6 +73,16 @@ public class SolutionActivity extends AppCompatActivity {
         fullDescription.setOnClickListener(v -> onFullDescriptionClicked());
         langOfTurns.setOnClickListener(v -> onLangOfTUrnsClicked());
         cubeView.disableTouch();
+
+        Bundle extras = getIntent().getExtras();
+
+        assert extras != null;
+        int type = extras.getInt("type");
+        char[][][] colors = (char[][][]) extras.getSerializable("colors");
+
+        assert colors != null;
+        Cube3x3 cube = new Cube3x3(colors);
+        Log.i(getClass().toString(), solve3x3Cube(cube));
     }
 
     private int moveToInt(char move) {
@@ -234,7 +245,7 @@ public class SolutionActivity extends AppCompatActivity {
             solution = solve2x2Cube(cube2x2);
         }
         else if (type == 2) {
-            Cube3x3 cube3x3 = new Cube3x3();
+            Cube3x3 cube3x3 = new Cube3x3(null); // TODO: почини!!!
             solution = solve3x3Cube(cube3x3);
         }
         else if (type == 3) {

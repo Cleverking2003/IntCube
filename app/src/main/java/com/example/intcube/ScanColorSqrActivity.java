@@ -3,16 +3,21 @@ package com.example.intcube;
 import static org.opencv.android.NativeCameraView.TAG;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -43,6 +48,7 @@ import java.util.List;
 
 public class ScanColorSqrActivity extends CameraActivity implements CvCameraViewListener2 {
 
+    private static final boolean DEBUG = false;
     private static final int CAMERA_PERMISSION_CODE = 100;
 
     private CameraBridgeViewBase mOpenCvCameraView;
@@ -58,8 +64,30 @@ public class ScanColorSqrActivity extends CameraActivity implements CvCameraView
     private SeekBar threshold1, threshold2, epsilon, minArea;
 
     private Scalar[] referenceColors;
+    private char[] referenceCodes;
     private boolean resultDialog = false;
 
+    private char[][][] colors;
+    private int sideIndex;
+
+    private String[] Stages = new String[] {
+            "Поверните кубик белым центром на себя, синем центром вверх",
+            "Поверните кубик вверх, синим центром на себя, жёлтым центром вверх",
+            "Поверните кубик вправо, красным центром на себя, жёлтым центром вверх",
+            "Поверните кубик вправо, зелёным центром на себя, жёлтым центром вверх",
+            "Поверните кубик вправо, оранжевым центром на себя, жёлтым центром вверх",
+            "Поверните кубик вверх, жёлтым центром на себя, красным центром вверх",
+            "",
+    };
+    private String[] StagesBar = new String[] {
+            "Отсканируйте сторону",
+            "Отсканировано 1 из 6 сторон",
+            "Отсканировано 2 из 6 сторон",
+            "Отсканировано 3 из 6 сторон",
+            "Отсканировано 4 из 6 сторон",
+            "Отсканировано 5 из 6 сторон",
+            "Отсканировано 6 из 6 сторон",
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,16 +118,24 @@ public class ScanColorSqrActivity extends CameraActivity implements CvCameraView
         minArea = findViewById(R.id.seekBar10);
 
         threshold1.setMax(250);
-        threshold1.setProgress(60);
+        threshold1.setProgress(40);
 
         threshold2.setMax(250);
-        threshold2.setProgress(40);
+        threshold2.setProgress(30);
 
         epsilon.setMax(500);
         epsilon.setProgress(250);
 
         minArea.setMax(1000);
         minArea.setProgress(500);
+
+        if (!DEBUG) {
+            threshold1.setVisibility(View.INVISIBLE);
+            threshold2.setVisibility(View.INVISIBLE);
+            epsilon.setVisibility(View.INVISIBLE);
+            minArea.setVisibility(View.INVISIBLE);
+            findViewById(R.id.matButton).setVisibility(View.INVISIBLE);
+        }
 
         bwIMG = new Mat();
         dsIMG = new Mat();
@@ -113,15 +149,36 @@ public class ScanColorSqrActivity extends CameraActivity implements CvCameraView
         approxCurve = new MatOfPoint2f();
 
         referenceColors = new Scalar[6];
+        referenceCodes = new char[6];
 
         referenceColors[0] = new Scalar(255, 255, 255); // Белый
-        referenceColors[1] = new Scalar(255, 255, 60); // Желтый
-
-        referenceColors[2] = new Scalar(255, 0, 0); // Красный
-        referenceColors[3] = new Scalar(255, 125, 0); // Оранжевый
-
+        referenceColors[1] = new Scalar(200, 255, 0); // Желтый
+        referenceColors[2] = new Scalar(200, 0, 0); // Красный
+        referenceColors[3] = new Scalar(255, 128, 0); // Оранжевый
         referenceColors[4] = new Scalar(0, 0, 200); // Синий
         referenceColors[5] = new Scalar(0, 255, 0); // Зеленый
+
+        referenceCodes[0] = 'W';
+        referenceCodes[1] = 'Y';
+        referenceCodes[2] = 'R';
+        referenceCodes[3] = 'O';
+        referenceCodes[4] = 'B';
+        referenceCodes[5] = 'G';
+
+        resetColors();
+    }
+
+    public void resetColors() {
+        colors = new char[6][3][3];
+        sideIndex = 0;
+        setProgress(0);
+    }
+
+    public void setScanProgress(int progress)
+    {
+        ((TextView)findViewById(R.id.tipText)).setText(Stages[progress]);
+        ((TextView)findViewById(R.id.scanBarText)).setText(StagesBar[progress]);
+        ((ProgressBar)findViewById(R.id.scanProgressBar)).setProgress(progress);
     }
 
     public void checkPermission(String permission, int requestCode)
@@ -187,31 +244,27 @@ public class ScanColorSqrActivity extends CameraActivity implements CvCameraView
 
     @Override
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
-
         Mat gray = inputFrame.gray();
         Mat dst = inputFrame.rgba();
 
-        int w = dst.width();
-        int h = dst.height();
-        double min = (double) Math.min(w, h);
-        double step = min * 0.15;
-        Point stepCenter = new Point(w * 0.5 - step * 0.5 - step, h * 0.5 - step * 0.5);
         Rect[] rois = new Rect[9];
+        List<MatOfPoint> squares = new ArrayList<>();
 
-        int index = 0;
-        for (int i = -1; i <= 1; i++) {
-            for (int j = 1; j >= -1; j--) {
-                Point pt1 = new Point(stepCenter.x + step * i, stepCenter.y + step * j);
-                Point pt2 = new Point(stepCenter.x + step + step * i, stepCenter.y + step + step * j);
-                Imgproc.rectangle(dst,
-                        pt1,
-                        pt2,
-                        Scalar.all(255.0));
-                rois[index] = new Rect(pt1, pt2);
-                index++;
-            }
-        }
+        updateRois(dst, rois);
+        updateScan(gray, dst, squares);
+        updateResult(rois, squares, dst);
 
+        return getMat(dst);
+    }
+
+    private Mat getMat(Mat dst) {
+        if (previewMatIndex == 0)
+            return dst;
+        else
+            return previewMats.get(previewMatIndex - 1);
+    }
+
+    private void updateScan(Mat gray, Mat dst, List<MatOfPoint> squares) {
         Imgproc.pyrDown(gray, dsIMG, new Size((double) gray.cols() / 2, (double) gray.rows() / 2));
         Imgproc.pyrUp(dsIMG, usIMG, gray.size());
 
@@ -226,9 +279,6 @@ public class ScanColorSqrActivity extends CameraActivity implements CvCameraView
 
         // RECT_TREE находит вложенные контуры
         Imgproc.findContours(cIMG, contours, hovIMG, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
-
-        List<MatOfPoint> squares = new ArrayList<>();
-        List<MatOfPoint> tris = new ArrayList<>();
 
         for (MatOfPoint cnt : contours) {
 
@@ -270,25 +320,42 @@ public class ScanColorSqrActivity extends CameraActivity implements CvCameraView
                 double mincos = cos.get(0);
                 double maxcos = cos.get(cos.size() - 1);
 
-
                 if (checkDistance(squares, cnt, 50)
                         && checkDistance(squares, cnt, 50)) {
                     setLabel(dst, r, mean, "Z");
                     squares.add(cnt);
                 }
             }
+        }
+    }
 
-            // Треугольники
-            if (numberVertices == 3) {
-                setLabel(dst, r, mean, "Y");
-                tris.add(cnt);
+    private static void updateRois(Mat dst, Rect[] rois) {
+        int w = dst.width();
+        int h = dst.height();
+        double min = (double) Math.min(w, h);
+        double step = min * 0.15;
+        Point stepCenter = new Point(w * 0.5 - step * 0.5 - step, h * 0.5 - step * 0.5);
+
+        int index = 0;
+        for (int i = -1; i <= 1; i++) {
+            for (int j = 1; j >= -1; j--) {
+                Point pt1 = new Point(stepCenter.x + step * i, stepCenter.y + step * j);
+                Point pt2 = new Point(stepCenter.x + step + step * i, stepCenter.y + step + step * j);
+                Imgproc.rectangle(dst,
+                        pt1,
+                        pt2,
+                        Scalar.all(255.0));
+                rois[index] = new Rect(pt1, pt2);
+                index++;
             }
         }
+    }
 
-        int[] colors = new int[9];
+    private void updateResult(Rect[] rois, List<MatOfPoint> squares, Mat dst) {
+        char[] sideColors = new char[9];
 
         for (int i = 0; i < 9; i++)
-            colors[i] = -1;
+            sideColors[i] = 0;
 
         for (int i = 0; i < 9; i++)
         {
@@ -308,39 +375,42 @@ public class ScanColorSqrActivity extends CameraActivity implements CvCameraView
                     Mat mask = new Mat(dst, r);
                     Scalar mean = Core.mean(mask);
 
-                    double maxDiff = 999;
-                    int bestColor = -1;
-                    for (int j = 0; j < 6; j++) {
+                    double maxDiff = 9999999;
+                    char bestColor = 0;
+                    for (int j = 0; j < 6; j++)
+                    {
                         Scalar color = referenceColors[j];
+                        char code = referenceCodes[j];
+
                         double diff =
-                                Math.abs(color.val[0] - mean.val[0])
-                                + Math.abs(color.val[1] - mean.val[1])
-                                + Math.abs(color.val[2] - mean.val[2]);
+                                Math.pow(Math.abs(color.val[0] - mean.val[0]), 2)
+                                        + Math.pow(Math.abs(color.val[1] - mean.val[1]), 2)
+                                        + Math.pow(Math.abs(color.val[2] - mean.val[2]), 2);
 
                         if (diff < maxDiff) {
                             maxDiff = diff;
-                            bestColor = j;
+                            bestColor = code;
                         }
                     }
 
-                    if (bestColor != -1) {
-                        colors[i] = bestColor;
+                    if (bestColor != 0) {
+                        sideColors[i] = bestColor;
                     }
 
                     break;
                 }
             }
 
-            if (colors[i] == -1)
+            if (sideColors[i] == 0)
                 break;
 
-            Scalar color = referenceColors[colors[i]];
-            Imgproc.putText(dst, String.valueOf(i), roi.tl(), 4, 2, color, 4);
+            if (DEBUG)
+                Imgproc.putText(dst, String.valueOf(sideColors[i]), roi.tl(), 4, 2, Scalar.all(255.0), 4);
         }
 
         boolean allFound = true;
-        for (int color : colors)
-            if (color == -1)
+        for (int color : sideColors)
+            if (color == 0)
             {
                 allFound = false;
                 break;
@@ -348,46 +418,34 @@ public class ScanColorSqrActivity extends CameraActivity implements CvCameraView
 
         if (allFound && !resultDialog) {
             resultDialog = true;
-            final int[] colorsCopy = Arrays.copyOf(colors, 9);
+            final char[] colorsCopy = Arrays.copyOf(sideColors, 9);
             runOnUiThread(() -> showResultDialog(colorsCopy));
         }
-
-        if (previewMatIndex == 0)
-            return dst;
-        else
-            return previewMats.get(previewMatIndex - 1);
     }
 
-    private void showResultDialog(int[] colors) {
+    @SuppressLint("SetTextI18n")
+    private void showResultDialog(char[] sideColors) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         builder.setTitle("Результат");
 
-        StringBuilder result = new StringBuilder();
+        Spanned result = createResultString(sideColors);
 
-        for (int i = 0; i < 9; i++) {
-            if (colors[i] == 0)
-                result.append('Б');
-            if (colors[i] == 1)
-                result.append('Ж');
-            if (colors[i] == 2)
-                result.append('К');
-            if (colors[i] == 3)
-                result.append('О');
-            if (colors[i] == 4)
-                result.append('С');
-            if (colors[i] == 5)
-                result.append('З');
+        builder.setMessage(result);
 
-            if (i == 2 || i == 5)
-                result.append('\n');
-        }
+        builder.setPositiveButton("Следующая сторона", (dialog, id) -> {
+            resultDialog = false;
 
-        builder.setMessage(result.toString());
+            applyColors(sideColors);
+            sideIndex++;
 
-        builder.setPositiveButton("Следующая сторона", (dialog, id) -> resultDialog = false);
+            setScanProgress(sideIndex);
 
-        builder.setNeutralButton("Ручной ввод", (dialog, id) -> resultDialog = false);
+            if (sideIndex == 6)
+                beginSolution();
+        }).setNeutralButton("Ручной ввод", (dialog, id) -> {
+            resultDialog = false;
+        });
 
         builder.setNegativeButton("Повторить попытку", (dialog, id) -> {
             resultDialog = false;
@@ -396,6 +454,57 @@ public class ScanColorSqrActivity extends CameraActivity implements CvCameraView
         AlertDialog dialog = builder.create();
 
         dialog.show();
+    }
+
+    private void beginSolution() {
+        Intent i = new Intent(ScanColorSqrActivity.this, SolutionActivity.class);
+        i.putExtra("type", 1);
+        i.putExtra("colors", colors);
+        startActivity(i);
+    }
+
+    private void applyColors(char[] sideColors)
+    {
+        char[][] side = colors[sideIndex];
+
+        side[0][0] = sideColors[0];
+        side[0][1] = sideColors[1];
+        side[0][2] = sideColors[2];
+
+        side[1][0] = sideColors[3];
+        side[1][1] = sideColors[4];
+        side[1][2] = sideColors[5];
+
+        side[2][0] = sideColors[6];
+        side[2][1] = sideColors[7];
+        side[2][2] = sideColors[8];
+
+        colors[sideIndex] = side;
+    }
+
+    @NonNull
+    private static Spanned createResultString(char[] colors) {
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 0; i < 9; i++) {
+            char color = colors[i];
+            if (color == 'W')
+                result.append("⬜");
+            if (color == 'R')
+                result.append("\uD83D\uDFE5");
+            if (color == 'B')
+                result.append("\uD83D\uDFE6");
+            if (color == 'Y')
+                result.append("\uD83D\uDFE8");
+            if (color == 'O')
+                result.append("\uD83D\uDFE7");
+            if (color == 'G')
+                result.append("\uD83D\uDFE9");
+
+            if (i == 2 || i == 5)
+                result.append("<br>");
+        }
+        return Html.fromHtml("<big>" + result.toString() + "</big>");
     }
 
     // Проверка на дистанцию между контурами
@@ -421,6 +530,8 @@ public class ScanColorSqrActivity extends CameraActivity implements CvCameraView
     }
 
     private void setLabel(Mat im, Rect r, Scalar color, String label) {
+        if (!DEBUG)
+            return;
         int fontface = 4;
         double scale = 3;//0.4;
         int thickness = 3;//1;

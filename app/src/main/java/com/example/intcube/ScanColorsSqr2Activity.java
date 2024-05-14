@@ -2,23 +2,22 @@ package com.example.intcube;
 
 import static org.opencv.android.NativeCameraView.TAG;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Looper;
+import android.text.Html;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.SeekBar;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import org.opencv.android.CameraActivity;
 import org.opencv.android.CameraBridgeViewBase;
@@ -35,14 +34,16 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 
-public class ScanTypeActivity extends CameraActivity implements CvCameraViewListener2 {
-    private static final boolean DEBUG = false;
+public class ScanColorsSqr2Activity extends CameraActivity implements CvCameraViewListener2 {
 
+    private static final boolean DEBUG = false;
     private static final int CAMERA_PERMISSION_CODE = 100;
 
     private CameraBridgeViewBase mOpenCvCameraView;
@@ -53,20 +54,21 @@ public class ScanTypeActivity extends CameraActivity implements CvCameraViewList
     private Mat cIMG;
     private Mat hovIMG;
     private MatOfPoint2f approxCurve;
-
     private ArrayList<Mat> previewMats;
     private int previewMatIndex;
-
     private SeekBar threshold1, threshold2, epsilon, minArea;
 
+    private Scalar[] referenceColors;
+    private char[] referenceCodes;
     private boolean resultDialog = false;
-    private LinkedList<Integer> rectCounts = new LinkedList<>();
-    private LinkedList<Integer> trisCounts = new LinkedList<>();
+
+    private char[][][] colors;
+    private int sideIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_scan_type);
+        setContentView(R.layout.activity_scan_color_sqr);
 
         if (OpenCVLoader.initLocal()) {
             Log.i(TAG, "OpenCV loaded successfully");
@@ -93,10 +95,10 @@ public class ScanTypeActivity extends CameraActivity implements CvCameraViewList
         minArea = findViewById(R.id.seekBar10);
 
         threshold1.setMax(250);
-        threshold1.setProgress(60);
+        threshold1.setProgress(40);
 
         threshold2.setMax(250);
-        threshold2.setProgress(40);
+        threshold2.setProgress(30);
 
         epsilon.setMax(500);
         epsilon.setProgress(250);
@@ -122,13 +124,37 @@ public class ScanTypeActivity extends CameraActivity implements CvCameraViewList
         previewMats.add(bwIMG);
 
         approxCurve = new MatOfPoint2f();
+
+        referenceColors = new Scalar[6];
+        referenceCodes = new char[6];
+
+        referenceColors[0] = new Scalar(255, 255, 255); // Белый
+        referenceColors[1] = new Scalar(200, 255, 0); // Желтый
+        referenceColors[2] = new Scalar(200, 0, 0); // Красный
+        referenceColors[3] = new Scalar(255, 128, 0); // Оранжевый
+        referenceColors[4] = new Scalar(0, 0, 200); // Синий
+        referenceColors[5] = new Scalar(0, 255, 0); // Зеленый
+
+        referenceCodes[0] = 'W';
+        referenceCodes[1] = 'Y';
+        referenceCodes[2] = 'R';
+        referenceCodes[3] = 'O';
+        referenceCodes[4] = 'B';
+        referenceCodes[5] = 'G';
+
+        resetColors();
+    }
+
+    public void resetColors() {
+        colors = new char[6][2][2];
+        sideIndex = 0;
     }
 
     public void checkPermission(String permission, int requestCode)
     {
-        if (ContextCompat.checkSelfPermission(ScanTypeActivity.this, permission) == PackageManager.PERMISSION_DENIED) {
+        if (ContextCompat.checkSelfPermission(ScanColorsSqr2Activity.this, permission) == PackageManager.PERMISSION_DENIED) {
             // Requesting the permission
-            ActivityCompat.requestPermissions(ScanTypeActivity.this, new String[] { permission }, requestCode);
+            ActivityCompat.requestPermissions(ScanColorsSqr2Activity.this, new String[] { permission }, requestCode);
         }
     }
 
@@ -143,9 +169,9 @@ public class ScanTypeActivity extends CameraActivity implements CvCameraViewList
 
         if (requestCode == CAMERA_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(ScanTypeActivity.this, "Camera Permission Granted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ScanColorsSqr2Activity.this, "Camera Permission Granted", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(ScanTypeActivity.this, "Для сканирования необходимо разрешение для использования камеры", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ScanColorsSqr2Activity.this, "Для сканирования необходимо разрешение для использования камеры", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -190,6 +216,24 @@ public class ScanTypeActivity extends CameraActivity implements CvCameraViewList
         Mat gray = inputFrame.gray();
         Mat dst = inputFrame.rgba();
 
+        Rect[] rois = new Rect[4];
+        List<MatOfPoint> squares = new ArrayList<>();
+
+        updateRois(dst, rois);
+        updateScan(gray, dst, squares);
+        updateResult(rois, squares, dst);
+
+        return getMat(dst);
+    }
+
+    private Mat getMat(Mat dst) {
+        if (previewMatIndex == 0)
+            return dst;
+        else
+            return previewMats.get(previewMatIndex - 1);
+    }
+
+    private void updateScan(Mat gray, Mat dst, List<MatOfPoint> squares) {
         Imgproc.pyrDown(gray, dsIMG, new Size((double) gray.cols() / 2, (double) gray.rows() / 2));
         Imgproc.pyrUp(dsIMG, usIMG, gray.size());
 
@@ -204,10 +248,6 @@ public class ScanTypeActivity extends CameraActivity implements CvCameraViewList
 
         // RECT_TREE находит вложенные контуры
         Imgproc.findContours(cIMG, contours, hovIMG, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_SIMPLE);
-
-        List<MatOfPoint> squares = new ArrayList<>();
-        List<MatOfPoint> quads = new ArrayList<>();
-        List<MatOfPoint> tris = new ArrayList<>();
 
         for (MatOfPoint cnt : contours) {
 
@@ -249,110 +289,131 @@ public class ScanTypeActivity extends CameraActivity implements CvCameraViewList
                 double mincos = cos.get(0);
                 double maxcos = cos.get(cos.size() - 1);
 
-                // Я добавил else чтобы отображать 4-х угольники аксис куба
-                if (mincos >= -0.1 && maxcos <= 0.3
-                        && checkDistance(quads, cnt, 50)
-                        && checkDistance(squares, cnt, 50)) {
-                    setLabel(dst, r, mean, "X");
-                    squares.add(cnt);
-                }
-                else if (checkDistance(quads, cnt, 50)
+                if (checkDistance(squares, cnt, 50)
                         && checkDistance(squares, cnt, 50)) {
                     setLabel(dst, r, mean, "Z");
-                    quads.add(cnt);
+                    squares.add(cnt);
+                }
+            }
+        }
+    }
+
+    private static void updateRois(Mat dst, Rect[] rois) {
+        int w = dst.width();
+        int h = dst.height();
+        double min = (double) Math.min(w, h);
+        double step = min * 0.15;
+        Point stepCenter = new Point(w * 0.5 - step * 0.5 - step, h * 0.5 - step * 0.5);
+
+        int index = 0;
+        for (int i = 0; i <= 1; i++) {
+            for (int j = 1; j >= 0; j--) {
+                Point pt1 = new Point(stepCenter.x + step * i, stepCenter.y + step * j);
+                Point pt2 = new Point(stepCenter.x + step + step * i, stepCenter.y + step + step * j);
+                Imgproc.rectangle(dst,
+                        pt1,
+                        pt2,
+                        Scalar.all(255.0));
+                rois[index] = new Rect(pt1, pt2);
+                index++;
+            }
+        }
+    }
+
+    private void updateResult(Rect[] rois, List<MatOfPoint> squares, Mat dst) {
+        char[] sideColors = new char[4];
+
+        for (int i = 0; i < 4; i++)
+            sideColors[i] = 0;
+
+        for (int i = 0; i < 4; i++)
+        {
+            Rect roi = rois[i];
+
+            for (MatOfPoint sqr : squares) {
+
+                Rect br = Imgproc.boundingRect(sqr);
+                Point center = new Point(br.x +  (double) br.width / 2, br.y + (double) br.height / 2);
+
+                if (roi.contains(center)) {
+                    Rect r = br.clone();
+                    r.x += r.width / 4;
+                    r.y += r.height / 4;
+                    r.width /= 2;
+                    r.height /= 2;
+                    Mat mask = new Mat(dst, r);
+                    Scalar mean = Core.mean(mask);
+
+                    double maxDiff = 9999999;
+                    char bestColor = 0;
+                    for (int j = 0; j < 6; j++)
+                    {
+                        Scalar color = referenceColors[j];
+                        char code = referenceCodes[j];
+
+                        double diff =
+                                Math.pow(Math.abs(color.val[0] - mean.val[0]), 2)
+                                        + Math.pow(Math.abs(color.val[1] - mean.val[1]), 2)
+                                        + Math.pow(Math.abs(color.val[2] - mean.val[2]), 2);
+
+                        if (diff < maxDiff) {
+                            maxDiff = diff;
+                            bestColor = code;
+                        }
+                    }
+
+                    if (bestColor != 0) {
+                        sideColors[i] = bestColor;
+                    }
+
+                    break;
                 }
             }
 
-            // Треугольники
-            if (numberVertices == 3) {
-                setLabel(dst, r, mean, "Y");
-                tris.add(cnt);
-            }
+            if (sideColors[i] == 0)
+                break;
+
+            Imgproc.putText(dst, String.valueOf(sideColors[i]), roi.tl(), 4, 2, Scalar.all(255.0), 4);
         }
 
-        final int AVG_COUNT = 10;
-
-        if (rectCounts.size() >= AVG_COUNT)
-            rectCounts.removeLast();
-        rectCounts.addFirst(quads.size() + squares.size());
-
-        if (trisCounts.size() >= AVG_COUNT)
-            trisCounts.removeLast();
-        trisCounts.addFirst(tris.size());
-
-        double rectsAvg = getAverage(rectCounts);
-        double trisAvg = getAverage(trisCounts);
-
-        if (isStable(rectCounts, rectsAvg, 5) && isStable(trisCounts, trisAvg, 15)){
-
-            int result = -1;
-            if (rectsAvg >= 3 && rectsAvg < 7 && trisAvg < 6)
-                result = 0;
-            if (rectsAvg >= 7 && rectsAvg < 13 && trisAvg < 6)
-                result = 1;
-            if (rectsAvg >= 13 && rectsAvg <= 18 && trisAvg < 6)
-                result = 2;
-            if (trisAvg >= 6)
-                result = 3;
-
-            Log.i("ScanTypeActivity", String.valueOf(resultDialog));
-
-            if (result != -1 && !resultDialog) {
-                resultDialog = true;
-                int finalResult = result;
-                runOnUiThread(() -> showResultDialog(finalResult));
-
+        boolean allFound = true;
+        for (int color : sideColors)
+            if (color == 0)
+            {
+                allFound = false;
+                break;
             }
+
+        if (allFound && !resultDialog) {
+            resultDialog = true;
+            final char[] colorsCopy = Arrays.copyOf(sideColors, 4);
+            runOnUiThread(() -> showResultDialog(colorsCopy));
         }
-
-        Log.i("ScanTypeActivity", rectsAvg + " rects, " + trisAvg + " tris.");
-
-        if (previewMatIndex == 0)
-            return dst;
-        else
-            return previewMats.get(previewMatIndex - 1);
     }
 
-    private void showResultDialog(int type)
-    {
+    private void showResultDialog(char[] sideColors) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         builder.setTitle("Результат");
 
-        if (type == 0)
-            builder.setMessage("Ваш кубик — 2 на 2.");
-        if (type == 1)
-            builder.setMessage("Ваш кубик — 3 на 3.");
-        if (type == 2)
-            builder.setMessage("Ваш кубик — 4 на 4.");
-        if (type == 3)
-            builder.setMessage("Ваш кубик — Аксис-куб.");
+        StringBuilder result = createResultString(sideColors);
 
-        builder.setPositiveButton("Подтвердить", (dialog, id) -> {
-            if (type == 0)
-            {
-                Intent i = new Intent(ScanTypeActivity.this, ScanColorsSqr2Activity.class);
-                startActivity(i);
-            } else if (type == 1)
-            {
-                Intent i = new Intent(ScanTypeActivity.this, ScanColorSqrActivity.class);
-                startActivity(i);
-            } else if (type == 2)
-            {
+        builder.setMessage(result.toString());
 
-            } else if (type == 3)
-            {
-                Intent i = new Intent(ScanTypeActivity.this, ScanColorActivity.class);
-                startActivity(i);
-            }
+        builder.setPositiveButton("Следующая сторона", (dialog, id) -> {
+            resultDialog = false;
+
+            applyColors(sideColors);
+            sideIndex++;
+
+            if (sideIndex == 6)
+                beginSolution();
+
+        }).setNeutralButton("Ручной ввод", (dialog, id) -> {
             resultDialog = false;
         });
 
-        builder.setNeutralButton("Ручной ввод", (dialog, id) -> resultDialog = false);
-
         builder.setNegativeButton("Повторить попытку", (dialog, id) -> {
-            rectCounts.clear();
-            trisCounts.clear();
             resultDialog = false;
         });
 
@@ -361,22 +422,43 @@ public class ScanTypeActivity extends CameraActivity implements CvCameraViewList
         dialog.show();
     }
 
-    private double getAverage(LinkedList<Integer> nums) {
-        double avg = 0;
-        for (int num : nums) {
-            avg += num;
-        }
-        if (!nums.isEmpty())
-            avg /= nums.size();
-        return avg;
+    private void beginSolution() {
+        Intent i = new Intent(ScanColorsSqr2Activity.this, SolutionActivity.class);
+        i.putExtra("type", 1);
+        i.putExtra("colors", colors);
+        startActivity(i);
     }
 
-    private boolean isStable(LinkedList<Integer> nums, double avg, double threshold) {
-        double diff = 0;
-        for (int num : nums) {
-            diff += Math.abs(avg - num);
+    private void applyColors(char[] sideColors)
+    {
+        char[][] side = colors[sideIndex];
+
+        side[0][0] = sideColors[0];
+        side[0][1] = sideColors[1];
+        side[0][2] = sideColors[2];
+
+        side[1][0] = sideColors[3];
+        side[1][1] = sideColors[4];
+        side[1][2] = sideColors[5];
+
+        side[2][0] = sideColors[6];
+        side[2][1] = sideColors[7];
+        side[2][2] = sideColors[8];
+
+        colors[sideIndex] = side;
+    }
+
+    @NonNull
+    private static StringBuilder createResultString(char[] colors) {
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 0; i < 4; i++) {
+            result.append(colors[i]);
+
+            if (i == 1)
+                result.append('\n');
         }
-        return diff < threshold;
+        return result;
     }
 
     // Проверка на дистанцию между контурами

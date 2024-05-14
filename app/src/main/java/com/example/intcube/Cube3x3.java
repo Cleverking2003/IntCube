@@ -12,79 +12,79 @@ public class Cube3x3 {
 	 * x, y, and z are zero-indexed.
 	 * The core of the cube is not an actual cubie, but is instantiated as one to prevent runtime error
 	 */
-	public Cube3x3() {
+	public Cube3x3(char[][][] colors) {
 		//Up, Front Row
 		cubiePos[0][0][0] = new Cubie(0,0,0,
-				new CubieColor[]{ new CubieColor('Y','U') , new CubieColor('R','L'), new CubieColor('G','F')}, true, false);
+				new CubieColor[]{ new CubieColor(colors[5][0][0],'U') , new CubieColor(colors[2][0][2],'L'), new CubieColor(colors[3][0][0],'F')}, true, false);
 		cubiePos[1][0][0] = new Cubie(1,0,0,
-				new CubieColor[]{ new CubieColor('Y','U') , new CubieColor('G','F')}, false, true);
+				new CubieColor[]{ new CubieColor(colors[5][1][0],'U') , new CubieColor(colors[3][0][1],'F')}, false, true);
 		cubiePos[2][0][0] = new Cubie(2,0,0,
-				new CubieColor[]{ new CubieColor('Y','U') , new CubieColor('G','F'), new CubieColor('O','R')}, true, false);
+				new CubieColor[]{ new CubieColor(colors[5][2][0],'U') , new CubieColor(colors[3][0][2],'F'), new CubieColor(colors[4][0][0],'R')}, true, false);
 
 		//Front, E Row
 		cubiePos[0][0][1] = new Cubie(0,0,1,
-				new CubieColor[]{ new CubieColor('R','L'), new CubieColor('G','F')}, false, true);
+				new CubieColor[]{ new CubieColor(colors[2][1][2],'L'), new CubieColor(colors[3][1][0],'F')}, false, true);
 		cubiePos[1][0][1] = new Cubie(1,0,1,
-				new CubieColor[]{ new CubieColor('G','F')}, false, false);
+				new CubieColor[]{ new CubieColor(colors[3][1][1],'F')}, false, false);
 		cubiePos[2][0][1] = new Cubie(2,0,1,
-				new CubieColor[]{ new CubieColor('G','F'), new CubieColor('O','R')}, false, true);
+				new CubieColor[]{ new CubieColor(colors[3][1][2],'F'), new CubieColor(colors[4][1][0],'R')}, false, true);
 
 		//Down, Front Row
 		cubiePos[0][0][2] = new Cubie(0,0,2,
-				new CubieColor[]{ new CubieColor('W','D') , new CubieColor('R','L'), new CubieColor('G','F')}, true, false);
+				new CubieColor[]{ new CubieColor(colors[0][2][2],'D') , new CubieColor(colors[2][2][2],'L'), new CubieColor(colors[3][2][0],'F')}, true, false);
 		cubiePos[1][0][2] = new Cubie(1,0,2,
-				new CubieColor[]{ new CubieColor('W','D') , new CubieColor('G','F')}, false, true);
+				new CubieColor[]{ new CubieColor(colors[0][2][1],'D') , new CubieColor(colors[3][2][1],'F')}, false, true);
 		cubiePos[2][0][2] = new Cubie(2,0,2,
-				new CubieColor[]{ new CubieColor('W','D') , new CubieColor('G','F'), new CubieColor('O','R')}, true, false);
+				new CubieColor[]{ new CubieColor(colors[0][2][0],'D') , new CubieColor(colors[3][2][2],'F'), new CubieColor(colors[4][2][0],'R')}, true, false);
 
 		//Up, S Row
 		cubiePos[0][1][0] = new Cubie(0,1,0,
-				new CubieColor[]{ new CubieColor('R','L'), new CubieColor('Y','U')}, false, true);
+				new CubieColor[]{ new CubieColor(colors[2][0][1],'L'), new CubieColor(colors[5][0][1],'U')}, false, true);
 		cubiePos[1][1][0] = new Cubie(1,1,0,
-				new CubieColor[]{ new CubieColor('Y','U')}, false, false);
+				new CubieColor[]{ new CubieColor(colors[5][1][1],'U')}, false, false);
 		cubiePos[2][1][0] = new Cubie(2,1,0,
-				new CubieColor[]{ new CubieColor('Y','U'), new CubieColor('O','R')}, false, true);
+				new CubieColor[]{ new CubieColor(colors[5][2][1],'U'), new CubieColor(colors[4][0][1],'R')}, false, true);
 
 		//E, S Row
 		cubiePos[0][1][1] = new Cubie(0,1,1,
-				new CubieColor[]{ new CubieColor('R','L')}, false, false);
+				new CubieColor[]{ new CubieColor(colors[2][1][1],'L')}, false, false);
 		cubiePos[1][1][1] = new Cubie(1,1,1,
 				new CubieColor[]{ new CubieColor('A','A')}, //Just giving random, non-legitimate values for color and direction
 				false, false);
 		cubiePos[2][1][1] = new Cubie(2,1,1,
-				new CubieColor[]{ new CubieColor('O','R')}, false, false);
+				new CubieColor[]{ new CubieColor(colors[4][1][1],'R')}, false, false);
 
 		//Down, S Row
 		cubiePos[0][1][2] = new Cubie(0,1,2,
-				new CubieColor[]{ new CubieColor('R','L'), new CubieColor('W','D')}, false, true);
+				new CubieColor[]{ new CubieColor(colors[2][2][1],'L'), new CubieColor(colors[0][1][2],'D')}, false, true);
 		cubiePos[1][1][2] = new Cubie(1,1,2,
-				new CubieColor[]{ new CubieColor('W','D')}, false, false);
+				new CubieColor[]{ new CubieColor(colors[0][1][1],'D')}, false, false);
 		cubiePos[2][1][2] = new Cubie(2,1,2,
-				new CubieColor[]{ new CubieColor('W','D'), new CubieColor('O','R')}, false, true);
+				new CubieColor[]{ new CubieColor(colors[0][1][0],'D'), new CubieColor(colors[4][2][1],'R')}, false, true);
 
 		//Up, Back Row
 		cubiePos[0][2][0] = new Cubie(0,2,0,
-				new CubieColor[]{ new CubieColor('Y','U') , new CubieColor('R','L'), new CubieColor('B','B')}, true, false);
+				new CubieColor[]{ new CubieColor(colors[5][0][2],'U') , new CubieColor(colors[2][0][0],'L'), new CubieColor(colors[1][0][2],'B')}, true, false);
 		cubiePos[1][2][0] = new Cubie(1,2,0,
-				new CubieColor[]{ new CubieColor('Y','U') , new CubieColor('B','B')}, false, true);
+				new CubieColor[]{ new CubieColor(colors[5][1][2],'U') , new CubieColor(colors[1][0][1],'B')}, false, true);
 		cubiePos[2][2][0] = new Cubie(2,2,0,
-				new CubieColor[]{ new CubieColor('Y','U') , new CubieColor('B','B'), new CubieColor('O','R')}, true, false);
+				new CubieColor[]{ new CubieColor(colors[5][2][2],'U') , new CubieColor(colors[1][0][0],'B'), new CubieColor(colors[4][0][2],'R')}, true, false);
 
 		//E, Back Row
 		cubiePos[0][2][1] = new Cubie(0,2,1,
-				new CubieColor[]{ new CubieColor('R','L'), new CubieColor('B','B')}, false, true);
+				new CubieColor[]{ new CubieColor(colors[2][1][0],'L'), new CubieColor(colors[1][1][2],'B')}, false, true);
 		cubiePos[1][2][1] = new Cubie(1,2,1,
-				new CubieColor[]{ new CubieColor('B','B')}, false, false);
+				new CubieColor[]{ new CubieColor(colors[1][1][1],'B')}, false, false);
 		cubiePos[2][2][1] = new Cubie(2,2,1,
-				new CubieColor[]{ new CubieColor('B','B'), new CubieColor('O','R')}, false, true);
+				new CubieColor[]{ new CubieColor(colors[1][1][0],'B'), new CubieColor(colors[4][1][2],'R')}, false, true);
 
 		//Down, Back Row
 		cubiePos[0][2][2] = new Cubie(0,2,2,
-				new CubieColor[]{ new CubieColor('W','D') , new CubieColor('R','L'), new CubieColor('B','B')}, true, false);
+				new CubieColor[]{ new CubieColor(colors[0][0][2],'D') , new CubieColor(colors[2][2][0],'L'), new CubieColor(colors[1][2][2],'B')}, true, false);
 		cubiePos[1][2][2] = new Cubie(1,2,2,
-				new CubieColor[]{ new CubieColor('W','D') , new CubieColor('B','B')}, false, true);
+				new CubieColor[]{ new CubieColor(colors[0][0][1],'D') , new CubieColor(colors[1][2][1],'B')}, false, true);
 		cubiePos[2][2][2] = new Cubie(2,2,2,
-				new CubieColor[]{ new CubieColor('W','D') , new CubieColor('B','B'), new CubieColor('O','R')}, true, false);
+				new CubieColor[]{ new CubieColor(colors[0][0][0],'D') , new CubieColor(colors[1][2][0],'B'), new CubieColor(colors[4][2][2],'R')}, true, false);
 	}
 
 	private boolean checkInfLoop(long startTime) {
@@ -1169,25 +1169,25 @@ public class Cube3x3 {
 			if ((cubiePos[0][0][1].getColorOfDir('F') != cubiePos[1][0][1].getColorOfDir('F')) ||
 					(cubiePos[0][0][1].getColorOfDir('L') != cubiePos[0][1][1].getColorOfDir('L'))) {
 				if (numYTurns == 1) {
-					return performMoves("y L' U' L U y' R U R' U' ");
+					return "y " + performMoves("L' U' L U y' R U R' U' ");
 				}
 				else if (numYTurns == 2) {
-					return performMoves("y2 L' U' L U y' R U R' U' ");
+					return "y2 " + performMoves("L' U' L U y' R U R' U' ");
 				}
 				else if (numYTurns == 3) {
-					return performMoves("y' L' U' L U y' R U R' U' ");
+					return "y' " + performMoves("L' U' L U y' R U R' U' ");
 				}
 			}
 			else if ((cubiePos[2][0][1].getColorOfDir('F') != cubiePos[1][0][1].getColorOfDir('F')) ||
 					(cubiePos[2][0][1].getColorOfDir('R') != cubiePos[2][1][1].getColorOfDir('R'))) {
 				if (numYTurns == 1) {
-					return performMoves("y R U R' U' y L' U' L U ");
+					return "y " + performMoves("R U R' U' y L' U' L U ");
 				}
 				else if (numYTurns == 2) {
-					return performMoves("y2 R U R' U' y L' U' L U ");
+					return "y2 " + performMoves("R U R' U' y L' U' L U ");
 				}
 				else if (numYTurns == 3) {
-					return performMoves("y' R U R' U' y L' U' L U ");
+					return "y' " + performMoves("R U R' U' y L' U' L U ");
 				}
 			}
 			performMoves("y ");
