@@ -1,9 +1,12 @@
 package com.example.intcube;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
+import androidx.preference.PreferenceManager;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 
@@ -14,6 +17,7 @@ public class GuideActivity extends AppCompatActivity {
         setContentView(R.layout.activity_guide);
 
         Toolbar toolbar = findViewById(R.id.guideToolbar);
+
         setSupportActionBar(toolbar);
         toolbar.setTitleTextColor(android.graphics.Color.WHITE);
         if (getSupportActionBar() != null) {
