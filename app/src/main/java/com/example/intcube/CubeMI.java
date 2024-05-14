@@ -119,9 +119,9 @@ class CubeMI{
         {put(Side.Front, "F");}
         {put(Side.Back, "B");}
     };
-    private Map<String, Corner> Corners = new HashMap<>();
-    private Map<String, Edges> Edges = new HashMap<>();
-    private Map<String, Centers> Centers = new HashMap<>();
+    public static Map<String, Corner> Corners = new HashMap<>();
+    public static Map<String, Edges> Edges = new HashMap<>();
+    public static Map<String, Centers> Centers = new HashMap<>();
 
     public CubeMI(int size) {
         Size = size;
@@ -133,12 +133,12 @@ class CubeMI{
         String[] locationsEdges = new String[]{ "FL", "FU", "FR", "FD", "BL", "BU", "BR", "BD", "RU", "RD", "LU", "LD" };
         String[] nameSides = new String[]{ "F", "R", "B", "L", "U", "D" };
         HashMap<String, Integer> centresColors = new HashMap<String, Integer>(){
-            {put("F", Color.RED);}
-            {put("R", Color.BLUE);}
-            {put("B", Color.parseColor("#FFA500"));}
-            {put("L", Color.GREEN);}
-            {put("U", Color.WHITE);}
-            {put("D", Color.YELLOW);}
+            {put("F", Color.WHITE);}
+            {put("R", Color.RED);}
+            {put("B", Color.YELLOW);}
+            {put("L", Color.parseColor("#FFA500"));}
+            {put("U", Color.BLUE);}
+            {put("D", Color.GREEN);}
         };
         HashMap<String, String[]> centresOrientation = new HashMap<String, String[]>(){
             {put("F", new String[]{ "L", "U", "R", "D" });}
@@ -283,7 +283,7 @@ class CubeMI{
         }
     }
 
-    private String getSortedString(String source){
+    public String getSortedString(String source){
         char[] chars = source.toCharArray();
         Arrays.sort(chars);
         return new String(chars);
