@@ -2,6 +2,8 @@ package com.example.intcube;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -13,6 +15,12 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+
+        String[] languages = {"Ru", "En"};
+        Spinner spinner = findViewById(R.id.langSpinner);
+        ArrayAdapter<String> adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, languages);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
 
         SwitchCompat themeSwitch = findViewById(R.id.themeSwitch);
         Toolbar toolbar = findViewById(R.id.guideToolbar);

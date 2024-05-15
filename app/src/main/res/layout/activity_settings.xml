@@ -22,14 +22,25 @@
         android:id="@+id/themeSwitch"
         android:layout_width="150dp"
         android:layout_height="40dp"
-        android:text="Тема:"
-        android:textOff="Светлая"
-        android:textOn="Темная"
+        android:text="Темная тема:"
+        android:textOff="OFF"
+        android:textOn="ON"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.051"
+        app:layout_constraintHorizontal_bias="0.061"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/guideToolbar"
-        app:layout_constraintVertical_bias="0.031" />
+        app:layout_constraintVertical_bias="0.023" />
+
+    <Spinner
+        android:id="@+id/langSpinner"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.061"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/themeSwitch"
+        app:layout_constraintVertical_bias="0.029" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

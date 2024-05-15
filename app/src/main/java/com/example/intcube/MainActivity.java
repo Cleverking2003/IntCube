@@ -5,16 +5,20 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.ImageDecoder;
 import android.graphics.drawable.AnimatedImageDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import org.opencv.android.OpenCVLoader;
 
@@ -27,6 +31,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        int currentNightMode = getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
+            TextView logo = findViewById(R.id.textTitle);
+            ImageButton helpButton = findViewById(R.id.buttonToHelp);
+            ImageButton settingsButton = findViewById(R.id.buttonToSettings);
+
+            int whiteColor = getResources().getColor(R.color.white,  null);
+            logo.setTextColor(whiteColor);
+            helpButton.setColorFilter(Color.argb(255, 255, 255, 255));
+            settingsButton.setColorFilter(Color.argb(255, 255, 255, 255));
+        }
 
         if (OpenCVLoader.initLocal()){
             Log.d("LOADED", "success");
@@ -48,10 +64,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        settings = findViewById(R.id.buttonToSettings);
-        settings.setColorFilter(Color.BLACK);
-
     }
 
     public void startActivityScan(View v){
