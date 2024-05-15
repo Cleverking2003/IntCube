@@ -450,6 +450,9 @@ public class ScanColorsSqr2Activity extends CameraActivity implements CvCameraVi
             if (sideIndex == 6)
                 beginSolution();
         }).setNeutralButton("Ручной ввод", (dialog, id) -> {
+            Intent i = new Intent(ScanColorsSqr2Activity.this, SelectColorsActivity.class);
+            i.putExtra("sizeCube", "2");
+            startActivity(i);
             resultDialog = false;
         });
 

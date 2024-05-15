@@ -355,7 +355,11 @@ public class ScanTypeActivity extends CameraActivity implements CvCameraViewList
             resultDialog = false;
         });
 
-        builder.setNeutralButton("Ручной ввод", (dialog, id) -> resultDialog = false);
+        builder.setNeutralButton("Ручной ввод", (dialog, id) -> {
+            Intent i = new Intent(ScanTypeActivity.this, SelectTypeActivity.class);
+            startActivity(i);
+            resultDialog = false;
+        });
 
         builder.setNegativeButton("Повторить попытку", (dialog, id) -> {
             rectCounts.clear();
