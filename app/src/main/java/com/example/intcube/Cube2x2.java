@@ -38,6 +38,36 @@ public class Cube2x2 {
                 new CubieColor[]{new CubieColor('W', 'D'), new CubieColor('B', 'B'), new CubieColor('O', 'R')}, true, false);
     }
 
+    public Cube2x2(char[][][] colors) {
+        //Up, Front Row
+        cubiePos[0][0][0] = new Cubie(0,0,0,
+                new CubieColor[]{ new CubieColor(colors[5][0][0],'U') , new CubieColor(colors[2][0][1],'L'), new CubieColor(colors[3][0][0],'F')}, true, false);
+
+        cubiePos[1][0][0] = new Cubie(2,0,0,
+                new CubieColor[]{ new CubieColor(colors[5][1][0],'U') , new CubieColor(colors[3][0][1],'F'), new CubieColor(colors[4][0][0],'R')}, true, false);
+
+        //Down, Front Row
+        cubiePos[0][0][1] = new Cubie(0,0,2,
+                new CubieColor[]{ new CubieColor(colors[0][1][1],'D') , new CubieColor(colors[2][1][1],'L'), new CubieColor(colors[3][1][0],'F')}, true, false);
+
+        cubiePos[1][0][1] = new Cubie(2,0,2,
+                new CubieColor[]{ new CubieColor(colors[0][1][0],'D') , new CubieColor(colors[3][1][1],'F'), new CubieColor(colors[4][1][0],'R')}, true, false);
+
+        //Up, Back Row
+        cubiePos[0][1][0] = new Cubie(0,2,0,
+                new CubieColor[]{ new CubieColor(colors[5][0][1],'U') , new CubieColor(colors[2][0][0],'L'), new CubieColor(colors[1][0][1],'B')}, true, false);
+
+        cubiePos[1][1][0] = new Cubie(2,2,0,
+                new CubieColor[]{ new CubieColor(colors[5][1][1],'U') , new CubieColor(colors[1][0][0],'B'), new CubieColor(colors[4][0][1],'R')}, true, false);
+
+        //Down, Back Row
+        cubiePos[0][1][1] = new Cubie(0,2,2,
+                new CubieColor[]{ new CubieColor(colors[0][0][1],'D') , new CubieColor(colors[2][1][0],'L'), new CubieColor(colors[1][1][1],'B')}, true, false);
+
+        cubiePos[1][1][1] = new Cubie(2,2,2,
+                new CubieColor[]{ new CubieColor(colors[0][0][0],'D') , new CubieColor(colors[1][1][0],'B'), new CubieColor(colors[4][1][1],'R')}, true, false);
+    }
+
     private boolean checkInfLoop(long startTime) {
         long finish = System.currentTimeMillis();
         long timeElapsed = finish - startTime;

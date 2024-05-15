@@ -87,6 +87,13 @@ public class ScanTypeActivity extends CameraActivity implements CvCameraViewList
             previewMatIndex = (previewMatIndex + 1) % (previewMats.size() + 1);
         });
 
+        findViewById(R.id.buttonScanType).setOnClickListener(v -> {
+            Intent i = new Intent(ScanTypeActivity.this, SelectTypeActivity.class);
+            i.putExtra("sizeCube", "3");
+            startActivity(i);
+        });
+
+
         threshold1 = findViewById(R.id.secondbar);
         threshold2 = findViewById(R.id.firstbar);
         epsilon = findViewById(R.id.seekBar9);

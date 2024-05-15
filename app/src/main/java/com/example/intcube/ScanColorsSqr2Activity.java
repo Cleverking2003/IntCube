@@ -3,16 +3,21 @@ package com.example.intcube;
 import static org.opencv.android.NativeCameraView.TAG;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -65,10 +70,28 @@ public class ScanColorsSqr2Activity extends CameraActivity implements CvCameraVi
     private char[][][] colors;
     private int sideIndex;
 
+    private String[] Stages = new String[] {
+            "Выберите любую сторону, запомните её",
+            "Поверните кубик вверх из предыдущего положения",
+            "Поверните кубик вправо из предыдущего положения (во второй раз)",
+            "Поверните кубик вправо из предыдущего положения (во третий раз)",
+            "Поверните кубик вправо из предыдущего положения (в четвёртый раз)",
+            "Поверните кубик вверх из предыдущего положения",
+            "",
+    };
+    private String[] StagesBar = new String[] {
+            "Отсканируйте сторону",
+            "Отсканировано 1 из 6 сторон",
+            "Отсканировано 2 из 6 сторон",
+            "Отсканировано 3 из 6 сторон",
+            "Отсканировано 4 из 6 сторон",
+            "Отсканировано 5 из 6 сторон",
+            "Отсканировано 6 из 6 сторон",
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_scan_color_sqr);
+        setContentView(R.layout.activity_scan_color_sqr_2);
 
         if (OpenCVLoader.initLocal()) {
             Log.i(TAG, "OpenCV loaded successfully");
@@ -87,6 +110,12 @@ public class ScanColorsSqr2Activity extends CameraActivity implements CvCameraVi
 
         findViewById(R.id.matButton).setOnClickListener(v -> {
             previewMatIndex = (previewMatIndex + 1) % (previewMats.size() + 1);
+        });
+
+        findViewById(R.id.buttonScanType).setOnClickListener(v -> {
+            Intent i = new Intent(ScanColorsSqr2Activity.this, SelectColorsActivity.class);
+            i.putExtra("sizeCube", "2");
+            startActivity(i);
         });
 
         threshold1 = findViewById(R.id.secondbar);
@@ -148,6 +177,14 @@ public class ScanColorsSqr2Activity extends CameraActivity implements CvCameraVi
     public void resetColors() {
         colors = new char[6][2][2];
         sideIndex = 0;
+        setProgress(0);
+    }
+
+    public void setScanProgress(int progress)
+    {
+        ((TextView)findViewById(R.id.tipText)).setText(Stages[progress]);
+        ((TextView)findViewById(R.id.scanBarText)).setText(StagesBar[progress]);
+        ((ProgressBar)findViewById(R.id.scanProgressBar)).setProgress(progress);
     }
 
     public void checkPermission(String permission, int requestCode)
@@ -303,7 +340,7 @@ public class ScanColorsSqr2Activity extends CameraActivity implements CvCameraVi
         int h = dst.height();
         double min = (double) Math.min(w, h);
         double step = min * 0.15;
-        Point stepCenter = new Point(w * 0.5 - step * 0.5 - step, h * 0.5 - step * 0.5);
+        Point stepCenter = new Point(w * 0.5 - step * 1.5, h * 0.5 - step);
 
         int index = 0;
         for (int i = 0; i <= 1; i++) {
@@ -373,7 +410,8 @@ public class ScanColorsSqr2Activity extends CameraActivity implements CvCameraVi
             if (sideColors[i] == 0)
                 break;
 
-            Imgproc.putText(dst, String.valueOf(sideColors[i]), roi.tl(), 4, 2, Scalar.all(255.0), 4);
+            if (DEBUG)
+                Imgproc.putText(dst, String.valueOf(sideColors[i]), roi.tl(), 4, 2, Scalar.all(255.0), 4);
         }
 
         boolean allFound = true;
@@ -391,14 +429,15 @@ public class ScanColorsSqr2Activity extends CameraActivity implements CvCameraVi
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private void showResultDialog(char[] sideColors) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         builder.setTitle("Результат");
 
-        StringBuilder result = createResultString(sideColors);
+        Spanned result = createResultString(sideColors);
 
-        builder.setMessage(result.toString());
+        builder.setMessage(result);
 
         builder.setPositiveButton("Следующая сторона", (dialog, id) -> {
             resultDialog = false;
@@ -406,9 +445,10 @@ public class ScanColorsSqr2Activity extends CameraActivity implements CvCameraVi
             applyColors(sideColors);
             sideIndex++;
 
+            setScanProgress(sideIndex);
+
             if (sideIndex == 6)
                 beginSolution();
-
         }).setNeutralButton("Ручной ввод", (dialog, id) -> {
             resultDialog = false;
         });
@@ -424,10 +464,11 @@ public class ScanColorsSqr2Activity extends CameraActivity implements CvCameraVi
 
     private void beginSolution() {
         Intent i = new Intent(ScanColorsSqr2Activity.this, SolutionActivity.class);
-        i.putExtra("type", 1);
+        i.putExtra("type", 0);
         i.putExtra("colors", colors);
         startActivity(i);
     }
+
 
     private void applyColors(char[] sideColors)
     {
@@ -435,30 +476,36 @@ public class ScanColorsSqr2Activity extends CameraActivity implements CvCameraVi
 
         side[0][0] = sideColors[0];
         side[0][1] = sideColors[1];
-        side[0][2] = sideColors[2];
 
-        side[1][0] = sideColors[3];
-        side[1][1] = sideColors[4];
-        side[1][2] = sideColors[5];
-
-        side[2][0] = sideColors[6];
-        side[2][1] = sideColors[7];
-        side[2][2] = sideColors[8];
+        side[1][0] = sideColors[2];
+        side[1][1] = sideColors[3];
 
         colors[sideIndex] = side;
     }
 
     @NonNull
-    private static StringBuilder createResultString(char[] colors) {
+    private static Spanned createResultString(char[] colors) {
         StringBuilder result = new StringBuilder();
 
         for (int i = 0; i < 4; i++) {
-            result.append(colors[i]);
+            char color = colors[i];
+            if (color == 'W')
+                result.append("⬜");
+            if (color == 'R')
+                result.append("\uD83D\uDFE5");
+            if (color == 'B')
+                result.append("\uD83D\uDFE6");
+            if (color == 'Y')
+                result.append("\uD83D\uDFE8");
+            if (color == 'O')
+                result.append("\uD83D\uDFE7");
+            if (color == 'G')
+                result.append("\uD83D\uDFE9");
 
             if (i == 1)
-                result.append('\n');
+                result.append("<br>");
         }
-        return result;
+        return Html.fromHtml("<big>" + result.toString() + "</big>");
     }
 
     // Проверка на дистанцию между контурами

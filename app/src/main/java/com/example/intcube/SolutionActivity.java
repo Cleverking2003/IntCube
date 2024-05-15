@@ -143,7 +143,7 @@ public class SolutionActivity extends AppCompatActivity {
 
 
     private void onPreviousStepClicked() {
-        if (currentStep > 1) {
+        if (currentStep >= 1) {
             currentStep--;
             String currentMove = moves[currentStep];
             setMove(currentMove);
@@ -269,7 +269,7 @@ public class SolutionActivity extends AppCompatActivity {
      */
     public void solve(int type, char[][][] colors) {
         if (type == 0) {
-            Cube2x2 cube2x2 = new Cube2x2();
+            Cube2x2 cube2x2 = new Cube2x2(colors);
             solution = solve2x2Cube(cube2x2);
         }
         else if (type == 1) {
