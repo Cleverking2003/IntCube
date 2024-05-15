@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.ImageDecoder;
 import android.graphics.drawable.AnimatedImageDrawable;
 import android.graphics.drawable.Drawable;
@@ -12,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import org.opencv.android.OpenCVLoader;
@@ -20,6 +22,7 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
 
+    ImageButton settings;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
             throw new RuntimeException(e);
         }
 
+        settings = findViewById(R.id.buttonToSettings);
+        settings.setColorFilter(Color.BLACK);
 
     }
 

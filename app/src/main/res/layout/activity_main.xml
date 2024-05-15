@@ -8,47 +8,39 @@
     tools:context=".MainActivity"
     tools:layout_editor_absoluteY="25dp">
 
-    <Button
-        android:id="@+id/buttonToCube"
-        android:layout_width="380dp"
-        android:layout_height="57dp"
-        android:layout_marginBottom="152dp"
-        android:onClick="startActivityCube"
-        android:text="@string/textToCubeButton"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <ImageButton
+        android:id="@+id/buttonToHelp"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/transparent"
+        android:onClick="startActivityHelp"
+        android:scaleType="fitXY"
+        android:src="@drawable/help_image"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.483"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.685"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/buttonToScan1"
-        android:layout_width="380dp"
-        android:layout_height="57dp"
-        android:layout_marginBottom="220dp"
-        android:onClick="startActivityScan"
-        android:text="@string/textToScanButton"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <ImageButton
+        android:id="@+id/buttonToSettings"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="8dp"
+        android:background="@android:color/transparent"
+        android:onClick="startActivitySettings"
+        android:scaleType="fitXY"
+        android:src="@drawable/setting_image"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.516"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/buttonToScan2"
-        android:layout_width="52dp"
-        android:layout_height="248dp"
-        android:layout_marginBottom="312dp"
-        android:onClick="startActivityScanSqr"
-        android:text="@string/textToScanButton"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.942"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.961"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/buttonToGuide"
         android:layout_width="380dp"
         android:layout_height="57dp"
-        android:layout_marginBottom="88dp"
+        android:layout_marginBottom="16dp"
         android:onClick="startActivityGuide"
         android:text="@string/textToGuideButton"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -57,64 +49,65 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
-        android:id="@+id/buttonToHelp"
+        android:id="@+id/button"
         android:layout_width="380dp"
         android:layout_height="57dp"
-        android:layout_marginBottom="24dp"
-        android:onClick="startActivityHelp"
-        android:text="@string/textToHelpButton"
+        android:layout_marginBottom="212dp"
+        android:onClick="startActivitySelectType"
+        android:text="@string/textToModelCube"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.516"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <Button
+        android:id="@+id/buttonToScan1"
+        android:layout_width="380dp"
+        android:layout_height="57dp"
+        android:layout_marginBottom="148dp"
+        android:onClick="startActivityScan"
+        android:text="@string/textToScanButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.516"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/buttonToCube"
+        android:layout_width="380dp"
+        android:layout_height="57dp"
+        android:layout_marginBottom="80dp"
+        android:onClick="startActivityCube"
+        android:text="@string/textToCubeButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.483"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <TextView
         android:id="@+id/textTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="191dp"
+        android:layout_height="76dp"
         android:text="@string/textLogo"
         android:textColor="@color/black"
         android:textSize="48sp"
         app:layout_constraintBottom_toTopOf="@+id/buttonToCube"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.252"
+        app:layout_constraintHorizontal_bias="0.06"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.038" />
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="258dp"
-        android:layout_height="53dp"
-        android:layout_marginBottom="300dp"
-        android:onClick="startActivitySelectType"
-        android:text="@string/textToModelCube"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.104"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="592dp"
-        android:text="@string/textToSettings"
-        android:onClick="startActivitySettings"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.908"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintVertical_bias="0.041" />
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="266dp"
-        android:layout_height="204dp"
+        android:layout_width="314dp"
+        android:layout_height="255dp"
         android:layout_marginTop="18dp"
         app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textTitle"
+        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/cube" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

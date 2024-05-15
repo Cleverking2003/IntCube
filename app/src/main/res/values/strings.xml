@@ -24,7 +24,7 @@
     <string name="textToSolveButton">Решить</string>
     <string name="textToScanColorsButton">Далее</string>
     <string name="app_name">IntCube</string>
-    <string name="textToCubeButton">Кубик</string>
+    <string name="textToCubeButton">Виртуальный кубик</string>
     <string name="textToModelCube">Ручной ввод</string>
     <string name="textToSettings">Настройки</string>
     <string name="textTo2x2">2x2x2</string>
