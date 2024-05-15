@@ -7,11 +7,11 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import android.util.Log;
+import android.util.Pair;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.SeekBar;
 
 import android.widget.Toast;
 
@@ -36,6 +36,9 @@ import org.opencv.imgproc.Imgproc;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 
@@ -65,7 +68,7 @@ class RetValue{
     }
 }
 
-public class ScanColorActivity extends CameraActivity implements CvCameraViewListener2{
+public class ScanAxisColorActivity extends CameraActivity implements CvCameraViewListener2{
     private static final String TAG = "OCVSample::Activity";
 
     private CameraBridgeViewBase mOpenCvCameraView;
@@ -90,6 +93,9 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
 
     private int[] colors;
     Rect[] rois;
+
+    private Pair<Boolean, String> leftupangle = new Pair<>(true, "qwer");
+    private HashMap<Integer, Pair<Integer, String>> statePreview = new HashMap();
 
     int global_counter = 0;
 
@@ -150,6 +156,9 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
         colors[3] = R.color.orange;
         colors[4] = R.color.blue;
         colors[5] = R.color.green;
+
+        for(int i=0;i<9;i++) statePreview.put(i, new Pair<>(0,"W"));
+
         showDialog();
     }
 
@@ -298,33 +307,41 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
                 });
                 return;
             }
-            if(lines.empty())
+            if(lines.empty()) {
                 runOnUiThread(() ->
                 {
                     preview[i].setImageResource(R.drawable.one_color_corner);
+                    int color = getColor(ROI);
                     DrawableCompat.setTint(preview[i].getDrawable(),
-                            ContextCompat.getColor(getApplicationContext(), getColor(ROI)));
+                            ContextCompat.getColor(getApplicationContext(), color));
+                    statePreview.put(i, new Pair<>(1, colorInterface(color)));
                 });
+            }
             else {
                 RetValue ret = isCorrectline(ROI, lines, i);
+                String[] colors = get2Color(ROI, ret.GetPoints(), i);
                 if (ret.IsCorrect()) runOnUiThread(() -> preview[i].setImageResource(
-                        Get2ColorsCorner(get2Color(ROI, ret.GetPoints(), i))));
+                        Get2ColorsCorner(colors)));
+                statePreview.put(i, new Pair<>(1, colors[0] + " " + colors[1]));
             }
         }
         else{
             if(lines.empty())
                 runOnUiThread(() ->
                 {
+                    int color = getColor(ROI);
                     preview[i].setImageResource(R.drawable.one_color_edge_lda);
                     DrawableCompat.setTint(preview[i].getDrawable(),
                             ContextCompat.getColor(getApplicationContext(), getColor(ROI)));
+                    statePreview.put(i, new Pair<>(1, colorInterface(color)));
                 });
             else {
                 RetValue ret = isCorrectline(ROI, lines, i);
+                String[] colors = get2Color(ROI, ret.GetPoints(), i);
                 if (ret.IsCorrect())
-                    runOnUiThread(() -> {
-                    preview[i].setImageResource(Get2ColorsEdge(get2Color(ROI, ret.GetPoints(), i)));
-                });
+                    runOnUiThread(() ->
+                    preview[i].setImageResource(Get2ColorsEdge(colors)));
+                statePreview.put(i, new Pair<>(1, colors[0] + " " + colors[1]));
             }
         }
     }
@@ -417,18 +434,25 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
 
         switch(counter){
             case 0:
+                statePreview.put(4, new Pair<>(2, "W R"));
                 return new int[]{R.drawable.by_center, R.drawable.wr_center, R.drawable.wg_center};
             case 1:
+                statePreview.put(4, new Pair<>(2, "W G"));
                 return new int[]{R.drawable.wr_center, R.drawable.wg_center, R.drawable.yo_center};
             case 2:
+                statePreview.put(4, new Pair<>(2, "Y O"));
                 return new int[]{R.drawable.wg_center, R.drawable.yo_center, R.drawable.by_center};
             case 3:
+                statePreview.put(4, new Pair<>(2, "B Y"));
                 return new int[]{R.drawable.yo_center, R.drawable.by_center, R.drawable.wr_center};
             case 4:
+                statePreview.put(4, new Pair<>(2, "R G"));
                 return new int[]{R.drawable.yo_center, R.drawable.rg_center, R.drawable.wr_center};
             case 5:
+                statePreview.put(4, new Pair<>(2, "B O"));
                 return new int[]{R.drawable.yo_center, R.drawable.bo_center, R.drawable.wr_center};
             default:
+                statePreview.put(4, new Pair<>(2, "W B"));
                 return new int[] {R.drawable.center, R.drawable.center, R.drawable.center};
         }
     }
@@ -542,6 +566,7 @@ public class ScanColorActivity extends CameraActivity implements CvCameraViewLis
     public void scanSide(View v){
         global_counter++;
         //Intent intent = new Intent(this, ScanTypeActivity.class);
+        //intent.putExtra("sideInfo", statePreview);
         //startActivity(intent);
     }
 

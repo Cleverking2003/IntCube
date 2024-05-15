@@ -548,7 +548,7 @@ public class ScanColorSqrActivity extends CameraActivity implements CvCameraView
     }
 
     public void startActivityScanColors(View v){
-        Intent intent = new Intent(this, ScanColorActivity.class);
+        Intent intent = new Intent(this, ScanAxisColorActivity.class);
         startActivity(intent);
     }
 }

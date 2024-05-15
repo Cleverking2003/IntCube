@@ -342,7 +342,7 @@ public class ScanTypeActivity extends CameraActivity implements CvCameraViewList
 
             } else if (type == 3)
             {
-                Intent i = new Intent(ScanTypeActivity.this, ScanColorActivity.class);
+                Intent i = new Intent(ScanTypeActivity.this, ScanAxisColorActivity.class);
                 startActivity(i);
             }
             resultDialog = false;
@@ -420,7 +420,7 @@ public class ScanTypeActivity extends CameraActivity implements CvCameraViewList
     }
 
     public void startActivityScanColors(View v){
-        Intent intent = new Intent(this, ScanColorActivity.class);
+        Intent intent = new Intent(this, ScanAxisColorActivity.class);
         startActivity(intent);
     }
 }
