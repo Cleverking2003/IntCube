@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.AbstractMap;
 import java.util.HashMap;
@@ -67,6 +68,10 @@ public class SolutionActivity extends AppCompatActivity {
         char[][][] colors = (char[][][]) extras.getSerializable("colors");
 
         assert colors != null;
+
+        setSolutionVersion();
+
+
         solve(type, colors);
         moves = solution.trim().split("\\s+");
 
@@ -179,6 +184,30 @@ public class SolutionActivity extends AppCompatActivity {
         return null;
     }
 
+    private void setSolutionVersion() {
+        final String[] versions = {"Алгоритм для начинающих", "Самый быстрый алгоритм"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, android.R.style.Theme_DeviceDefault_NoActionBar_Fullscreen);
+        builder.setTitle("Выбор типа решения");
+        builder.setMessage("Выберите вариант решения")
+                .setPositiveButton("Алгоритм для начинающих",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int id) {
+                                dialog.cancel();
+                            }
+                        })
+                .setNegativeButton("Самый быстрый алгоритм",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int id) {
+                                Toast.makeText(getApplicationContext(), "В разработке", Toast.LENGTH_LONG).show();
+                            }
+                        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+        alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
+    }
+
     private void onLangOfTUrnsClicked() {
         if (flagMoves != 1) {
             flagMoves = 1;
@@ -229,6 +258,7 @@ public class SolutionActivity extends AppCompatActivity {
             finish();
         });
         AlertDialog alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.show();
     }
 
