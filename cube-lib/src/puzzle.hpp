@@ -115,7 +115,7 @@ public:
     }
 
     void apply_move(int axis, int coord, bool inverse) {
-        if (is_in_animation()) return;
+//        if (is_in_animation()) return;
         auto coord_mat = m_moves[axis];
         if (inverse)
             coord_mat = glm::inverse(coord_mat);
@@ -135,10 +135,12 @@ public:
     }
 
     void apply_rot(int axis, bool inverse) {
-        if (is_in_animation()) return;
+//        if (is_in_animation()) return;
         auto mat = m_moves[axis];
         auto [axis_vec, axis_part] = m_axes[axis];
         if (inverse) axis_vec *= -1;
+        if (inverse)
+            mat = glm::inverse(mat);
         for (auto& [c, pos, orig_pos] : m_cubies) {
             pos = mat * pos;
             pos = glm::vec3(glm::round(pos.x), glm::round(pos.y), glm::round(pos.z));

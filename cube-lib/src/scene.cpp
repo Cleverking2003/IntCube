@@ -115,6 +115,9 @@ Scene::Scene(int width, int height, int size)
         m_cube = new Cube(size, &cube_vertex, &cube_frag);
     }
 
+    m_rot = glm::rotate(glm::mat4(1.0), glm::radians(35.0f), glm::vec3(0.0, -1.0, 0.0));
+    m_rot = glm::rotate(glm::mat4(1.0), glm::radians(35.0f), glm::vec3(1.0, 0.0, 0.0)) * m_rot;
+
     glEnable(GL_DEPTH_TEST);
     // glEnable(GL_CULL_FACE);
 
@@ -201,7 +204,9 @@ void Scene::changeCube(int type) {
     else {
         m_cube = new Cube(type, &cube_vertex, &cube_frag);
     }
-    m_rot = glm::mat4(1.0);
+
+    m_rot = glm::rotate(glm::mat4(1.0), glm::radians(35.0f), glm::vec3(0.0, -1.0, 0.0));
+    m_rot = glm::rotate(glm::mat4(1.0), glm::radians(35.0f), glm::vec3(1.0, 0.0, 0.0)) * m_rot;
 }
 
 void Scene::render() {
@@ -215,7 +220,7 @@ void Scene::render() {
         glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);  
         glEnable(GL_DEPTH_TEST);
 //        glClearColor(0, 0.1, 0.5, 1);
-        glClearColor(1, 1, 1, 1);
+        glClearColor(m_clear_color.r, m_clear_color.g, m_clear_color.b, m_clear_color.a);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         auto new_view = m_view * m_rot;
@@ -223,7 +228,7 @@ void Scene::render() {
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glClearColor(1, 1, 1, 1);
+    glClearColor(m_clear_color.r, m_clear_color.g, m_clear_color.b, m_clear_color.a);
     glClear(GL_COLOR_BUFFER_BIT);
     glDisable(GL_DEPTH_TEST);
     glActiveTexture(GL_TEXTURE0);
@@ -439,5 +444,12 @@ JNIEXPORT void JNICALL
 Java_com_example_intcube_CubeGLRenderer_applyMove(JNIEnv *env, jobject thiz, jint move,
                                                   jboolean inverse) {
     s_scene->apply_move((SceneKey)move, inverse);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_intcube_CubeGLView_setClearColor(JNIEnv *env, jobject thiz, jfloat r, jfloat g,
+                                                  jfloat b, jfloat a) {
+    __android_log_print(ANDROID_LOG_ERROR, "gl", "clear color %f %f %f %f\n", r, g, b, a);
+    s_scene->setClearColor(r, g, b, a);
 }
 #endif

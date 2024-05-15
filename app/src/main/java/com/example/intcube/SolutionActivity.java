@@ -5,8 +5,10 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,6 +49,7 @@ public class SolutionActivity extends AppCompatActivity {
             new AbstractMap.SimpleEntry<String, String>("y'", "Перехватите кубик против часовой стрелки"),
             new AbstractMap.SimpleEntry<String, String>("x", "Перехватите кубик по часовой стрелке сбоку")));
     static LinkedHashMap<String, Integer> stages = new LinkedHashMap<>();
+    private int mType;
 
 
     @Override
@@ -65,6 +68,15 @@ public class SolutionActivity extends AppCompatActivity {
 
         assert extras != null;
         int type = extras.getInt("type");
+        if (type == 0) {
+            mType = 2;
+        }
+        else if (type == 1) {
+            mType = 3;
+        }
+        else if (type == 3) {
+            mType = 0;
+        }
         char[][][] colors = (char[][][]) extras.getSerializable("colors");
 
         assert colors != null;
@@ -123,7 +135,7 @@ public class SolutionActivity extends AppCompatActivity {
     }
 
     private void onNextStepClicked() {
-        if (currentStep < moves.length - 1) {
+        if (currentStep < moves.length) {
             String currentMove = moves[currentStep];
             int move = moveToInt(currentMove.charAt(0));
             boolean inverse = false;
@@ -133,6 +145,10 @@ public class SolutionActivity extends AppCompatActivity {
             if (currentMove.length() > 1 && currentMove.charAt(1) == '2')
                 cubeView.executeMove(move, inverse);
             currentStep++;
+            if (currentStep == moves.length) {
+                setMove("");
+                return;
+            }
             currentMove = moves[currentStep];
             setMove(currentMove);
             if (stages.containsValue(currentStep)) {
@@ -194,6 +210,23 @@ public class SolutionActivity extends AppCompatActivity {
                             public void onClick(DialogInterface dialog,
                                                 int id) {
                                 dialog.cancel();
+                                cubeView.changeCube(mType);
+
+                                cubeView.applyMove(moveToInt('z'), true);
+                                cubeView.applyMove(moveToInt('z'), true);
+                                cubeView.applyMove(moveToInt('x'), true);
+                                cubeView.applyMove(moveToInt('x'), true);
+
+                                for (int i = moves.length - 1; i >= 0; i--) {
+                                    String currentMove = moves[i];
+                                    int move = moveToInt(currentMove.charAt(0));
+                                    boolean inverse = true;
+                                    if (currentMove.length() > 1 && currentMove.charAt(1) == '\'')
+                                        inverse = false;
+                                    cubeView.applyMove(move, inverse);
+                                    if (currentMove.length() > 1 && currentMove.charAt(1) == '2')
+                                        cubeView.applyMove(move, inverse);
+                                }
                             }
                         })
                 .setNegativeButton("Самый быстрый алгоритм",

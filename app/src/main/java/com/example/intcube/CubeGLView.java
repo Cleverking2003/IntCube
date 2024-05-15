@@ -4,6 +4,7 @@ import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.DragEvent;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -20,6 +21,7 @@ public class CubeGLView extends GLSurfaceView {
 
     public native void handleMouseMovement(int x, int y);
     public native void handleDragStop(int x, int y);
+    public native void setClearColor(float r, float g, float b, float a);
 
     public CubeGLView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -28,6 +30,16 @@ public class CubeGLView extends GLSurfaceView {
         renderer = new CubeGLRenderer(context);
         setRenderer(renderer);
         setLongClickable(true);
+        TypedValue typedValue = new TypedValue();
+        if (context.getTheme().resolveAttribute(android.R.attr.background, typedValue, true)) {
+            Log.d("test", "CubeGLView: " + typedValue.type);
+            int color = typedValue.data;
+            float r = (float)((color >> 16) & 0xff) / 255.0f;
+            float g = (float)((color >> 8) & 0xff) / 255.0f;
+            float b = (float)((color >> 0) & 0xff) / 255.0f;
+            float a = (float)((color >> 24) & 0xff) / 255.0f;
+            setClearColor(r, g, b, a);
+        }
     }
 
     @Override

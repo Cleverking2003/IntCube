@@ -46,6 +46,9 @@ public:
     void handleMouseMovement(int x, int y);
     bool handleKeyPress(SceneKey key, bool inverse);
     void apply_move(SceneKey key, bool inverse);
+    void setClearColor(float r, float g, float b, float a) {
+        m_clear_color = glm::vec4(r, g, b, a);
+    }
 
     void handleDragStart(int x, int y);
     void handleDragStop(int x, int y);
@@ -65,6 +68,7 @@ private:
     bool m_in_drag { false }, m_in_cube_move { false };
     glm::vec2 m_drag_start;
     glm::vec3 m_orig_1, m_dir_1;
+    glm::vec4 m_clear_color { 1.0 };
 
     Cube* m_cube;
 };
