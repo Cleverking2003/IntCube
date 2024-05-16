@@ -312,8 +312,8 @@ public class SelectColorsActivity extends AppCompatActivity{
 
             colors[1][0][0] = getColor(Cube.Corners.get(Cube.getSortedString("BUL")).Colors.get("U"));
             colors[1][0][1] = getColor(Cube.Corners.get(Cube.getSortedString("BUR")).Colors.get("U"));
-            colors[1][1][0] = getColor(Cube.Corners.get(Cube.getSortedString("FUR")).Colors.get("U"));
-            colors[1][1][1] = getColor(Cube.Corners.get(Cube.getSortedString("FUL")).Colors.get("U"));
+            colors[1][1][0] = getColor(Cube.Corners.get(Cube.getSortedString("FUL")).Colors.get("U"));
+            colors[1][1][1] = getColor(Cube.Corners.get(Cube.getSortedString("FUR")).Colors.get("U"));
 
             colors[2][0][0] = getColor(Cube.Corners.get(Cube.getSortedString("BUR")).Colors.get("R"));
             colors[2][0][1] = getColor(Cube.Corners.get(Cube.getSortedString("BDR")).Colors.get("R"));

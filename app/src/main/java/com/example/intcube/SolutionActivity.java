@@ -81,6 +81,8 @@ public class SolutionActivity extends AppCompatActivity {
 
         assert colors != null;
 
+        printColors(colors);
+
         setSolutionVersion();
 
 
@@ -318,9 +320,20 @@ public class SolutionActivity extends AppCompatActivity {
         }
     }
 
-
-
-
+    public void printColors(char[][][] colors) {
+        int size = colors[0].length;
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < 6; i++) {
+            char[][] side = colors[i];
+            for (int j = 0; j < size; j++) {
+                for (int k = 0; k < size; k++)
+                    builder.append(side[j][k]);
+                builder.append('\n');
+            }
+            builder.append('\n');
+        }
+        Log.i(getLocalClassName(), builder.toString());
+    }
 
     public String solve2x2Cube(Cube2x2 cube) {
         String solution = "";

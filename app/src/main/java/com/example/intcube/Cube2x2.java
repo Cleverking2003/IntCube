@@ -401,6 +401,19 @@ public class Cube2x2 {
             if (checkInfLoop(startTime)) return "Wrong cube";
             moves += performMoves("D' ");
         }
+
+        startTime = System.currentTimeMillis();
+        while (cubiePos[0][0][0].getColorOfDir('U') != 'W') {
+            if (checkInfLoop(startTime)) return "Wrong cube";
+            moves += performMoves("x ");
+        }
+
+        startTime = System.currentTimeMillis();
+        while (cubiePos[0][0][0].getColorOfDir('F') != 'R') {
+            if (checkInfLoop(startTime)) return "Wrong cube";
+            moves += performMoves("y ");
+        }
+
         return moves;
     }
 

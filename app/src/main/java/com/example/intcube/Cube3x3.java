@@ -1465,6 +1465,13 @@ public class Cube3x3 {
 			if (checkInfLoop(startTime2)) return "Wrong cube";
 			moves += performMoves("D ");
 		}
+
+		long startTime3 = System.currentTimeMillis();
+		while (cubiePos[1][0][1].getColorOfDir('F') != 'R') {
+			if (checkInfLoop(startTime)) return "Wrong cube";
+			moves += performMoves("y ");
+		}
+
 		return moves;
 	}
 }
