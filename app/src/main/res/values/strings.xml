@@ -32,13 +32,6 @@
     <string name="textTo4x4">4x4x4</string>
     <string name="textToAxis">Axis</string>
     <string name="input">Выбрать</string>
-    <string name="toModelCube">Модель кубика</string>
-    <string name="orangeButton">Оранжевый</string>
-    <string name="whiteButton">Белый</string>
-    <string name="greenButton">Зеленый</string>
-    <string name="blueButton">Синий</string>
-    <string name="yellowButton">Желтый</string>
-    <string name="redButton">Красный</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
@@ -81,4 +74,9 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+    <string name="rotateElement">Развернуть</string>
+    <string name="deleteElement">Удалить</string>
+    <string name="chooseColors">Выбор цветов</string>
+    <string name="clearColorsElement">Очистить цвета</string>
+    <string name="clearColorElement">Очистить цвет</string>
 </resources>

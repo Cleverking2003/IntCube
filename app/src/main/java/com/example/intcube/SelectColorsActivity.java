@@ -220,10 +220,8 @@ public class SelectColorsActivity extends AppCompatActivity{
         Drawable background = layer.getDrawable(0);
         int color = ((ColorDrawable) background).getColor();
         if (Cube.CountColors.containsKey(color)) {
-            if (newColor == color) {
-                Cube.CountColors.put(color, Cube.CountColors.get(color) - 1);
-                Element.setBackgroundWithBorder(new ColorDrawable(Color.GRAY));
-            }
+            if (newColor == color)
+                return;
             else
             {
                 if(Cube.CountColors.get(newColor) == Cube.MaxCountColor) {
@@ -247,6 +245,17 @@ public class SelectColorsActivity extends AppCompatActivity{
         checkSolveButton();
     }
 
+    public void clearColor(View v){
+        if (Element.elementIsNotSelected()) {
+            Toast.makeText(this, "Выберите элемент", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        int color = ((ColorDrawable)Element.background).getColor();
+        if(Cube.CountColors.containsKey(color)){
+            Cube.CountColors.put(color, Cube.CountColors.get(color) - 1);
+            Element.setBackgroundWithBorder(new ColorDrawable(Color.GRAY));
+        }
+    }
 
     public void choosingElement(View v){
         Element.choosingNewElement((Button) v);
@@ -403,16 +412,7 @@ public class SelectColorsActivity extends AppCompatActivity{
             i.putExtra("type", 1);
             i.putExtra("colors", colors);
         }
-        startActivityForResult(i,1);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == 1) {
-            setResult(1);
-            finish();
-        }
+        startActivity(i);
     }
 
 }

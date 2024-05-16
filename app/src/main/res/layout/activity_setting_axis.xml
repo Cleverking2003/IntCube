@@ -3,155 +3,29 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".SelectColorsActivity">
+    android:layout_height="match_parent">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:id="@+id/mainLayout"
+        android:layout_width="0dp"
+        android:layout_height="480dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.089">
 
         <androidx.gridlayout.widget.GridLayout
-            android:id="@+id/layoutGrid"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:columnCount="3"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.025"
-            app:rowCount="2">
-
-            <android.widget.Button
-                android:id="@+id/red"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/radius_red"
-                android:onClick="choosingRed"
-                app:layout_column="0"
-                app:layout_columnWeight="1"
-                app:layout_row="0" />
-
-            <android.widget.Button
-                android:id="@+id/orange"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/radius_orange"
-                android:onClick="choosingOrange"
-                app:layout_column="1"
-                app:layout_columnWeight="1"
-                app:layout_row="0" />
-
-            <android.widget.Button
-                android:id="@+id/green"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/radius_green"
-                android:onClick="choosingGreen"
-                app:layout_column="2"
-                app:layout_columnWeight="1"
-                app:layout_row="0" />
-
-            <android.widget.Button
-                android:id="@+id/blue"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/radius_blue"
-                android:onClick="choosingBlue"
-                app:layout_column="0"
-                app:layout_columnWeight="1"
-                app:layout_row="1" />
-
-            <android.widget.Button
-                android:id="@+id/white"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/radius_white"
-                android:onClick="choosingWhite"
-                app:layout_column="1"
-                app:layout_columnWeight="1"
-                app:layout_row="1" />
-
-            <android.widget.Button
-                android:id="@+id/yellow"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/radius_yellow"
-                android:onClick="choosingYellow"
-                app:layout_column="2"
-                app:layout_columnWeight="1"
-                app:layout_row="1" />
-
-        </androidx.gridlayout.widget.GridLayout>
-
-        <Button
-            android:id="@+id/solveCube"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:onClick="solveCube"
-            android:text="@string/textToSolveButton"
-            app:layout_column="2"
-            app:layout_columnSpan="2"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.992"
-            app:layout_row="1" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
-        android:layout_width="0dp"
-        android:layout_height="480dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.gridlayout.widget.GridLayout
-            android:id="@+id/layoutForButtons"
+            android:id="@+id/axisView"
             android:layout_width="260dp"
             android:layout_height="300dp"
-            android:layout_gravity="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.496"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
 
         <Button
             android:id="@+id/buttonToManualInput"
@@ -161,67 +35,174 @@
             android:text="@string/textBackButton"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.065"
+            app:layout_constraintHorizontal_bias="0.049"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.023" />
-
+            app:layout_constraintVertical_bias="0.037" />
 
         <ImageButton
-            android:id="@+id/left"
+            android:id="@+id/downAxis"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="@drawable/radius_gray"
-            android:onClick="goLeft"
+            android:onClick="goDownSide"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/layoutForButtons"
-            app:layout_constraintHorizontal_bias="0.592"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.96"
+            app:srcCompat="@drawable/bottom" />
+
+        <ImageButton
+            android:id="@+id/leftAxis"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/radius_gray"
+            android:onClick="goLeftSide"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/left" />
 
         <ImageButton
-            android:id="@+id/up"
+            android:id="@+id/rightAxis"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="@drawable/radius_gray"
-            android:onClick="goUp"
-            app:layout_constraintBottom_toTopOf="@+id/layoutForButtons"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.38"
-            app:srcCompat="@drawable/up" />
-
-        <ImageButton
-            android:id="@+id/right"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="@drawable/radius_gray"
-            android:onClick="goRight"
+            android:onClick="goRightSide"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.428"
-            app:layout_constraintStart_toEndOf="@+id/layoutForButtons"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/right" />
 
         <ImageButton
-            android:id="@+id/down"
+            android:id="@+id/upAxis"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:background="@drawable/radius_gray"
-            android:onClick="goDown"
+            android:onClick="goUpSide"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layoutForButtons"
-            app:layout_constraintVertical_bias="0.619"
-            app:srcCompat="@drawable/bottom" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.04"
+            app:srcCompat="@drawable/up" />
+
+        <Button
+            android:id="@+id/startScan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="startActivityScan"
+            android:text="@string/textScanButton"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.941"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.023" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <androidx.gridlayout.widget.GridLayout
+        android:id="@+id/workWithAxis"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:columnCount="4"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mainLayout"
+        app:layout_constraintVertical_bias="0.032"
+        app:rowCount="3">
+
+        <android.widget.Button
+            android:id="@+id/oneColorCorner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/one_color_corner_but"
+            android:onClick="addOneColorCorner"
+            app:layout_column="0"
+            app:layout_columnWeight="1"
+            app:layout_row="0" />
+
+        <android.widget.Button
+            android:id="@+id/threeColorCorner"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/three_color_corner_but"
+            android:onClick="addThreeColorsCorner"
+            app:layout_column="1"
+            app:layout_columnWeight="1"
+            app:layout_row="0" />
+
+        <android.widget.Button
+            android:id="@+id/oneColorEdge"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/one_color_edge_but"
+            android:onClick="addOneColorEdge"
+            app:layout_column="2"
+            app:layout_columnWeight="1"
+            app:layout_row="0" />
+
+        <android.widget.Button
+            android:id="@+id/twoColorEdge"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:background="@drawable/two_color_edge_but"
+            android:onClick="addTwoColorsEdge"
+            app:layout_column="3"
+            app:layout_columnWeight="1"
+            app:layout_row="0" />
+
+        <Button
+            android:id="@+id/rotateElement"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:onClick="rotateElement"
+            android:text="@string/rotateElement"
+            app:layout_column="0"
+            app:layout_columnSpan="2"
+            app:layout_columnWeight="1"
+            app:layout_row="1" />
+
+        <Button
+            android:id="@+id/deleteElement"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:onClick="deleteElement"
+            android:text="@string/deleteElement"
+            app:layout_column="2"
+            app:layout_columnSpan="2"
+            app:layout_columnWeight="1"
+            app:layout_row="1" />
+
+        <Button
+            android:id="@+id/selectColorsAxis"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:onClick="goSelectColors"
+            android:text="@string/chooseColors"
+            app:layout_column="0"
+            app:layout_row="2"
+            app:layout_columnSpan="4"
+            app:layout_columnWeight="1"
+            />
+
+    </androidx.gridlayout.widget.GridLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

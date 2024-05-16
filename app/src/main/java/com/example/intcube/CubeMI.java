@@ -203,13 +203,13 @@ class CubeMI{
                     String locEdges = getSortedString(LocationSides.get(Side.Front) + LocationSides.get(Side.Up));
                     Edges edges = Edges.get(locEdges);
                     result[row][column] = edges.Elements[column - 2].Colors.get(LocationSides.get(Side.Front));
-                    result[row - 1][column] = edges.Elements[column - 2].Colors.get(LocationSides.get(Side.Up));
+                    result[row - 1][column] = edges.Elements[Size - column - 1].Colors.get(LocationSides.get(Side.Up));
                 }
                 else if(column == 1){
                     String locEdges = getSortedString(LocationSides.get(Side.Front) + LocationSides.get(Side.Left));
                     Edges edges = Edges.get(locEdges);
                     result[row][column] = edges.Elements[Size - row - 1].Colors.get(LocationSides.get(Side.Front));
-                    result[row][column - 1] = edges.Elements[row - 2].Colors.get(LocationSides.get(Side.Left));
+                    result[row][column - 1] = edges.Elements[Size - row - 1].Colors.get(LocationSides.get(Side.Left));
                 }
                 else if(row == Size){
                     String locEdges = getSortedString(LocationSides.get(Side.Front) + LocationSides.get(Side.Down));
