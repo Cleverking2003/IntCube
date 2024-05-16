@@ -40,13 +40,6 @@ public class SelectTypeActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void choosing4x4(View v)
-    {
-        Intent intent = new Intent(this, SelectColorsActivity.class);
-        intent.putExtra("sizeCube", "4");
-        startActivity(intent);
-    }
-
     public void choosingAxis(View v)
     {
         Intent intent = new Intent(this, SettingAxisActivity.class);

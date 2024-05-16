@@ -289,6 +289,10 @@ public class SelectColorsActivity extends AppCompatActivity{
         finish();
     }
 
+    public void startActivityScan(View view) {
+    }
+
+
     private void checkSolveButton(){
         Button solveButton = findViewById(R.id.solveCube);
         solveButton.setEnabled(Cube.cubeIsFill());
