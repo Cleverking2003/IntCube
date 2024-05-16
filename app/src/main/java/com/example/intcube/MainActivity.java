@@ -100,9 +100,4 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, SelectTypeActivity.class);
         startActivity(intent);
     }
-
-    public void startActivityManualInput(View v){
-        Intent intent = new Intent(this, CubeManualInput.class);
-        startActivity(intent);
-    }
 }
