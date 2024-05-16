@@ -217,11 +217,6 @@ public class SolutionActivity extends AppCompatActivity {
                                 dialog.cancel();
                                 cubeView.changeCube(mType);
 
-                                cubeView.applyMove(moveToInt('z'), true);
-                                cubeView.applyMove(moveToInt('z'), true);
-                                cubeView.applyMove(moveToInt('x'), true);
-                                cubeView.applyMove(moveToInt('x'), true);
-
                                 for (int i = moves.length - 1; i >= 0; i--) {
                                     String currentMove = moves[i];
                                     int move = moveToInt(currentMove.charAt(0));
