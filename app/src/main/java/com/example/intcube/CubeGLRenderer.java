@@ -31,11 +31,11 @@ public class CubeGLRenderer implements GLSurfaceView.Renderer {
         initScene(1000, 1000, 3, m_context.getAssets());
         int currentNightMode = m_context.getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK;
         if (currentNightMode == Configuration.UI_MODE_NIGHT_YES) {
-            setClearColor(0, 0, 0, 1);
+            setClearColor((float)18/255, (float)18/255, (float)18/255, 1);
         }
         else {
             int color = m_context.getColor(R.color.gray_400);
-            setClearColor(1,1,1,1);
+            setClearColor((float)254/255,(float)247/255,1,1);
         }
     }
 
