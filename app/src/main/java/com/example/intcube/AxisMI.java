@@ -459,7 +459,7 @@ class AxisMI{
             }
             for(String key : Colors.keySet()) {
                 if(Colors.get(key) != Color.GRAY)
-                    CountColors.put(Colors.get(key), CountColors.get(Colors.get(key) - 1));
+                    CountColors.put(Colors.get(key), CountColors.get(Colors.get(key)) - 1);
                 Colors.put(key, Color.GRAY);
             }
         }
