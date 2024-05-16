@@ -9,11 +9,14 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.AbstractMap;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -27,6 +30,7 @@ public class SolutionActivity extends AppCompatActivity {
     Button prevButton;
     Button fullDescription;
     Button langOfTurns;
+    Button backToMainButton;
     static String solution;
     private int currentStep = 0;
     private String[] moves;
@@ -63,6 +67,7 @@ public class SolutionActivity extends AppCompatActivity {
         fullDescription = findViewById(R.id.btn_full_desc);
         langOfTurns = findViewById(R.id.btn_lang_of_turns);
         cubeView = findViewById(R.id.solutionCubeView);
+        backToMainButton = findViewById(R.id.button_back_to_main);
 
         Bundle extras = getIntent().getExtras();
 
@@ -99,6 +104,7 @@ public class SolutionActivity extends AppCompatActivity {
         prevButton.setOnClickListener(v -> onPreviousStepClicked());
         fullDescription.setOnClickListener(v -> onFullDescriptionClicked());
         langOfTurns.setOnClickListener(v -> onLangOfTUrnsClicked());
+        backToMainButton.setOnClickListener(v -> onBackToMainClicked());
         cubeView.disableTouch();
 
 //        Cube3x3 cube = new Cube3x3(colors);
@@ -159,8 +165,11 @@ public class SolutionActivity extends AppCompatActivity {
         }
     }
 
-
     private void onPreviousStepClicked() {
+        if (currentStep == moves.length) {
+            backToMainButton.setVisibility(View.INVISIBLE);
+            setStage(currentStep);
+        }
         if (currentStep >= 1) {
             currentStep--;
             String currentMove = moves[currentStep];
@@ -181,6 +190,8 @@ public class SolutionActivity extends AppCompatActivity {
     private void setMove(String move) {
         if (currentStep == moves.length) {
             moveText.setText("Кубик решен!");
+            backToMainButton.setVisibility(View.VISIBLE);
+            stageText.setText("");
         }
         else if (flagMoves == 1) {
             moveText.setText(move);
@@ -227,6 +238,19 @@ public class SolutionActivity extends AppCompatActivity {
                                     if (currentMove.length() > 1 && currentMove.charAt(1) == '2')
                                         cubeView.applyMove(move, inverse);
                                 }
+
+
+                                int index = moves.length - 1;
+                                while (true) {
+                                    char move = moves[index].charAt(0);
+                                    if (move == 'x' || move == 'y') {
+                                        index--;
+                                    }
+                                    else {
+                                        break;
+                                    }
+                                }
+                                moves = Arrays.copyOfRange(moves, 0, index + 1);
                             }
                         })
                 .setNegativeButton("Самый быстрый алгоритм",
@@ -238,6 +262,7 @@ public class SolutionActivity extends AppCompatActivity {
                         });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+        alertDialog.setCancelable(false);
         alertDialog.getButton(AlertDialog.BUTTON_NEGATIVE).setEnabled(false);
     }
 
@@ -277,6 +302,11 @@ public class SolutionActivity extends AppCompatActivity {
                 stageText.setText(key);
             }
         });
+    }
+
+    private void onBackToMainClicked() {
+        setResult(1);
+        finish();
     }
 
     /**

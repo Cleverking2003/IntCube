@@ -339,25 +339,25 @@ public class ScanTypeActivity extends CameraActivity implements CvCameraViewList
             if (type == 0)
             {
                 Intent i = new Intent(ScanTypeActivity.this, ScanColorsSqr2Activity.class);
-                startActivity(i);
+                startActivityForResult(i,1);
             } else if (type == 1)
             {
                 Intent i = new Intent(ScanTypeActivity.this, ScanColorSqrActivity.class);
-                startActivity(i);
+                startActivityForResult(i,1);
             } else if (type == 2)
             {
 
             } else if (type == 3)
             {
                 Intent i = new Intent(ScanTypeActivity.this, ScanAxisColorActivity.class);
-                startActivity(i);
+                startActivityForResult(i,1);
             }
             resultDialog = false;
         });
 
         builder.setNeutralButton("Ручной ввод", (dialog, id) -> {
             Intent i = new Intent(ScanTypeActivity.this, SelectTypeActivity.class);
-            startActivity(i);
+            startActivityForResult(i,1);
             resultDialog = false;
         });
 
@@ -370,6 +370,14 @@ public class ScanTypeActivity extends CameraActivity implements CvCameraViewList
         AlertDialog dialog = builder.create();
 
         dialog.show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == 1) {
+            finish();
+        }
     }
 
     private double getAverage(LinkedList<Integer> nums) {

@@ -572,9 +572,18 @@ public class ScanAxisColorActivity extends CameraActivity implements CvCameraVie
 
     public void toManualinput(){
         Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent,1);
     }
     public void backScanType(View v){
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == 1) {
+            setResult(1);
+            finish();
+        }
     }
 }

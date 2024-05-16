@@ -402,11 +402,40 @@ public class Cube2x2 {
             moves += performMoves("D' ");
         }
 
-        startTime = System.currentTimeMillis();
-        while (cubiePos[0][0][0].getColorOfDir('U') != 'W') {
-            if (checkInfLoop(startTime)) return "Wrong cube";
-            moves += performMoves("x ");
+        int countX = 0;
+
+        for (int i = 0; i < 4; i++) {
+            if (cubiePos[0][0][0].getColorOfDir('U') != 'W') {
+                performMoves("x");
+                countX++;
+            }
         }
+        if (cubiePos[0][0][0].getColorOfDir('U') == 'W') {
+            if (countX == 1) {
+                moves += "x ";
+            }
+            else if (countX == 2) {
+                moves += "x2 ";
+            }
+            else if (countX == 3) {
+                moves += "x' ";
+            }
+        }
+        else {
+            moves += performMoves("y ");
+            startTime = System.currentTimeMillis();
+            while (cubiePos[0][0][0].getColorOfDir('U') != 'W') {
+                if (checkInfLoop(startTime)) return "Wrong cube";
+                moves += performMoves("x ");
+            }
+        }
+
+
+////        startTime = System.currentTimeMillis();
+//        while (cubiePos[0][0][0].getColorOfDir('U') != 'W') {
+////            if (checkInfLoop(startTime)) return "Wrong cube";
+//            moves += performMoves("x ");
+//        }
 
         startTime = System.currentTimeMillis();
         while (cubiePos[0][0][0].getColorOfDir('F') != 'R') {

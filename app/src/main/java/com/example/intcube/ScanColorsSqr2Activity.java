@@ -115,7 +115,7 @@ public class ScanColorsSqr2Activity extends CameraActivity implements CvCameraVi
         findViewById(R.id.buttonScanType).setOnClickListener(v -> {
             Intent i = new Intent(ScanColorsSqr2Activity.this, SelectColorsActivity.class);
             i.putExtra("sizeCube", "2");
-            startActivity(i);
+            startActivityForResult(i,1);
         });
 
         threshold1 = findViewById(R.id.secondbar);
@@ -452,7 +452,7 @@ public class ScanColorsSqr2Activity extends CameraActivity implements CvCameraVi
         }).setNeutralButton("Ручной ввод", (dialog, id) -> {
             Intent i = new Intent(ScanColorsSqr2Activity.this, SelectColorsActivity.class);
             i.putExtra("sizeCube", "2");
-            startActivity(i);
+            startActivityForResult(i,1);
             resultDialog = false;
         });
 
@@ -469,7 +469,16 @@ public class ScanColorsSqr2Activity extends CameraActivity implements CvCameraVi
         Intent i = new Intent(ScanColorsSqr2Activity.this, SolutionActivity.class);
         i.putExtra("type", 0);
         i.putExtra("colors", colors);
-        startActivity(i);
+        startActivityForResult(i,1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == 1) {
+            setResult(1);
+            finish();
+        }
     }
 
 
