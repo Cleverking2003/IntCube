@@ -452,4 +452,10 @@ Java_com_example_intcube_CubeGLView_setClearColor(JNIEnv *env, jobject thiz, jfl
     __android_log_print(ANDROID_LOG_ERROR, "gl", "clear color %f %f %f %f\n", r, g, b, a);
     s_scene->setClearColor(r, g, b, a);
 }
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_intcube_CubeGLRenderer_setClearColor(JNIEnv *env, jobject thiz, jfloat r, jfloat g,
+                                                      jfloat b, jfloat a) {
+    s_scene->setClearColor(r, g, b, a);
+}
 #endif

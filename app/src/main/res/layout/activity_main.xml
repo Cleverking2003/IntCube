@@ -98,7 +98,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.041" />
 
-    <ImageView
+    <com.example.intcube.CubeGLView
         android:id="@+id/imageView"
         android:layout_width="314dp"
         android:layout_height="255dp"

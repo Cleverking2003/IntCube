@@ -1,6 +1,7 @@
 package com.example.intcube;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.opengl.GLSurfaceView;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -30,16 +31,6 @@ public class CubeGLView extends GLSurfaceView {
         renderer = new CubeGLRenderer(context);
         setRenderer(renderer);
         setLongClickable(true);
-        TypedValue typedValue = new TypedValue();
-        if (context.getTheme().resolveAttribute(android.R.attr.background, typedValue, true)) {
-            Log.d("test", "CubeGLView: " + typedValue.type);
-            int color = typedValue.data;
-            float r = (float)((color >> 16) & 0xff) / 255.0f;
-            float g = (float)((color >> 8) & 0xff) / 255.0f;
-            float b = (float)((color >> 0) & 0xff) / 255.0f;
-            float a = (float)((color >> 24) & 0xff) / 255.0f;
-            setClearColor(r, g, b, a);
-        }
     }
 
     @Override

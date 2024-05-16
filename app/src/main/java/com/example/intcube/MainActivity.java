@@ -52,18 +52,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         System.loadLibrary("libcube");
-
-        ImageView image = findViewById(R.id.imageView);
-        ImageDecoder.Source src = ImageDecoder.createSource(getResources(), R.drawable.cube);
-        try {
-            @SuppressLint("WrongThread") Drawable draw = ImageDecoder.decodeDrawable(src);
-            image.setImageDrawable(draw);
-            if (draw instanceof AnimatedImageDrawable) {
-                ((AnimatedImageDrawable) draw).start();
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     public void startActivityScan(View v){
