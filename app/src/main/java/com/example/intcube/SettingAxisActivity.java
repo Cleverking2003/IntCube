@@ -3,6 +3,7 @@ package com.example.intcube;
 import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
@@ -63,11 +64,18 @@ public class SettingAxisActivity extends AppCompatActivity{
 
     HashMap<String, ImageButton> buttonsNavigationCube = new HashMap<>();
 
+    Button buttonToScanAxis;
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting_axis);
+        buttonToScanAxis = findViewById(R.id.startScan);
+        buttonToScanAxis.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), ScanAxisColorActivity.class);
+            startActivity(intent);
+        });
         Cube = new AxisMI();
         Cube.createCenters();
         buttonsNavigationCube.put("L", findViewById(R.id.leftAxis));
@@ -76,6 +84,12 @@ public class SettingAxisActivity extends AppCompatActivity{
         buttonsNavigationCube.put("D", findViewById(R.id.downAxis));
         checkSelectColorButton();
     }
+
+    public void startActivityScanAxis(){
+        Intent intent = new Intent(this, ScanAxisColorActivity.class);
+        startActivity(intent);
+    }
+
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
