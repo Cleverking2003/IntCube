@@ -177,7 +177,10 @@ public class SolutionActivity extends AppCompatActivity {
     }
 
     private void setMove(String move) {
-        if (flagMoves == 1) {
+        if (currentStep == moves.length) {
+            moveText.setText("Кубик решен!");
+        }
+        else if (flagMoves == 1) {
             moveText.setText(move);
         }
         else {
