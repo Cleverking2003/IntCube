@@ -16,9 +16,9 @@ public class HelpActivity extends AppCompatActivity {
 
 
         webHelp = findViewById(R.id.webHelp);
-        webHelp.loadUrl("file:///android_asset/html/2x2/.html");
+        webHelp.loadUrl("file:///android_asset/html/Help/index.html");
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.guideToolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
