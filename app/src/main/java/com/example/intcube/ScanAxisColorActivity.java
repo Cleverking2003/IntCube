@@ -159,6 +159,8 @@ public class ScanAxisColorActivity extends CameraActivity implements CvCameraVie
 
         for(int i=0;i<9;i++) statePreview.put(i, new Pair<>(0,"W"));
 
+        int[] centers = getIntent().getIntArrayExtra("centers");
+
         showDialog();
     }
 

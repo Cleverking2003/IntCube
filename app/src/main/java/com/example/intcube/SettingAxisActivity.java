@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import androidx.gridlayout.widget.GridLayout;
@@ -87,6 +88,7 @@ public class SettingAxisActivity extends AppCompatActivity{
 
     public void startActivityScanAxis(){
         Intent intent = new Intent(this, ScanAxisColorActivity.class);
+        HashMap<String, Drawable> centers = Cube.ViewSide.getColorsNeighboringSidesCenters();
         startActivity(intent);
     }
 
