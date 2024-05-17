@@ -565,17 +565,14 @@ public class ScanAxisColorActivity extends CameraActivity implements CvCameraVie
 
     public void scanSide(View v){
         global_counter++;
-        //Intent intent = new Intent(this, ScanTypeActivity.class);
-        //intent.putExtra("sideInfo", statePreview);
-        //startActivity(intent);
+        Intent intent = new Intent(this, SettingAxisActivity.class);
+        intent.putExtra("sideInfo", statePreview);
+        startActivity(intent);
     }
 
     public void toManualinput(){
         Intent intent = new Intent(this, MainActivity.class);
         startActivityForResult(intent,1);
-    }
-    public void backScanType(View v){
-
     }
 
     @Override
