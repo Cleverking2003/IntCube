@@ -257,7 +257,7 @@ public class ScanColorSqrActivity extends CameraActivity implements CvCameraView
         List<MatOfPoint> squares = new ArrayList<>();
 
         updateRois(dst, rois);
-        updateScan(gray, dst, squares);
+        // updateScan(gray, dst, squares);
         updateResult(rois, squares, dst);
 
         return getMat(dst);
@@ -367,45 +367,46 @@ public class ScanColorSqrActivity extends CameraActivity implements CvCameraView
         {
             Rect roi = rois[i];
 
-            for (MatOfPoint sqr : squares) {
+            //for (MatOfPoint sqr : squares) {
 
-                Rect br = Imgproc.boundingRect(sqr);
-                Point center = new Point(br.x +  (double) br.width / 2, br.y + (double) br.height / 2);
+                //Rect br = roi;//Imgproc.boundingRect(sqr);
+                //Point center = new Point(br.x +  (double) br.width / 2, br.y + (double) br.height / 2);
 
-                if (roi.contains(center)) {
-                    Rect r = br.clone();
-                    r.x += r.width / 4;
-                    r.y += r.height / 4;
-                    r.width /= 2;
-                    r.height /= 2;
-                    Mat mask = new Mat(dst, r);
-                    Scalar mean = Core.mean(mask);
+                //if (roi.contains(center)) {
+            Rect r = roi.clone();
+            r.x += r.width / 4;
+            r.y += r.height / 4;
+            r.width /= 2;
+            r.height /= 2;
+            Mat mask = new Mat(dst, r);
+            Scalar mean = Core.mean(mask);
 
-                    double maxDiff = 9999999;
-                    char bestColor = 0;
-                    for (int j = 0; j < 6; j++)
-                    {
-                        Scalar color = referenceColors[j];
-                        char code = referenceCodes[j];
+            final double diffThreshold = 20000; // 20000 -- приемлемая погрешность, 50000 -- серый фон, наверное
+            double maxDiff = 9999999;
+            char bestColor = 0;
+            for (int j = 0; j < 6; j++)
+            {
+                Scalar color = referenceColors[j];
+                char code = referenceCodes[j];
 
-                        double diff =
-                                Math.pow(Math.abs(color.val[0] - mean.val[0]), 2)
-                                        + Math.pow(Math.abs(color.val[1] - mean.val[1]), 2)
-                                        + Math.pow(Math.abs(color.val[2] - mean.val[2]), 2);
 
-                        if (diff < maxDiff) {
-                            maxDiff = diff;
-                            bestColor = code;
-                        }
-                    }
-
-                    if (bestColor != 0) {
-                        sideColors[i] = bestColor;
-                    }
-
-                    break;
+                double diff =
+                        Math.pow(Math.abs(color.val[0] - mean.val[0]), 2)
+                                + Math.pow(Math.abs(color.val[1] - mean.val[1]), 2)
+                                + Math.pow(Math.abs(color.val[2] - mean.val[2]), 2);
+                if (diff < diffThreshold && diff < maxDiff) {
+                    maxDiff = diff;
+                    bestColor = code;
                 }
             }
+
+            if (bestColor != 0) {
+                sideColors[i] = bestColor;
+            }
+
+                    //break;
+                //}
+            //}
 
             if (sideColors[i] == 0)
                 break;
