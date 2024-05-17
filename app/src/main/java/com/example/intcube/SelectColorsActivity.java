@@ -416,7 +416,16 @@ public class SelectColorsActivity extends AppCompatActivity{
             i.putExtra("type", 1);
             i.putExtra("colors", colors);
         }
-        startActivity(i);
+        startActivityForResult(i,1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == 1) {
+            setResult(1);
+            finish();
+        }
     }
 
 }

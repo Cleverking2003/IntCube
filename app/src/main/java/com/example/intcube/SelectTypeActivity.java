@@ -30,20 +30,29 @@ public class SelectTypeActivity extends AppCompatActivity {
     {
         Intent intent = new Intent(this, SelectColorsActivity.class);
         intent.putExtra("sizeCube", "2");
-        startActivity(intent);
+        startActivityForResult(intent,1);
     }
 
     public void choosing3x3(View v)
     {
         Intent intent = new Intent(this, SelectColorsActivity.class);
         intent.putExtra("sizeCube", "3");
-        startActivity(intent);
+        startActivityForResult(intent,1);
     }
 
     public void choosingAxis(View v)
     {
         Intent intent = new Intent(this, SettingAxisActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent,1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == 1) {
+            setResult(1);
+            finish();
+        }
     }
 
 }
