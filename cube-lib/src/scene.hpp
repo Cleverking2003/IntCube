@@ -50,6 +50,10 @@ public:
         m_clear_color = glm::vec4(r, g, b, a);
     }
 
+    void setDistance(float z) {
+        m_view = glm::translate(glm::mat4(1.0), glm::vec3(0.0, 0.0, z));
+    }
+
     void handleDragStart(int x, int y);
     void handleDragStop(int x, int y);
 

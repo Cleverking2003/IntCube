@@ -97,9 +97,13 @@ static float quadVertices[] = {
 };
 
 Scene::Scene(int width, int height, int size)
-    : m_view(glm::translate(glm::mat4(1.0), glm::vec3(0.0, 0.0, -4.0))),
+    : m_view(glm::translate(glm::mat4(1.0), glm::vec3(0.0, 0.0, -4.5))),
     m_proj(glm::perspective(glm::radians(45.0f), (float)width/(float)height, 0.1f, 100.0f)),
     m_width(width), m_height(height) {
+
+    if (width > height) {
+        m_view = glm::translate(glm::mat4(1.0), glm::vec3(0.0, 0.0, -2.5));
+    }
 
     vertex = loadStringFromFile("simple_vertex.glsl");
     frag = loadStringFromFile("simple_fragment.glsl");
@@ -164,6 +168,10 @@ void Scene::resize(int width, int height) {
     glDeleteFramebuffers(1, &m_fbo);
     glDeleteRenderbuffers(1, &m_rbo);
     glDeleteTextures(1, &m_texture);
+
+    if (width > height) {
+        m_view = glm::translate(glm::mat4(1.0), glm::vec3(0.0, 0.0, -2.5));
+    }
 
     m_width = width;
     m_height = height;
@@ -457,5 +465,10 @@ JNIEXPORT void JNICALL
 Java_com_example_intcube_CubeGLRenderer_setClearColor(JNIEnv *env, jobject thiz, jfloat r, jfloat g,
                                                       jfloat b, jfloat a) {
     s_scene->setClearColor(r, g, b, a);
+}
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_example_intcube_CubeGLView_setDistance(JNIEnv *env, jobject thiz, jfloat z) {
+    s_scene->setDistance(z);
 }
 #endif

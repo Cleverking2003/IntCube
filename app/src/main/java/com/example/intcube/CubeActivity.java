@@ -20,6 +20,22 @@ public class CubeActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        CubeGLView cube = findViewById(R.id.cubeGLView2);
+        cube.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        CubeGLView cube = findViewById(R.id.cubeGLView2);
+        cube.onResume();
+    }
+
     public boolean onSupportNavigateUp() {
         this.finish();
         return true;

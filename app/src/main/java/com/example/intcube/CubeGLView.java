@@ -23,6 +23,7 @@ public class CubeGLView extends GLSurfaceView {
     public native void handleMouseMovement(int x, int y);
     public native void handleDragStop(int x, int y);
     public native void setClearColor(float r, float g, float b, float a);
+    public native void setDistance(float z);
 
     public CubeGLView(Context context, AttributeSet attrs) {
         super(context, attrs);

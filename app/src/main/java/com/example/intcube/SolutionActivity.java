@@ -111,6 +111,20 @@ public class SolutionActivity extends AppCompatActivity {
 //        Log.i(getClass().toString(), solve3x3Cube(cube));
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        cubeView.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        cubeView.onResume();
+    }
+
     private int moveToInt(char move) {
         switch (move) {
             case 'U':

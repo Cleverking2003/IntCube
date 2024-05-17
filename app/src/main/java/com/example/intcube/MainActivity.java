@@ -54,6 +54,22 @@ public class MainActivity extends AppCompatActivity {
         System.loadLibrary("libcube");
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        CubeGLView cube = findViewById(R.id.imageView);
+        cube.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        CubeGLView cube = findViewById(R.id.imageView);
+        cube.onResume();
+    }
+
     public void startActivityScan(View v){
         Intent intent = new Intent(this, ScanTypeActivity.class);
         startActivity(intent);
