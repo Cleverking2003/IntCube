@@ -26,6 +26,7 @@ public class SolutionActivity extends AppCompatActivity {
 
     TextView stageText;
     TextView moveText;
+    TextView movesLeftText;
     Button nextButton;
     Button prevButton;
     Button fullDescription;
@@ -62,6 +63,7 @@ public class SolutionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_solution);
         stageText = findViewById(R.id.stageText);
         moveText = findViewById(R.id.moveText);
+        movesLeftText = findViewById(R.id.movesLeftText);
         nextButton = findViewById(R.id.buttonNext);
         prevButton = findViewById(R.id.buttonPrev);
         fullDescription = findViewById(R.id.btn_full_desc);
@@ -109,6 +111,11 @@ public class SolutionActivity extends AppCompatActivity {
 
 //        Cube3x3 cube = new Cube3x3(colors);
 //        Log.i(getClass().toString(), solve3x3Cube(cube));
+    }
+
+    private void setMovesLeftCount(int count) {
+        String movesLeftCountText = "Осталось шагов: " + String.valueOf(count);
+        movesLeftText.setText(movesLeftCountText);
     }
 
     @Override
@@ -176,6 +183,7 @@ public class SolutionActivity extends AppCompatActivity {
             if (stages.containsValue(currentStep)) {
                 setStage(currentStep);
             }
+            setMovesLeftCount(moves.length - currentStep);
         }
     }
 
@@ -199,6 +207,7 @@ public class SolutionActivity extends AppCompatActivity {
             if (currentMove.length() > 1 && currentMove.charAt(1) == '2')
                 cubeView.executeMove(move, inverse);
         }
+        setMovesLeftCount(moves.length - currentStep);
     }
 
     private void setMove(String move) {
@@ -206,6 +215,7 @@ public class SolutionActivity extends AppCompatActivity {
             moveText.setText("Кубик решен!");
             backToMainButton.setVisibility(View.VISIBLE);
             stageText.setText("");
+            movesLeftText.setText("");
         }
         else if (flagMoves == 1) {
             moveText.setText(move);
@@ -265,6 +275,7 @@ public class SolutionActivity extends AppCompatActivity {
                                     }
                                 }
                                 moves = Arrays.copyOfRange(moves, 0, index + 1);
+                                setMovesLeftCount(moves.length);
                             }
                         })
                 .setNegativeButton("Самый быстрый алгоритм",
