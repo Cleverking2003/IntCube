@@ -441,6 +441,7 @@ public class SettingAxisActivity extends AppCompatActivity{
             Cube.ViewSide.clearColorsCorner(Element.Position);
             Cube.ViewSide.clearColorsEdge(Element.Position);
             Element.setBackgroundWithBorder(Cube.ViewSide.getDrawable(Element.Position));
+            checkSolveButton();
         }
     }
 

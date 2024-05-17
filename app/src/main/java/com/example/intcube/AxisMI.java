@@ -432,6 +432,12 @@ class AxisMI{
             }
             else{
                 if(Colors.get(side) == Color.GRAY) {
+                    if(positionFrontSide == PositionFrontSide.TopLeft || positionFrontSide == PositionFrontSide.BottomRight)
+                        if(Colors.get(Orientation.get(OrientationCorner.TopBottom)) == color)
+                            return;
+                    else
+                        if(Colors.get(Orientation.get(OrientationCorner.LeftRight)) == color)
+                            return;
                     Colors.put(side, color);
                     CountColors.put(color, CountColors.get(color) + 1);
                 }
@@ -454,13 +460,17 @@ class AxisMI{
 
         public void clearColors(){
             if(Type == TypeCorner.OneColor) {
-                CountColors.put(Colors.get(Colors.get(OrientationsCorner[0])), CountColors.get(Colors.get(Colors.get(OrientationsCorner[0]))) - 1);
-                Colors.replaceAll((k, v) -> Color.GRAY);
+                if(Colors.get(Orientation.get(OrientationsCorner[0])) != Color.GRAY){
+                    CountColors.put(Colors.get(Orientation.get(OrientationsCorner[0])), CountColors.get(Colors.get(Orientation.get(OrientationsCorner[0]))) - 1);
+                    Colors.replaceAll((k, v) -> Color.GRAY);
+                }
             }
-            for(String key : Colors.keySet()) {
-                if(Colors.get(key) != Color.GRAY)
-                    CountColors.put(Colors.get(key), CountColors.get(Colors.get(key)) - 1);
-                Colors.put(key, Color.GRAY);
+            else {
+                for (String key : Colors.keySet()) {
+                    if (Colors.get(key) != Color.GRAY)
+                        CountColors.put(Colors.get(key), CountColors.get(Colors.get(key)) - 1);
+                    Colors.put(key, Color.GRAY);
+                }
             }
         }
     }
@@ -469,7 +479,7 @@ class AxisMI{
         TypeEdge Type;
         String Location;
         public Map<String, DirectionEdge> Directions = new HashMap<>();
-        public Map<String, Integer[]> Colors = new HashMap<>();
+        public Map<String, Integer> Colors = new HashMap<>();
 
         public Edge(String location, TypeEdge type){
             Location = location;
@@ -477,7 +487,7 @@ class AxisMI{
             DirectionEdge direction = DirectionEdge.Left;
             for(int i = 0; i < location.length(); i++){
                 String side = String.valueOf(location.charAt(i));
-                Colors.put(side, new Integer[]{ Color.GRAY, Color.GRAY });
+                Colors.put(side, Color.GRAY);
                 if(i == 0)
                     Directions.put(side, DirectionEdge.Left);
                 else {
@@ -490,7 +500,9 @@ class AxisMI{
         }
 
         public Drawable getDrawable(String side, PositionFrontSide position){
-            return Drawables.getEdgeDrawable(Type, Directions.get(side), position, Colors.get(side));
+            Integer[] colors = Type == TypeEdge.OneColor ? new Integer[]{ Colors.get(side) }
+                    : new Integer[]{ Colors.get(side), Colors.get(getAnotherSide(side)) };
+            return Drawables.getEdgeDrawable(Type, Directions.get(side), position, colors);
         }
 
         public void rotateEdge(){
@@ -499,35 +511,51 @@ class AxisMI{
         }
 
         public void addColor(String side, Integer color){
-            if(Colors.get(side)[0] != Color.GRAY) {
-                if(Objects.equals(Colors.get(side)[0], color))
+            if(Type == TypeEdge.OneColor){
+                if(Colors.get(side) != Color.GRAY)
                     return;
-                if(Colors.get(side)[1] != Color.GRAY)
-                    return;
+                Colors.replaceAll((k, v) -> color);
                 CountColors.put(color, CountColors.get(color) + 1);
-                Colors.get(side)[1] = color;
-                if(Objects.equals(side, String.valueOf(Location.charAt(0))))
-                    Colors.get(String.valueOf(Location.charAt(1)))[0] = color;
-                else
-                    Colors.get(String.valueOf(Location.charAt(0)))[0] = color;
             }
             else {
-                CountColors.put(color, CountColors.get(color) + 1);
-                Colors.get(side)[0] = color;
-                if(Objects.equals(side, String.valueOf(Location.charAt(0))))
-                    Colors.get(String.valueOf(Location.charAt(1)))[1] = color;
-                else
-                    Colors.get(String.valueOf(Location.charAt(0)))[1] = color;
+                if (Colors.get(side) != Color.GRAY) {
+                    if (Objects.equals(Colors.get(side), color))
+                        return;
+                    if (Colors.get(getAnotherSide(side)) != Color.GRAY)
+                        return;
+                    CountColors.put(color, CountColors.get(color) + 1);
+                    Colors.put(getAnotherSide(side), color);
+
+                }
+                else {
+                    CountColors.put(color, CountColors.get(color) + 1);
+                    Colors.put(side, color);
+                }
             }
         }
 
+        private String getAnotherSide(String current){
+            if(Objects.equals(current, String.valueOf(Location.charAt(0))))
+                return String.valueOf(Location.charAt(1));
+            else
+                return String.valueOf(Location.charAt(0));
+        }
+
         public void clearColors(){
-            for(String key : Colors.keySet()) {
-                if(Colors.get(key)[0] != Color.GRAY)
-                    CountColors.put(Colors.get(key)[0], CountColors.get(Colors.get(key)[0]) - 1);
-                if(Colors.get(key)[1] != Color.GRAY)
-                    CountColors.put(Colors.get(key)[1], CountColors.get(Colors.get(key)[1]) - 1);
-                Colors.put(key, new Integer[]{Color.GRAY, Color.GRAY});
+            if(Type == TypeEdge.OneColor)
+            {
+                String side = String.valueOf(Location.charAt(0));
+                if(Colors.get(side) != Color.GRAY) {
+                    CountColors.put(Colors.get(side), CountColors.get(Colors.get(side)) - 1);
+                    Colors.replaceAll((k, v) -> Color.GRAY);
+                }
+            }
+            else {
+                for (String key : Colors.keySet()) {
+                    if (Colors.get(key) != Color.GRAY)
+                        CountColors.put(Colors.get(key), CountColors.get(Colors.get(key)) - 1);
+                    Colors.put(key, Color.GRAY);
+                }
             }
         }
     }
@@ -567,7 +595,7 @@ class AxisMI{
     }
 
     int Size = 3;
-    int MaxCountColor = 8;
+    int MaxCountColor = 7;
     Map<Integer, Integer> CountColors = new HashMap<Integer, Integer>(){
         {put(Color.RED, 0);}
         {put(Color.BLUE, 0);}
