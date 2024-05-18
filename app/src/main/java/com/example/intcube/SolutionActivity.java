@@ -114,8 +114,13 @@ public class SolutionActivity extends AppCompatActivity {
     }
 
     private void setMovesLeftCount(int count) {
-        String movesLeftCountText = "Осталось шагов: " + String.valueOf(count);
-        movesLeftText.setText(movesLeftCountText);
+        if (count > 99) {
+            movesLeftText.setText("Осталось шагов: 99+");
+        }
+        else {
+            String movesLeftCountText = "Осталось шагов: " + String.valueOf(count);
+            movesLeftText.setText(movesLeftCountText);
+        }
     }
 
     @Override
