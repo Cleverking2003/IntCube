@@ -67,6 +67,9 @@ public class SettingAxisActivity extends AppCompatActivity{
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
+    public static Context Context;
+
     AxisMI Cube;
     ChoosingElement Element = new ChoosingElement();
 
@@ -80,14 +83,7 @@ public class SettingAxisActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting_axis);
-
-        buttonToScanAxis = findViewById(R.id.startScan);
-        buttonToScanAxis.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivityScanAxis(v);
-            }
-        });
+        Context = this;
         Cube = new AxisMI();
         Cube.createCenters();
         buttonsNavigationCube.put("L", findViewById(R.id.leftAxis));
@@ -479,7 +475,6 @@ public class SettingAxisActivity extends AppCompatActivity{
         solveButton.setEnabled(Cube.cubeIsFillColors());
     }
 
-<<<<<<< HEAD
     public static byte[] drawable2Bytes(Drawable d) {
         Bitmap bitmap = drawable2Bitmap(d);
         return bitmap2Bytes(bitmap);
@@ -504,7 +499,7 @@ public class SettingAxisActivity extends AppCompatActivity{
         bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
         return baos.toByteArray();
     }
-=======
+
     private char getColor(Integer color){
         if(color == Color.RED)
             return 'R';
@@ -586,6 +581,4 @@ public class SettingAxisActivity extends AppCompatActivity{
         intent.putExtra("colors", colors);
         startActivity(intent);
     }
-
->>>>>>> 752578c (pupupupu)
 }

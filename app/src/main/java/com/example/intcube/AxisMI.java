@@ -1,7 +1,11 @@
 package com.example.intcube;
 
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.ShapeDrawable;
@@ -128,6 +132,9 @@ class AxisMI{
         }
 
         private static Drawable getTwoColorDrawable(Integer[] startPoint, Integer[][] firstLines, Integer[][] secondLines, Integer[] colors){
+            Bitmap bitmap = Bitmap.createBitmap(50, 50, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            Paint paint = new Paint();
             Path first = new Path();
             Path second = new Path();
             first.moveTo(startPoint[0], startPoint[1]);
@@ -138,11 +145,11 @@ class AxisMI{
             }
             first.close();
             second.close();
-            ShapeDrawable firstDrawable = new ShapeDrawable(new PathShape(first, 50, 50));
-            ShapeDrawable secondDrawable = new ShapeDrawable(new PathShape(second, 50, 50));
-            firstDrawable.getPaint().setColor(colors[0]);
-            secondDrawable.getPaint().setColor(colors[1]);
-            return new LayerDrawable(new Drawable[]{ firstDrawable, secondDrawable });
+            paint.setColor(colors[0]);
+            canvas.drawPath(first, paint);
+            paint.setColor(colors[1]);
+            canvas.drawPath(second, paint);
+            return new BitmapDrawable(SettingAxisActivity.Context.getResources(), bitmap);
         }
     }
 
@@ -565,10 +572,10 @@ class AxisMI{
         DirectionCenter Direction;
         String[] Orientation;
 
-        public Center(String[] orientation, Integer[] colors){
+        public Center(String[] orientation, Integer[] colors, DirectionCenter direction){
             Colors = colors;
             Orientation = orientation;
-            Direction = DirectionCenter.TopLeft;
+            Direction = direction;
         }
 
         public Drawable getDrawable(){
@@ -642,7 +649,7 @@ class AxisMI{
             {put("U", new Integer[]{Color.YELLOW, Color.BLUE});}
             {put("D", new Integer[]{Color.WHITE, Color.GREEN});}
         };
-        HashMap<String, String[]> centresOrientation = new HashMap<String, String[]>(){
+        HashMap<String, String[]> centersOrientation = new HashMap<String, String[]>(){
             {put("F", new String[]{ "L", "U", "R", "D" });}
             {put("R", new String[]{ "F", "U", "B", "D" });}
             {put("B", new String[]{ "R", "U", "L", "D" });}
@@ -650,8 +657,16 @@ class AxisMI{
             {put("U", new String[]{ "L", "B", "R", "F" });}
             {put("D", new String[]{ "R", "F", "L", "B" });}
         };
+        HashMap<String, DirectionCenter> centersDirection = new HashMap<String, DirectionCenter>(){
+            {put("F", DirectionCenter.BottomRight);}
+            {put("R", DirectionCenter.BottomRight);}
+            {put("B", DirectionCenter.TopRight);}
+            {put("L", DirectionCenter.TopRight);}
+            {put("U", DirectionCenter.BottomRight);}
+            {put("D", DirectionCenter.BottomLeft);}
+        };
         for(Map.Entry<String, Integer[]> center : centersColor.entrySet()) {
-            Centers.put(center.getKey(), new Center(centresOrientation.get(center.getKey()), center.getValue()));
+            Centers.put(center.getKey(), new Center(centersOrientation.get(center.getKey()), center.getValue(), centersDirection.get(center.getKey())));
             CountColors.put(center.getValue()[0], CountColors.get(center.getValue()[0]) + 1);
             CountColors.put(center.getValue()[1], CountColors.get(center.getValue()[1]) + 1);
         }
