@@ -290,6 +290,12 @@ public class SelectColorsActivity extends AppCompatActivity{
     }
 
     public void startActivityScan(View view) {
+        Intent intent;
+        if(Cube.Size == 2)
+            intent = new Intent(this, ScanColorsSqr2Activity.class);
+        else
+            intent = new Intent(this, ScanColorSqrActivity.class);
+        startActivity(intent);
     }
 
 
