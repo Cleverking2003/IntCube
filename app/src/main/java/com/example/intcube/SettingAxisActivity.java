@@ -4,7 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
@@ -17,6 +22,8 @@ import androidx.gridlayout.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -67,15 +74,19 @@ public class SettingAxisActivity extends AppCompatActivity{
 
     Button buttonToScanAxis;
 
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting_axis);
+
         buttonToScanAxis = findViewById(R.id.startScan);
-        buttonToScanAxis.setOnClickListener(v -> {
-            Intent intent = new Intent(v.getContext(), ScanAxisColorActivity.class);
-            startActivity(intent);
+        buttonToScanAxis.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityScanAxis(v);
+            }
         });
         Cube = new AxisMI();
         Cube.createCenters();
@@ -86,9 +97,24 @@ public class SettingAxisActivity extends AppCompatActivity{
         checkSelectColorButton();
     }
 
-    public void startActivityScanAxis(){
+    public void startActivityScanAxis(View v){
         Intent intent = new Intent(this, ScanAxisColorActivity.class);
+
         HashMap<String, Drawable> centers = Cube.ViewSide.getColorsNeighboringSidesCenters();
+
+        if (centers.get("L") == null | centers.get("R") == null) return;
+        Drawable left = centers.get("L");
+        Drawable right = centers.get("R");
+        Drawable main = Cube.ViewSide.ViewCenter.getDrawable();
+
+        byte[] leftAsBytes = drawable2Bytes(left);
+        byte[] rightAsBytes = drawable2Bytes(right);
+        byte[] mainAsBytes = drawable2Bytes(main);
+
+        intent.putExtra("left", leftAsBytes);
+        intent.putExtra("right", rightAsBytes);
+        intent.putExtra("main", mainAsBytes);
+
         startActivity(intent);
     }
 
@@ -455,5 +481,30 @@ public class SettingAxisActivity extends AppCompatActivity{
     private void checkSolveButton(){
         Button solveButton = findViewById(R.id.solveCube);
         solveButton.setEnabled(Cube.cubeIsFillColors());
+    }
+
+    public static byte[] drawable2Bytes(Drawable d) {
+        Bitmap bitmap = drawable2Bitmap(d);
+        return bitmap2Bytes(bitmap);
+    }/*from  www . ja  v  a 2s.  com*/
+
+    public static Bitmap drawable2Bitmap(Drawable drawable) {
+        Bitmap bitmap = Bitmap
+                .createBitmap(
+                        drawable.getIntrinsicWidth(),
+                        drawable.getIntrinsicHeight(),
+                        drawable.getOpacity() != PixelFormat.OPAQUE ? Bitmap.Config.ARGB_8888
+                                : Bitmap.Config.RGB_565);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight());
+        drawable.draw(canvas);
+        return bitmap;
+    }
+
+    public static byte[] bitmap2Bytes(Bitmap bm) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
+        return baos.toByteArray();
     }
 }

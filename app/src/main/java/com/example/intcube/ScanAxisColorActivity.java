@@ -4,6 +4,8 @@ package com.example.intcube;
 import android.app.AlertDialog;
 import android.content.Intent;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import android.util.Log;
@@ -36,9 +38,7 @@ import org.opencv.imgproc.Imgproc;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 
@@ -159,9 +159,25 @@ public class ScanAxisColorActivity extends CameraActivity implements CvCameraVie
 
         for(int i=0;i<9;i++) statePreview.put(i, new Pair<>(0,"W"));
 
-        int[] centers = getIntent().getIntArrayExtra("centers");
+        byte[] leftcntr = getIntent().getByteArrayExtra("left");
+        byte[] rightcntr = getIntent().getByteArrayExtra("right");
+        byte[] maincntr = getIntent().getByteArrayExtra("main");
 
-        showDialog();
+        if (leftcntr == null | rightcntr == null | maincntr == null) {
+            leftcenter.setImageResource(R.drawable.bo_center);
+            rightcenter.setImageResource(R.drawable.rg_center);
+            center.setImageResource(R.drawable.wr_center);
+            showDialog();
+        }
+
+        else{
+            Bitmap leftBitmap = BitmapFactory.decodeByteArray(leftcntr, 0, leftcntr.length);
+            Bitmap rightBitmap = BitmapFactory.decodeByteArray(rightcntr, 0, rightcntr.length);
+            Bitmap mainBitmap = BitmapFactory.decodeByteArray(maincntr, 0, maincntr.length);
+            leftcenter.setImageBitmap(leftBitmap);
+            rightcenter.setImageBitmap(rightBitmap);
+            center.setImageBitmap(mainBitmap);
+        }
     }
 
     @Override
@@ -270,25 +286,6 @@ public class ScanAxisColorActivity extends CameraActivity implements CvCameraVie
                 index++;
             }
         }
-//        Определение pt1 в квадратиках
-//        for (int i = 0; i < 9; i++) {
-//            if (i == 0){
-//                Point pt = new Point(rois[i].tl().x + rois[i].width, rois[i].tl().y);
-//                Imgproc.circle(view, pt, 5, new Scalar(0, 255, 255),4);
-//            }
-//            if (i == 2){
-//                Point pt = new Point(rois[i].tl().x + rois[i].width, rois[i].tl().y + rois[i].width);
-//                Imgproc.circle(view, pt, 5, new Scalar(0, 255, 255),4);
-//            }
-//            if (i == 6){
-//                Point pt = new Point(rois[i].tl().x, rois[i].tl().y);
-//                Imgproc.circle(view, pt, 5, new Scalar(0, 255, 255),4);
-//            }
-//            if (i == 8){
-//                Point pt = new Point(rois[i].tl().x, rois[i].tl().y + rois[i].width);
-//                Imgproc.circle(view, pt, 5, new Scalar(0, 255, 255),4);
-//            }
-//        }
         return rois;
     }
 
@@ -300,13 +297,13 @@ public class ScanAxisColorActivity extends CameraActivity implements CvCameraVie
          */
         if(i % 2 == 0){
             if(i == 4){
-                RetValue ret = isCorrectline(ROI, lines, i);
-                runOnUiThread(() -> {
-                    int[] centers = getCenter(global_counter);
-                    preview[i].setImageResource(centers[1]);
-                    leftcenter.setImageResource(centers[0]);
-                    rightcenter.setImageResource(centers[2]);
-                });
+//                RetValue ret = isCorrectline(ROI, lines, i);
+//                runOnUiThread(() -> {
+//                    int[] centers = getCenter(global_counter);
+//                    preview[i].setImageResource(centers[1]);
+//                    leftcenter.setImageResource(centers[0]);
+//                    rightcenter.setImageResource(centers[2]);
+//                });
                 return;
             }
             if(lines.empty()) {
