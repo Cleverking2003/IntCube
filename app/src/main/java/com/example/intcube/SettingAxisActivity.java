@@ -373,10 +373,6 @@ public class SettingAxisActivity extends AppCompatActivity{
         finish();
     }
 
-    public void solveCube(View v){
-
-    }
-
     public void selectRed(View v) {
         Log.wtf("COunt", String.valueOf(Cube.CountColors.get(Color.RED)));
         if (Element.elementIsNotSelected())
@@ -483,6 +479,7 @@ public class SettingAxisActivity extends AppCompatActivity{
         solveButton.setEnabled(Cube.cubeIsFillColors());
     }
 
+<<<<<<< HEAD
     public static byte[] drawable2Bytes(Drawable d) {
         Bitmap bitmap = drawable2Bitmap(d);
         return bitmap2Bytes(bitmap);
@@ -507,4 +504,88 @@ public class SettingAxisActivity extends AppCompatActivity{
         bm.compress(Bitmap.CompressFormat.PNG, 100, baos);
         return baos.toByteArray();
     }
+=======
+    private char getColor(Integer color){
+        if(color == Color.RED)
+            return 'R';
+        else if(color == Color.parseColor("#FFA500"))
+            return 'O';
+        else if(color == Color.GREEN)
+            return 'G';
+        else if(color == Color.BLUE)
+            return 'B';
+        else if(color == Color.WHITE)
+            return 'W';
+        else
+            return 'Y';
+    }
+
+    public void solveCube(View v){
+        Intent intent = new Intent(this, SolutionActivity.class);
+        char[][][] colors = new char[6][3][3];
+        colors[0][0][0] = getColor(Cube.Corners.get(Cube.getSortedString("LUF")).Colors.get("F"));
+        colors[0][0][1] = getColor(Cube.Edges.get(Cube.getSortedString("UF")).Colors.get("F"));
+        colors[0][0][2] = getColor(Cube.Corners.get(Cube.getSortedString("RUF")).Colors.get("F"));
+        colors[0][1][0] = getColor(Cube.Edges.get(Cube.getSortedString("LF")).Colors.get("F"));
+        colors[0][1][1] = getColor(Cube.Centers.get("F").Colors[0]);
+        colors[0][1][2] = getColor(Cube.Edges.get(Cube.getSortedString("RF")).Colors.get("F"));
+        colors[0][2][0] = getColor(Cube.Corners.get(Cube.getSortedString("LDF")).Colors.get("F"));
+        colors[0][2][1] = getColor(Cube.Edges.get(Cube.getSortedString("DF")).Colors.get("F"));
+        colors[0][2][2] = getColor(Cube.Corners.get(Cube.getSortedString("RDF")).Colors.get("F"));
+
+        colors[1][0][0] = getColor(Cube.Corners.get(Cube.getSortedString("LUB")).Colors.get("U"));
+        colors[1][0][1] = getColor(Cube.Edges.get(Cube.getSortedString("UB")).Colors.get("U"));
+        colors[1][0][2] = getColor(Cube.Corners.get(Cube.getSortedString("RBU")).Colors.get("U"));
+        colors[1][1][0] = getColor(Cube.Edges.get(Cube.getSortedString("LU")).Colors.get("U"));
+        colors[1][1][1] = getColor(Cube.Centers.get("U").Colors[0]);
+        colors[1][1][2] = getColor(Cube.Edges.get(Cube.getSortedString("UR")).Colors.get("U"));
+        colors[1][2][0] = getColor(Cube.Corners.get(Cube.getSortedString("LFU")).Colors.get("U"));
+        colors[1][2][1] = getColor(Cube.Edges.get(Cube.getSortedString("FU")).Colors.get("U"));
+        colors[1][2][2] = getColor(Cube.Corners.get(Cube.getSortedString("RFU")).Colors.get("U"));
+
+        colors[2][0][0] = getColor(Cube.Corners.get(Cube.getSortedString("BUR")).Colors.get("R"));
+        colors[2][0][1] = getColor(Cube.Edges.get(Cube.getSortedString("RB")).Colors.get("R"));
+        colors[2][0][2] = getColor(Cube.Corners.get(Cube.getSortedString("BDR")).Colors.get("R"));
+        colors[2][1][0] = getColor(Cube.Edges.get(Cube.getSortedString("RU")).Colors.get("R"));
+        colors[2][1][1] = getColor(Cube.Centers.get("R").Colors[0]);
+        colors[2][1][2] = getColor(Cube.Edges.get(Cube.getSortedString("RD")).Colors.get("R"));
+        colors[2][2][0] = getColor(Cube.Corners.get(Cube.getSortedString("FUR")).Colors.get("R"));
+        colors[2][2][1] = getColor(Cube.Edges.get(Cube.getSortedString("FR")).Colors.get("R"));
+        colors[2][2][2] = getColor(Cube.Corners.get(Cube.getSortedString("FDR")).Colors.get("R"));
+
+        colors[3][0][0] = getColor(Cube.Corners.get(Cube.getSortedString("BDR")).Colors.get("D"));
+        colors[3][0][1] = getColor(Cube.Edges.get(Cube.getSortedString("DB")).Colors.get("D"));
+        colors[3][0][2] = getColor(Cube.Corners.get(Cube.getSortedString("BDL")).Colors.get("D"));
+        colors[3][1][0] = getColor(Cube.Edges.get(Cube.getSortedString("RD")).Colors.get("D"));
+        colors[3][1][1] = getColor(Cube.Centers.get("D").Colors[0]);
+        colors[3][1][2] = getColor(Cube.Edges.get(Cube.getSortedString("LD")).Colors.get("D"));
+        colors[3][2][0] = getColor(Cube.Corners.get(Cube.getSortedString("FDR")).Colors.get("D"));
+        colors[3][2][1] = getColor(Cube.Edges.get(Cube.getSortedString("FD")).Colors.get("D"));
+        colors[3][2][2] = getColor(Cube.Corners.get(Cube.getSortedString("FDL")).Colors.get("D"));
+
+        colors[4][0][0] = getColor(Cube.Corners.get(Cube.getSortedString("BDL")).Colors.get("L"));
+        colors[4][0][1] = getColor(Cube.Edges.get(Cube.getSortedString("LB")).Colors.get("L"));
+        colors[4][0][2] = getColor(Cube.Corners.get(Cube.getSortedString("BUL")).Colors.get("L"));
+        colors[4][1][0] = getColor(Cube.Edges.get(Cube.getSortedString("LD")).Colors.get("L"));
+        colors[4][1][1] = getColor(Cube.Centers.get("L").Colors[0]);
+        colors[4][1][2] = getColor(Cube.Edges.get(Cube.getSortedString("LU")).Colors.get("L"));
+        colors[4][2][0] = getColor(Cube.Corners.get(Cube.getSortedString("FDL")).Colors.get("L"));
+        colors[4][2][1] = getColor(Cube.Edges.get(Cube.getSortedString("FL")).Colors.get("L"));
+        colors[4][2][2] = getColor(Cube.Corners.get(Cube.getSortedString("FUL")).Colors.get("L"));
+
+        colors[5][0][0] = getColor(Cube.Corners.get(Cube.getSortedString("BDR")).Colors.get("B"));
+        colors[5][0][1] = getColor(Cube.Edges.get(Cube.getSortedString("BR")).Colors.get("B"));
+        colors[5][0][2] = getColor(Cube.Corners.get(Cube.getSortedString("BUR")).Colors.get("B"));
+        colors[5][1][0] = getColor(Cube.Edges.get(Cube.getSortedString("BD")).Colors.get("B"));
+        colors[5][1][1] = getColor(Cube.Centers.get("B").Colors[0]);
+        colors[5][1][2] = getColor(Cube.Edges.get(Cube.getSortedString("BU")).Colors.get("B"));
+        colors[5][2][0] = getColor(Cube.Corners.get(Cube.getSortedString("BDL")).Colors.get("B"));
+        colors[5][2][1] = getColor(Cube.Edges.get(Cube.getSortedString("BL")).Colors.get("B"));
+        colors[5][2][2] = getColor(Cube.Corners.get(Cube.getSortedString("BUL")).Colors.get("B"));
+        intent.putExtra("type", 2);
+        intent.putExtra("colors", colors);
+        startActivity(intent);
+    }
+
+>>>>>>> 752578c (pupupupu)
 }

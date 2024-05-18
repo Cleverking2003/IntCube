@@ -629,17 +629,17 @@ class AxisMI{
         {put(Side.Back, "B");}
     };
     ViewSide ViewSide = new ViewSide();
-    private Map<String, Corner> Corners = new HashMap<>();
-    private Map<String, Edge> Edges = new HashMap<>();
-    private Map<String, Center> Centers = new HashMap<>();
+    Map<String, Corner> Corners = new HashMap<>();
+    Map<String, Edge> Edges = new HashMap<>();
+    Map<String, Center> Centers = new HashMap<>();
 
     public void createCenters(){
         HashMap<String, Integer[]> centersColor = new HashMap<String, Integer[]>(){
-            {put("F", new Integer[]{Color.RED, Color.WHITE});}
-            {put("R", new Integer[]{Color.RED, Color.GREEN});}
-            {put("B", new Integer[]{Color.parseColor("#FFA500"), Color.YELLOW});}
-            {put("L", new Integer[]{Color.parseColor("#FFA500"), Color.BLUE});}
-            {put("U", new Integer[]{Color.BLUE, Color.YELLOW});}
+            {put("F", new Integer[]{Color.GREEN, Color.RED});}
+            {put("R", new Integer[]{Color.parseColor("#FFA500"), Color.YELLOW});}
+            {put("B", new Integer[]{Color.BLUE, Color.parseColor("#FFA500")});}
+            {put("L", new Integer[]{Color.RED, Color.WHITE});}
+            {put("U", new Integer[]{Color.YELLOW, Color.BLUE});}
             {put("D", new Integer[]{Color.WHITE, Color.GREEN});}
         };
         HashMap<String, String[]> centresOrientation = new HashMap<String, String[]>(){
@@ -728,7 +728,7 @@ class AxisMI{
             return null;
     }
 
-    private String getSortedString(String source){
+    public String getSortedString(String source){
         char[] chars = source.toCharArray();
         Arrays.sort(chars);
         return new String(chars);
