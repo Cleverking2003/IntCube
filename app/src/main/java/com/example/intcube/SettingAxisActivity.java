@@ -27,9 +27,12 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class SettingAxisActivity extends AppCompatActivity{
 
@@ -58,10 +61,10 @@ public class SettingAxisActivity extends AppCompatActivity{
         AxisMI.PositionFrontSide Position;
 
         @SuppressLint("UseCompatLoadingForDrawables")
-        public void setBackgroundWithBorder(Drawable drawable){
-            String[] indexes = ((String) Element.getTag()).split(" ");
+        public void setBackgroundWithBorder(){
+            Drawable background = Cube.ViewSide.getDrawable(Position, IsSelectColors);
             Drawable[] layers = new Drawable[2];
-            Drawable = layers[0] = drawable;
+            Drawable = layers[0] = background != null ? background : getDrawable(R.drawable.element_empty);
             layers[1] = SettingAxisActivity.this.getDrawable(R.drawable.border_button);
             LayerDrawable layerDrawable = new LayerDrawable(layers);
             Element.setBackground(layerDrawable);
@@ -74,12 +77,13 @@ public class SettingAxisActivity extends AppCompatActivity{
             int row = Integer.parseInt(tag.split(" ")[0]);
             int column = Integer.parseInt(tag.split(" ")[1]);
             Position = AxisMI.PositionFrontSide.getPosition(row, column, Cube.Size - 1, Cube.Size - 1);
-            setBackgroundWithBorder(Element.getBackground());
+            setBackgroundWithBorder();
         }
 
         public void deleteBorder(){
             if(Element != null) {
-                Element.setBackground(Drawable);
+                Drawable background = Cube.ViewSide.getDrawable(Position, false);
+                Element.setBackground(background != null ? background : getDrawable(R.drawable.element_empty));
                 Element = null;
                 Drawable = null;
             }
@@ -95,6 +99,7 @@ public class SettingAxisActivity extends AppCompatActivity{
 
     AxisMI Cube;
     ChoosingElement Element = new ChoosingElement();
+    boolean IsSelectColors = false;
 
     HashMap<String, ImageButton> buttonsNavigationCube = new HashMap<>();
 
@@ -165,7 +170,7 @@ public class SettingAxisActivity extends AppCompatActivity{
             GridLayout.LayoutParams layoutParams = createLayoutParams();
             layoutParams.rowSpec = GridLayout.spec(row);
             layoutParams.columnSpec = GridLayout.spec(column);
-            addViewOnGrid(layout, layoutParams, Cube.ViewSide.getDrawable(position), row + " " + column, sizeButton);
+            addViewOnGrid(layout, layoutParams, Cube.ViewSide.getDrawable(position, false), row + " " + column, sizeButton);
             column++;
             if(column == Cube.Size)
             {
@@ -204,7 +209,10 @@ public class SettingAxisActivity extends AppCompatActivity{
     private void changeBackgroundNavigationButtons() {
         HashMap<String, Drawable> sideColor = Cube.ViewSide.getColorsNeighboringSidesCenters();
         for (Map.Entry<String, Drawable> oneSide : sideColor.entrySet()) {
-            buttonsNavigationCube.get(oneSide.getKey()).setBackground(oneSide.getValue());
+            Drawable[] drawables = new Drawable[2];
+            drawables[0] = oneSide.getValue();
+            drawables[1] = getDrawable(R.drawable.radius_transparent);
+            buttonsNavigationCube.get(oneSide.getKey()).setBackground(new LayerDrawable(drawables));
         }
     }
 
@@ -248,11 +256,11 @@ public class SettingAxisActivity extends AppCompatActivity{
         if (Element.elementIsNotSelected())
             Toast.makeText(this, "Выберите элемент", Toast.LENGTH_SHORT).show();
         else if(AxisMI.PositionFrontSide.isPositionCorner(Element.Position))
-            if(Cube.CountCorners.get(AxisMI.TypeCorner.OneColor) == Cube.MaxCountCorners.get(AxisMI.TypeCorner.OneColor))
+            if(Objects.equals(Cube.CountCorners.get(AxisMI.TypeCorner.OneColor), Cube.MaxCountCorners.get(AxisMI.TypeCorner.OneColor)))
                 Toast.makeText(this, "Достигнут максимум этих элементов", Toast.LENGTH_SHORT).show();
             else {
                 Cube.ViewSide.addCorner(Element.Position, AxisMI.TypeCorner.OneColor);
-                Element.setBackgroundWithBorder(Cube.ViewSide.getDrawable(Element.Position));
+                Element.setBackgroundWithBorder();
                 checkSelectColorButton();
             }
         else
@@ -263,11 +271,11 @@ public class SettingAxisActivity extends AppCompatActivity{
         if (Element.elementIsNotSelected())
             Toast.makeText(this, "Выберите элемент", Toast.LENGTH_SHORT).show();
         else if(AxisMI.PositionFrontSide.isPositionCorner(Element.Position))
-            if(Cube.CountCorners.get(AxisMI.TypeCorner.ThreeColors) == Cube.MaxCountCorners.get(AxisMI.TypeCorner.ThreeColors))
+            if(Objects.equals(Cube.CountCorners.get(AxisMI.TypeCorner.ThreeColors), Cube.MaxCountCorners.get(AxisMI.TypeCorner.ThreeColors)))
                 Toast.makeText(this, "Достигнут максимум этих элементов", Toast.LENGTH_SHORT).show();
             else {
                 Cube.ViewSide.addCorner(Element.Position, AxisMI.TypeCorner.ThreeColors);
-                Element.setBackgroundWithBorder(Cube.ViewSide.getDrawable(Element.Position));
+                Element.setBackgroundWithBorder();
                 checkSelectColorButton();
             }
         else
@@ -278,11 +286,11 @@ public class SettingAxisActivity extends AppCompatActivity{
         if (Element.elementIsNotSelected())
             Toast.makeText(this, "Выберите элемент", Toast.LENGTH_SHORT).show();
         else if(AxisMI.PositionFrontSide.isPositionEdge(Element.Position)) {
-            if(Cube.CountEdges.get(AxisMI.TypeEdge.OneColor) == Cube.MaxCountEdges.get(AxisMI.TypeEdge.OneColor))
+            if(Objects.equals(Cube.CountEdges.get(AxisMI.TypeEdge.OneColor), Cube.MaxCountEdges.get(AxisMI.TypeEdge.OneColor)))
                 Toast.makeText(this, "Достигнут максимум этих элементов", Toast.LENGTH_SHORT).show();
             else {
                 Cube.ViewSide.addEdge(Element.Position, AxisMI.TypeEdge.OneColor);
-                Element.setBackgroundWithBorder(Cube.ViewSide.getDrawable(Element.Position));
+                Element.setBackgroundWithBorder();
                 checkSelectColorButton();
             }
         }
@@ -294,11 +302,11 @@ public class SettingAxisActivity extends AppCompatActivity{
         if (Element.elementIsNotSelected())
             Toast.makeText(this, "Выберите элемент", Toast.LENGTH_SHORT).show();
         else if(AxisMI.PositionFrontSide.isPositionEdge(Element.Position))
-            if(Cube.CountEdges.get(AxisMI.TypeEdge.TwoColors) == Cube.MaxCountEdges.get(AxisMI.TypeEdge.TwoColors))
+            if(Objects.equals(Cube.CountEdges.get(AxisMI.TypeEdge.TwoColors), Cube.MaxCountEdges.get(AxisMI.TypeEdge.TwoColors)))
                 Toast.makeText(this, "Достигнут максимум этих элементов", Toast.LENGTH_SHORT).show();
             else {
                 Cube.ViewSide.addEdge(Element.Position, AxisMI.TypeEdge.TwoColors);
-                Element.setBackgroundWithBorder(Cube.ViewSide.getDrawable(Element.Position));
+                Element.setBackgroundWithBorder();
                 checkSelectColorButton();
             }
         else
@@ -313,7 +321,7 @@ public class SettingAxisActivity extends AppCompatActivity{
                 Toast.makeText(this, "Нет элемента", Toast.LENGTH_SHORT).show();
             else {
                 Cube.ViewSide.rotateElement(Element.Position);
-                Element.setBackgroundWithBorder(Cube.ViewSide.getDrawable(Element.Position));
+                Element.setBackgroundWithBorder();
             }
         }
     }
@@ -332,13 +340,15 @@ public class SettingAxisActivity extends AppCompatActivity{
                     Cube.ViewSide.deleteCorner(Element.Position);
                 else
                     Cube.ViewSide.deleteEdge(Element.Position);
-                Element.setBackgroundWithBorder(getDrawable(R.drawable.element_empty));
+                Element.setBackgroundWithBorder();
             }
         }
     }
 
     @SuppressLint("UseCompatLoadingForDrawables")
     public void goSelectColors(View v) {
+        Element.deleteBorder();
+        IsSelectColors = true;
         GridLayout grid = findViewById(R.id.workWithAxis);
         grid.removeAllViews();
         grid.setColumnCount(3);
@@ -406,7 +416,7 @@ public class SettingAxisActivity extends AppCompatActivity{
             Toast.makeText(this, "Достигнуто максимальное количество", Toast.LENGTH_SHORT).show();
         else{
             Cube.ViewSide.addColorElement(Element.Position, Color.RED);
-            Element.setBackgroundWithBorder(Cube.ViewSide.getDrawable(Element.Position));
+            Element.setBackgroundWithBorder();
             checkSolveButton();
         }
     }
@@ -420,7 +430,7 @@ public class SettingAxisActivity extends AppCompatActivity{
             Toast.makeText(this, "Достигнуто максимальное количество", Toast.LENGTH_SHORT).show();
         else{
             Cube.ViewSide.addColorElement(Element.Position, Color.parseColor("#FFA500"));
-            Element.setBackgroundWithBorder(Cube.ViewSide.getDrawable(Element.Position));
+            Element.setBackgroundWithBorder();
             checkSolveButton();
         }
     }
@@ -434,7 +444,7 @@ public class SettingAxisActivity extends AppCompatActivity{
             Toast.makeText(this, "Достигнуто максимальное количество", Toast.LENGTH_SHORT).show();
         else {
             Cube.ViewSide.addColorElement(Element.Position, Color.GREEN);
-            Element.setBackgroundWithBorder(Cube.ViewSide.getDrawable(Element.Position));
+            Element.setBackgroundWithBorder();
             checkSolveButton();
         }
     }
@@ -448,7 +458,7 @@ public class SettingAxisActivity extends AppCompatActivity{
             Toast.makeText(this, "Достигнуто максимальное количество", Toast.LENGTH_SHORT).show();
         else{
             Cube.ViewSide.addColorElement(Element.Position, Color.BLUE);
-            Element.setBackgroundWithBorder(Cube.ViewSide.getDrawable(Element.Position));
+            Element.setBackgroundWithBorder();
             checkSolveButton();
         }
     }
@@ -462,7 +472,7 @@ public class SettingAxisActivity extends AppCompatActivity{
             Toast.makeText(this, "Достигнуто максимальное количество", Toast.LENGTH_SHORT).show();
         else{
             Cube.ViewSide.addColorElement(Element.Position, Color.WHITE);
-            Element.setBackgroundWithBorder(Cube.ViewSide.getDrawable(Element.Position));
+            Element.setBackgroundWithBorder();
             checkSolveButton();
         }
     }
@@ -476,7 +486,7 @@ public class SettingAxisActivity extends AppCompatActivity{
             Toast.makeText(this, "Достигнуто максимальное количество", Toast.LENGTH_SHORT).show();
         else {
             Cube.ViewSide.addColorElement(Element.Position, Color.YELLOW);
-            Element.setBackgroundWithBorder(Cube.ViewSide.getDrawable(Element.Position));
+            Element.setBackgroundWithBorder();
             checkSolveButton();
         }
     }
@@ -487,7 +497,7 @@ public class SettingAxisActivity extends AppCompatActivity{
         else {
             Cube.ViewSide.clearColorsCorner(Element.Position);
             Cube.ViewSide.clearColorsEdge(Element.Position);
-            Element.setBackgroundWithBorder(Cube.ViewSide.getDrawable(Element.Position));
+            Element.setBackgroundWithBorder();
             checkSolveButton();
         }
     }
@@ -542,10 +552,26 @@ public class SettingAxisActivity extends AppCompatActivity{
             return 'Y';
     }
 
+    private char getDirection(String side){
+        AxisMI.DirectionCenter[] directions = new AxisMI.DirectionCenter[]{ AxisMI.DirectionCenter.TopLeft, AxisMI.DirectionCenter.TopRight, AxisMI.DirectionCenter.BottomRight, AxisMI.DirectionCenter.BottomLeft };
+        AxisMI.DirectionCenter rightDirection = Cube.RightDirectionCenters.get(side);
+        AxisMI.DirectionCenter currentDirection = Cube.Centers.get(side).Direction;
+        int first = Arrays.asList(directions).indexOf(rightDirection);
+        if(currentDirection == rightDirection)
+            return 'U';
+        else if(currentDirection == directions[(first + 1) % directions.length])
+            return 'R';
+        else if(currentDirection == directions[(first - 1) % directions.length])
+            return 'L';
+        else
+            return 'D';
+    }
+
     public void solveCube(View v){
         Intent intent = new Intent(this, SolutionActivity.class);
         char[][][] colors = new char[6][3][3];
-        colors[0][0][0] = getColor(Cube.Corners.get(Cube.getSortedString("LUF")).Colors.get("F"));
+        char[] directions = new char[6];
+        colors[0][0][0] = getColor(Cube.Corners.get(Cube.getSortedString("FLU")).Colors.get("F"));
         colors[0][0][1] = getColor(Cube.Edges.get(Cube.getSortedString("UF")).Colors.get("F"));
         colors[0][0][2] = getColor(Cube.Corners.get(Cube.getSortedString("RUF")).Colors.get("F"));
         colors[0][1][0] = getColor(Cube.Edges.get(Cube.getSortedString("LF")).Colors.get("F"));
@@ -554,6 +580,7 @@ public class SettingAxisActivity extends AppCompatActivity{
         colors[0][2][0] = getColor(Cube.Corners.get(Cube.getSortedString("LDF")).Colors.get("F"));
         colors[0][2][1] = getColor(Cube.Edges.get(Cube.getSortedString("DF")).Colors.get("F"));
         colors[0][2][2] = getColor(Cube.Corners.get(Cube.getSortedString("RDF")).Colors.get("F"));
+        directions[0] = getDirection("F");
 
         colors[1][0][0] = getColor(Cube.Corners.get(Cube.getSortedString("LUB")).Colors.get("U"));
         colors[1][0][1] = getColor(Cube.Edges.get(Cube.getSortedString("UB")).Colors.get("U"));
@@ -564,6 +591,7 @@ public class SettingAxisActivity extends AppCompatActivity{
         colors[1][2][0] = getColor(Cube.Corners.get(Cube.getSortedString("LFU")).Colors.get("U"));
         colors[1][2][1] = getColor(Cube.Edges.get(Cube.getSortedString("FU")).Colors.get("U"));
         colors[1][2][2] = getColor(Cube.Corners.get(Cube.getSortedString("RFU")).Colors.get("U"));
+        directions[1] = getDirection("U");
 
         colors[2][0][0] = getColor(Cube.Corners.get(Cube.getSortedString("BUR")).Colors.get("R"));
         colors[2][0][1] = getColor(Cube.Edges.get(Cube.getSortedString("RB")).Colors.get("R"));
@@ -574,6 +602,7 @@ public class SettingAxisActivity extends AppCompatActivity{
         colors[2][2][0] = getColor(Cube.Corners.get(Cube.getSortedString("FUR")).Colors.get("R"));
         colors[2][2][1] = getColor(Cube.Edges.get(Cube.getSortedString("FR")).Colors.get("R"));
         colors[2][2][2] = getColor(Cube.Corners.get(Cube.getSortedString("FDR")).Colors.get("R"));
+        directions[2] = getDirection("R");
 
         colors[3][0][0] = getColor(Cube.Corners.get(Cube.getSortedString("BDR")).Colors.get("D"));
         colors[3][0][1] = getColor(Cube.Edges.get(Cube.getSortedString("DB")).Colors.get("D"));
@@ -584,6 +613,7 @@ public class SettingAxisActivity extends AppCompatActivity{
         colors[3][2][0] = getColor(Cube.Corners.get(Cube.getSortedString("FDR")).Colors.get("D"));
         colors[3][2][1] = getColor(Cube.Edges.get(Cube.getSortedString("FD")).Colors.get("D"));
         colors[3][2][2] = getColor(Cube.Corners.get(Cube.getSortedString("FDL")).Colors.get("D"));
+        directions[3] = getDirection("D");
 
         colors[4][0][0] = getColor(Cube.Corners.get(Cube.getSortedString("BDL")).Colors.get("L"));
         colors[4][0][1] = getColor(Cube.Edges.get(Cube.getSortedString("LB")).Colors.get("L"));
@@ -594,6 +624,7 @@ public class SettingAxisActivity extends AppCompatActivity{
         colors[4][2][0] = getColor(Cube.Corners.get(Cube.getSortedString("FDL")).Colors.get("L"));
         colors[4][2][1] = getColor(Cube.Edges.get(Cube.getSortedString("FL")).Colors.get("L"));
         colors[4][2][2] = getColor(Cube.Corners.get(Cube.getSortedString("FUL")).Colors.get("L"));
+        directions[4] = getDirection("L");
 
         colors[5][0][0] = getColor(Cube.Corners.get(Cube.getSortedString("BDR")).Colors.get("B"));
         colors[5][0][1] = getColor(Cube.Edges.get(Cube.getSortedString("BR")).Colors.get("B"));
@@ -604,6 +635,8 @@ public class SettingAxisActivity extends AppCompatActivity{
         colors[5][2][0] = getColor(Cube.Corners.get(Cube.getSortedString("BDL")).Colors.get("B"));
         colors[5][2][1] = getColor(Cube.Edges.get(Cube.getSortedString("BL")).Colors.get("B"));
         colors[5][2][2] = getColor(Cube.Corners.get(Cube.getSortedString("BUL")).Colors.get("B"));
+        directions[5] = getDirection("B");
+
         intent.putExtra("type", 2);
         intent.putExtra("colors", colors);
         startActivity(intent);

@@ -9,8 +9,9 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.VectorDrawable;
 import android.graphics.drawable.shapes.PathShape;
-import android.util.Log;
+import android.hardware.lights.Light;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -44,10 +45,10 @@ class AxisMI{
             });}
         };
         static HashMap<PositionFrontSide, Integer[][][]> ThreeColorCornerPoints = new HashMap<PositionFrontSide, Integer[][][]>(){
-            {put(PositionFrontSide.TopLeft, new Integer[][][]{ { {50, 50} }, { {0, 50}, {10, 10} }, { {50, 0}, {10, 10} } });}
-            {put(PositionFrontSide.TopRight, new Integer[][][]{ { {0, 50} }, { {0, 0}, {40, 10} }, { {50, 50}, {40, 10} } });}
-            {put(PositionFrontSide.BottomLeft, new Integer[][][]{ { {50, 0} }, { {0, 0}, {10, 40} }, { {50, 50}, {10, 40} } });}
-            {put(PositionFrontSide.BottomRight, new Integer[][][]{ { {0, 0} }, { {0, 50}, {40, 40} }, { {50, 0}, {40, 40} } });}
+            {put(PositionFrontSide.TopLeft, new Integer[][][]{ { {50, 50} }, { {0, 50}, {10, 10} }, { {50, 0}, {10, 10} }, { {50, 50}, {10, 10} } });}
+            {put(PositionFrontSide.TopRight, new Integer[][][]{ { {0, 50} }, { {0, 0}, {40, 10} }, { {50, 50}, {40, 10} }, { {0, 50}, {40, 10} } });}
+            {put(PositionFrontSide.BottomLeft, new Integer[][][]{ { {50, 0} }, { {50, 50}, {10, 40} }, { {0, 0}, {10, 40} }, { {50, 0}, {10, 40} } });}
+            {put(PositionFrontSide.BottomRight, new Integer[][][]{ { {0, 0} }, { {50, 0}, {40, 40} }, { {0, 50}, {40, 40} }, { {0, 0}, {40, 40} } });}
         };
         static HashMap<PositionFrontSide, HashMap<DirectionEdge, Integer[][][]>> OneColorEdgePoints = new HashMap<PositionFrontSide, HashMap<DirectionEdge, Integer[][][]>>(){
             {put(PositionFrontSide.Left, new HashMap<DirectionEdge, Integer[][][]>(){
@@ -69,55 +70,55 @@ class AxisMI{
         };
         static HashMap<PositionFrontSide, HashMap<DirectionEdge, Integer[][][]>> TwoColorEdgePoints = new HashMap<PositionFrontSide, HashMap<DirectionEdge, Integer[][][]>>(){
             {put(PositionFrontSide.Left, new HashMap<DirectionEdge, Integer[][][]>(){
-                {put(DirectionEdge.Left, new Integer[][][]{ { {50, 0} }, { {50, 50}, {0, 50} }, { {20, 0}, {0, 50} }  });}
-                {put(DirectionEdge.Right, new Integer[][][]{ { {50, 50} }, { {50, 0}, {0, 0} }, { {20, 50}, {0, 0}} });}
+                {put(DirectionEdge.Left, new Integer[][][]{ { {50, 0} }, { {50, 50}, {0, 50} }, { {20, 0}, {0, 50} }, { {50, 0}, {0, 50} }  });}
+                {put(DirectionEdge.Right, new Integer[][][]{ { {50, 50} }, { {50, 0}, {0, 0} }, { {20, 50}, {0, 0}}, { {50, 50}, {0, 0} } });}
             });}
             {put(PositionFrontSide.Top, new HashMap<DirectionEdge, Integer[][][]>(){
-                {put(DirectionEdge.Left, new Integer[][][]{ { {50, 50} }, { {0, 50}, {0, 0} }, { {0, 0}, {50, 20} }  });}
-                {put(DirectionEdge.Right, new Integer[][][]{ { {0, 50} }, { {50, 50}, {50, 0} }, { {0, 20}, {50, 0} } });}
+                {put(DirectionEdge.Left, new Integer[][][]{ { {50, 50} }, { {0, 50}, {0, 0} }, { {0, 0}, {50, 20} }, { {50, 50}, {0, 0} }  });}
+                {put(DirectionEdge.Right, new Integer[][][]{ { {0, 50} }, { {50, 50}, {50, 0} }, { {0, 20}, {50, 0} }, { {0, 50}, {50, 0} } });}
             });}
             {put(PositionFrontSide.Bottom, new HashMap<DirectionEdge, Integer[][][]>(){
-                {put(DirectionEdge.Left, new Integer[][][]{ { {0, 0} }, { {50, 0}, {50, 50} }, { {0, 30}, {50, 50} } });}
-                {put(DirectionEdge.Right, new Integer[][][]{ { {50, 0} }, { {0, 0}, {0, 50} }, { {50, 30}, {0, 50} } });}
+                {put(DirectionEdge.Left, new Integer[][][]{ { {0, 0} }, { {50, 0}, {50, 50} }, { {0, 30}, {50, 50} }, { {0, 0}, {50, 50} } });}
+                {put(DirectionEdge.Right, new Integer[][][]{ { {50, 0} }, { {0, 0}, {0, 50} }, { {50, 30}, {0, 50} }, { {50, 0}, {0, 50} } });}
             });}
             {put(PositionFrontSide.Right, new HashMap<DirectionEdge, Integer[][][]>(){
-                {put(DirectionEdge.Left, new Integer[][][]{ { {0, 50} }, { {0, 0}, {50, 0} }, { {30, 50}, {50, 0} } });}
-                {put(DirectionEdge.Right, new Integer[][][]{ { {0, 0} }, { {0, 50}, {50, 50} }, { {30, 0}, {50, 50} } });}
+                {put(DirectionEdge.Left, new Integer[][][]{ { {0, 50} }, { {0, 0}, {50, 0} }, { {30, 50}, {50, 0} }, { {0, 50}, {50, 0} } });}
+                {put(DirectionEdge.Right, new Integer[][][]{ { {0, 0} }, { {0, 50}, {50, 50} }, { {30, 0}, {50, 50} }, { {0, 0}, {50, 50} } });}
             });}
         };
 
         static HashMap<DirectionCenter, Integer[][][]> CenterPoints = new HashMap<DirectionCenter, Integer[][][]>(){
-            {put(DirectionCenter.TopLeft, new Integer[][][]{ { {50, 0} }, { {0, 50}, {0, 0} }, { {50, 50}, {0, 50} } });}
-            {put(DirectionCenter.TopRight, new Integer[][][]{ { {50, 50} }, { {0, 0}, {50, 0} }, { {0, 50}, {0, 0} } });}
-            {put(DirectionCenter.BottomRight, new Integer[][][]{ { {50, 0} }, { {50, 50}, {0, 50} }, { {0, 50}, {0, 0} } });}
-            {put(DirectionCenter.BottomLeft, new Integer[][][]{ { {50, 50} }, { {0, 50}, {0, 0} }, { {0, 0}, {50, 0} } });}
+            {put(DirectionCenter.TopLeft, new Integer[][][]{ { {50, 0} }, { {0, 50}, {0, 0} }, { {50, 50}, {0, 50} }, { {50, 0}, {0, 50} } });}
+            {put(DirectionCenter.TopRight, new Integer[][][]{ { {50, 50} }, { {0, 0}, {50, 0} }, { {0, 50}, {0, 0} }, { {50, 50}, {0, 0} } });}
+            {put(DirectionCenter.BottomRight, new Integer[][][]{ { {50, 0} }, { {50, 50}, {0, 50} }, { {0, 50}, {0, 0} }, { {50, 0}, {0, 50} } });}
+            {put(DirectionCenter.BottomLeft, new Integer[][][]{ { {50, 50} }, { {0, 50}, {0, 0} }, { {0, 0}, {50, 0} }, { {50, 50}, {0, 0} } } );}
         };
 
-        public static Drawable getCornerDrawable(TypeCorner type, DirectionCorner direction, PositionFrontSide position, Integer[] colors){
+        public static Drawable getCornerDrawable(TypeCorner type, DirectionCorner direction, PositionFrontSide position, Integer[] colors, boolean needHighlight){
             if(type == TypeCorner.OneColor){
                 Integer[][][] points = OneColorCornerPoints.get(position).get(direction);
                 return getOneColorDrawable(points[0][0], points[1], colors[0]);
             }
             else{
                 Integer[][][] points = ThreeColorCornerPoints.get(position);
-                return getTwoColorDrawable(points[0][0], points[1], points[2], colors);
+                return getTwoColorDrawable(points[0][0], points[1], points[2], points[3], colors, needHighlight);
             }
         }
 
-        public static Drawable getEdgeDrawable(TypeEdge type, DirectionEdge direction, PositionFrontSide position, Integer[] colors){
+        public static Drawable getEdgeDrawable(TypeEdge type, DirectionEdge direction, PositionFrontSide position, Integer[] colors, boolean needHighlight){
             if(type == TypeEdge.OneColor){
                 Integer[][][] points = OneColorEdgePoints.get(position).get(direction);
                 return getOneColorDrawable(points[0][0], points[1], colors[0]);
             }
             else{
                 Integer[][][] points = TwoColorEdgePoints.get(position).get(direction);
-                return getTwoColorDrawable(points[0][0], points[1], points[2], colors);
+                return getTwoColorDrawable(points[0][0], points[1], points[2], points[3], colors, needHighlight);
             }
         }
 
         public static Drawable getCenterDrawable(DirectionCenter pos, Integer[] colors){
             Integer[][][] points = CenterPoints.get(pos);
-            return getTwoColorDrawable(points[0][0], points[1], points[2], colors);
+            return getTwoColorDrawable(points[0][0], points[1], points[2], points[3], colors, false);
         }
 
         private static Drawable getOneColorDrawable(Integer[] startPoint, Integer[][] lines, Integer color){
@@ -131,7 +132,14 @@ class AxisMI{
             return shapeDrawable;
         }
 
-        private static Drawable getTwoColorDrawable(Integer[] startPoint, Integer[][] firstLines, Integer[][] secondLines, Integer[] colors){
+        private static Drawable getTwoColorDrawable(Integer[] startPoint, Integer[][] firstLines, Integer[][] secondLines, Integer[][] splitLine, Integer[] colors, boolean needHighlight){
+            if(needHighlight) {
+                for (int i = 0; i < colors.length; i++)
+                    if (Objects.equals(Color.GRAY, colors[i])){
+                        colors[i] = LightGray;
+                        break;
+                    }
+            }
             Bitmap bitmap = Bitmap.createBitmap(50, 50, Bitmap.Config.ARGB_8888);
             Canvas canvas = new Canvas(bitmap);
             Paint paint = new Paint();
@@ -145,10 +153,15 @@ class AxisMI{
             }
             first.close();
             second.close();
+            VectorDrawable drawable = new VectorDrawable();
+            drawable.setBounds(0, 0, 50, 50);
+            drawable.draw(canvas);
             paint.setColor(colors[0]);
             canvas.drawPath(first, paint);
             paint.setColor(colors[1]);
             canvas.drawPath(second, paint);
+            paint.setColor(Color.BLACK);
+            canvas.drawLine(splitLine[0][0], splitLine[0][1], splitLine[1][0], splitLine[1][1], paint);
             return new BitmapDrawable(SettingAxisActivity.Context.getResources(), bitmap);
         }
     }
@@ -338,11 +351,11 @@ class AxisMI{
             else return !(positionFrontSide == PositionFrontSide.Center);
         }
 
-        public Drawable getDrawable(PositionFrontSide positionFrontSide){
+        public Drawable getDrawable(PositionFrontSide positionFrontSide, boolean needHighlight){
             if(ViewCorners.containsKey(positionFrontSide) && ViewCorners.get(positionFrontSide) != null)
-                return ViewCorners.get(positionFrontSide).getDrawable(LocationSides.get(Side.Front), positionFrontSide);
+                return ViewCorners.get(positionFrontSide).getDrawable(LocationSides.get(Side.Front), positionFrontSide, needHighlight);
             else if(ViewEdges.containsKey(positionFrontSide) && ViewEdges.get(positionFrontSide) != null)
-                return ViewEdges.get(positionFrontSide).getDrawable(LocationSides.get(Side.Front), positionFrontSide);
+                return ViewEdges.get(positionFrontSide).getDrawable(LocationSides.get(Side.Front), positionFrontSide, needHighlight);
             else if(positionFrontSide == PositionFrontSide.Center)
                 return ViewCenter.getDrawable();
             else
@@ -400,13 +413,12 @@ class AxisMI{
             }
         }
 
-        public Drawable getDrawable(String side, PositionFrontSide position) {
+        public Drawable getDrawable(String side, PositionFrontSide position, boolean needHighlight) {
             Integer[] colors = Type == TypeCorner.OneColor ? new Integer[]{Colors.get(side)}
-                    : position == PositionFrontSide.TopLeft ? new Integer[]{ Colors.get(Orientation.get(OrientationCorner.Front)), Colors.get(Orientation.get(OrientationCorner.TopBottom)) }
-                    : position == PositionFrontSide.TopRight ? new Integer[]{ Colors.get(Orientation.get(OrientationCorner.Front)), Colors.get(Orientation.get(OrientationCorner.LeftRight)) }
-                    : position == PositionFrontSide.BottomRight ? new Integer[]{ Colors.get(Orientation.get(OrientationCorner.TopBottom)), Colors.get(Orientation.get(OrientationCorner.Front)) }
-                    : new Integer[]{ Colors.get(Orientation.get(OrientationCorner.LeftRight)), Colors.get(Orientation.get(OrientationCorner.Front)) };
-            return Drawables.getCornerDrawable(Type, getDirection(), position, colors);
+                    : position == PositionFrontSide.TopLeft || position == PositionFrontSide.BottomRight
+                    ? new Integer[]{ Colors.get(Orientation.get(OrientationCorner.Front)), Colors.get(Orientation.get(OrientationCorner.TopBottom)) }
+                    : new Integer[]{ Colors.get(Orientation.get(OrientationCorner.Front)), Colors.get(Orientation.get(OrientationCorner.LeftRight)) };
+            return Drawables.getCornerDrawable(Type, getDirection(), position, colors, needHighlight);
         }
 
         public void rotateCorner(){
@@ -432,31 +444,27 @@ class AxisMI{
                 return DirectionCorner.Vertical;
         }
 
-        public void addColor(PositionFrontSide positionFrontSide, String side, int color){
-            if(Type == TypeCorner.OneColor && Colors.get(side) == Color.GRAY) {
+        public void addColor(PositionFrontSide positionFrontSide, String side, int color) {
+            if (Type == TypeCorner.OneColor && Colors.get(side) == Color.GRAY) {
                 Colors.replaceAll((k, v) -> color);
                 CountColors.put(color, CountColors.get(color) + 1);
-            }
-            else{
-                if(Colors.get(side) == Color.GRAY) {
-                    if(positionFrontSide == PositionFrontSide.TopLeft || positionFrontSide == PositionFrontSide.BottomRight)
-                        if(Colors.get(Orientation.get(OrientationCorner.TopBottom)) == color)
+            } else {
+                if (Objects.equals(Colors.get(side), Color.GRAY)) {
+                    if (positionFrontSide == PositionFrontSide.TopLeft || positionFrontSide == PositionFrontSide.BottomRight)
+                        if (Colors.get(Orientation.get(OrientationCorner.TopBottom)) == color)
                             return;
-                    else
-                        if(Colors.get(Orientation.get(OrientationCorner.LeftRight)) == color)
+                        else if (Colors.get(Orientation.get(OrientationCorner.LeftRight)) == color)
                             return;
                     Colors.put(side, color);
                     CountColors.put(color, CountColors.get(color) + 1);
-                }
-                else{
-                    if(positionFrontSide == PositionFrontSide.TopLeft || positionFrontSide == PositionFrontSide.BottomRight) {
-                        if (Colors.get(Orientation.get(OrientationCorner.TopBottom)) == Color.GRAY && Colors.get(side) != color) {
+                } else {
+                    if (positionFrontSide == PositionFrontSide.TopLeft || positionFrontSide == PositionFrontSide.BottomRight) {
+                        if (Objects.equals(Colors.get(Orientation.get(OrientationCorner.TopBottom)), Color.GRAY) && Colors.get(side) != color) {
                             Colors.put(Orientation.get(OrientationCorner.TopBottom), color);
                             CountColors.put(color, CountColors.get(color) + 1);
                         }
-                    }
-                    else if(positionFrontSide == PositionFrontSide.TopRight || positionFrontSide == PositionFrontSide.BottomLeft) {
-                        if (Colors.get(Orientation.get(OrientationCorner.LeftRight)) == Color.GRAY && Colors.get(side) != color) {
+                    } else if (positionFrontSide == PositionFrontSide.TopRight || positionFrontSide == PositionFrontSide.BottomLeft) {
+                        if (Objects.equals(Colors.get(Orientation.get(OrientationCorner.LeftRight)), Color.GRAY) && Colors.get(side) != color) {
                             Colors.put(Orientation.get(OrientationCorner.LeftRight), color);
                             CountColors.put(color, CountColors.get(color) + 1);
                         }
@@ -474,7 +482,7 @@ class AxisMI{
             }
             else {
                 for (String key : Colors.keySet()) {
-                    if (Colors.get(key) != Color.GRAY)
+                    if (!Objects.equals(Colors.get(key), Color.GRAY))
                         CountColors.put(Colors.get(key), CountColors.get(Colors.get(key)) - 1);
                     Colors.put(key, Color.GRAY);
                 }
@@ -506,10 +514,10 @@ class AxisMI{
             }
         }
 
-        public Drawable getDrawable(String side, PositionFrontSide position){
+        public Drawable getDrawable(String side, PositionFrontSide position, boolean needHighlight){
             Integer[] colors = Type == TypeEdge.OneColor ? new Integer[]{ Colors.get(side) }
                     : new Integer[]{ Colors.get(side), Colors.get(getAnotherSide(side)) };
-            return Drawables.getEdgeDrawable(Type, Directions.get(side), position, colors);
+            return Drawables.getEdgeDrawable(Type, Directions.get(side), position, colors, needHighlight);
         }
 
         public void rotateEdge(){
@@ -525,10 +533,10 @@ class AxisMI{
                 CountColors.put(color, CountColors.get(color) + 1);
             }
             else {
-                if (Colors.get(side) != Color.GRAY) {
+                if (!Objects.equals(Colors.get(side), Color.GRAY)) {
                     if (Objects.equals(Colors.get(side), color))
                         return;
-                    if (Colors.get(getAnotherSide(side)) != Color.GRAY)
+                    if (!Objects.equals(Colors.get(getAnotherSide(side)), Color.GRAY))
                         return;
                     CountColors.put(color, CountColors.get(color) + 1);
                     Colors.put(getAnotherSide(side), color);
@@ -559,7 +567,7 @@ class AxisMI{
             }
             else {
                 for (String key : Colors.keySet()) {
-                    if (Colors.get(key) != Color.GRAY)
+                    if (!Objects.equals(Colors.get(key), Color.GRAY))
                         CountColors.put(Colors.get(key), CountColors.get(Colors.get(key)) - 1);
                     Colors.put(key, Color.GRAY);
                 }
@@ -601,6 +609,7 @@ class AxisMI{
         }
     }
 
+    static Integer LightGray = Color.parseColor("#C8C8C8");
     int Size = 3;
     int MaxCountColor = 7;
     Map<Integer, Integer> CountColors = new HashMap<Integer, Integer>(){
@@ -635,6 +644,14 @@ class AxisMI{
         {put(Side.Front, "F");}
         {put(Side.Back, "B");}
     };
+    Map<String, DirectionCenter> RightDirectionCenters = new HashMap<String, DirectionCenter>(){
+        {put("F", DirectionCenter.TopRight);}
+        {put("R", DirectionCenter.BottomRight);}
+        {put("B", DirectionCenter.BottomRight);}
+        {put("L", DirectionCenter.TopRight);}
+        {put("U", DirectionCenter.TopRight);}
+        {put("D", DirectionCenter.TopLeft);}
+    };
     ViewSide ViewSide = new ViewSide();
     Map<String, Corner> Corners = new HashMap<>();
     Map<String, Edge> Edges = new HashMap<>();
@@ -642,12 +659,12 @@ class AxisMI{
 
     public void createCenters(){
         HashMap<String, Integer[]> centersColor = new HashMap<String, Integer[]>(){
-            {put("F", new Integer[]{Color.GREEN, Color.RED});}
-            {put("R", new Integer[]{Color.parseColor("#FFA500"), Color.YELLOW});}
-            {put("B", new Integer[]{Color.BLUE, Color.parseColor("#FFA500")});}
-            {put("L", new Integer[]{Color.RED, Color.WHITE});}
-            {put("U", new Integer[]{Color.YELLOW, Color.BLUE});}
-            {put("D", new Integer[]{Color.WHITE, Color.GREEN});}
+            {put("F", new Integer[]{Color.WHITE, Color.GREEN});}
+            {put("R", new Integer[]{Color.RED, Color.WHITE});}
+            {put("B", new Integer[]{Color.YELLOW, Color.BLUE});}
+            {put("L", new Integer[]{Color.parseColor("#FFA500"), Color.YELLOW});}
+            {put("U", new Integer[]{Color.BLUE, Color.parseColor("#FFA500")});}
+            {put("D", new Integer[]{Color.GREEN, Color.RED});}
         };
         HashMap<String, String[]> centersOrientation = new HashMap<String, String[]>(){
             {put("F", new String[]{ "L", "U", "R", "D" });}
@@ -657,16 +674,8 @@ class AxisMI{
             {put("U", new String[]{ "L", "B", "R", "F" });}
             {put("D", new String[]{ "R", "F", "L", "B" });}
         };
-        HashMap<String, DirectionCenter> centersDirection = new HashMap<String, DirectionCenter>(){
-            {put("F", DirectionCenter.BottomRight);}
-            {put("R", DirectionCenter.BottomRight);}
-            {put("B", DirectionCenter.TopRight);}
-            {put("L", DirectionCenter.TopRight);}
-            {put("U", DirectionCenter.BottomRight);}
-            {put("D", DirectionCenter.BottomLeft);}
-        };
         for(Map.Entry<String, Integer[]> center : centersColor.entrySet()) {
-            Centers.put(center.getKey(), new Center(centersOrientation.get(center.getKey()), center.getValue(), centersDirection.get(center.getKey())));
+            Centers.put(center.getKey(), new Center(centersOrientation.get(center.getKey()), center.getValue(), RightDirectionCenters.get(center.getKey())));
             CountColors.put(center.getValue()[0], CountColors.get(center.getValue()[0]) + 1);
             CountColors.put(center.getValue()[1], CountColors.get(center.getValue()[1]) + 1);
         }
