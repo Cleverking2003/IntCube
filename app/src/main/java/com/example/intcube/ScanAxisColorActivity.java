@@ -97,7 +97,7 @@ public class ScanAxisColorActivity extends CameraActivity implements CvCameraVie
     private Pair<Boolean, String> leftupangle = new Pair<>(true, "qwer");
     private HashMap<Integer, Pair<Integer, String>> statePreview = new HashMap();
 
-    int global_counter = 0;
+    private boolean isFromScan = true;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -164,9 +164,9 @@ public class ScanAxisColorActivity extends CameraActivity implements CvCameraVie
         byte[] maincntr = getIntent().getByteArrayExtra("main");
 
         if (leftcntr == null | rightcntr == null | maincntr == null) {
-            leftcenter.setImageResource(R.drawable.bo_center);
-            rightcenter.setImageResource(R.drawable.rg_center);
-            center.setImageResource(R.drawable.wr_center);
+            leftcenter.setImageResource(R.drawable.wr_center);
+            center.setImageResource(R.drawable.rg_center);
+            rightcenter.setImageResource(R.drawable.yo_center);
             showDialog();
         }
 
@@ -177,6 +177,7 @@ public class ScanAxisColorActivity extends CameraActivity implements CvCameraVie
             leftcenter.setImageBitmap(leftBitmap);
             rightcenter.setImageBitmap(rightBitmap);
             center.setImageBitmap(mainBitmap);
+            isFromScan = false;
         }
     }
 
@@ -563,10 +564,17 @@ public class ScanAxisColorActivity extends CameraActivity implements CvCameraVie
 
 
     public void scanSide(View v){
-        global_counter++;
-        Intent intent = new Intent(this, SettingAxisActivity.class);
-        intent.putExtra("sideInfo", statePreview);
-        startActivity(intent);
+        if(isFromScan){
+            Intent intent = new Intent(this, SettingAxisActivity.class);
+            intent.putExtra("sideInfo", statePreview);
+            startActivity(intent);
+        }
+        else{
+            Intent data = new Intent();
+            data.putExtra("sideInfo", statePreview);
+            setResult(RESULT_OK, data);
+            finish();
+        }
     }
 
     public void toManualinput(){

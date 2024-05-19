@@ -1,5 +1,9 @@
 package com.example.intcube;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -28,6 +32,25 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SettingAxisActivity extends AppCompatActivity{
+
+    ActivityResultLauncher<Intent> mStartForResult = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    if(result.getResultCode() == RESULT_OK){
+                        //Распаковка интента
+                        Intent intent = result.getData();
+                        assert intent != null;
+                        HashMap<Integer, Pair<Integer, String>> preview =
+                                (HashMap<Integer, Pair<Integer, String>>)
+                                        intent.getSerializableExtra("sideInfo");
+                    }
+                    else{
+                        //Наверное ничего
+                    }
+                }
+            });
 
     private class ChoosingElement{
         Button Element;
@@ -91,7 +114,11 @@ public class SettingAxisActivity extends AppCompatActivity{
         buttonsNavigationCube.put("R", findViewById(R.id.rightAxis));
         buttonsNavigationCube.put("D", findViewById(R.id.downAxis));
         checkSelectColorButton();
+
     }
+
+
+
 
     public void startActivityScanAxis(View v){
         Intent intent = new Intent(this, ScanAxisColorActivity.class);
