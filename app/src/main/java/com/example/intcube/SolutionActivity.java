@@ -11,6 +11,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -96,8 +97,6 @@ public class SolutionActivity extends AppCompatActivity {
         solve(type, colors);
         moves = solution.trim().split("\\s+");
 
-
-//        onNextStepClicked();
         setMove(moves[currentStep]);
         if (stages.containsValue(currentStep)) {
             setStage(currentStep);
@@ -108,19 +107,11 @@ public class SolutionActivity extends AppCompatActivity {
         langOfTurns.setOnClickListener(v -> onLangOfTUrnsClicked());
         backToMainButton.setOnClickListener(v -> onBackToMainClicked());
         cubeView.disableTouch();
-
-//        Cube3x3 cube = new Cube3x3(colors);
-//        Log.i(getClass().toString(), solve3x3Cube(cube));
     }
 
-    private void setMovesLeftCount(int count) {
-        if (count > 99) {
-            movesLeftText.setText("Осталось шагов: 99+");
-        }
-        else {
-            String movesLeftCountText = "Осталось шагов: " + String.valueOf(count);
-            movesLeftText.setText(movesLeftCountText);
-        }
+    private void setMovesLeftCount() {
+        String movesLeftCountText = "Шаг " + String.valueOf(currentStep + 1) + "/" + String.valueOf(moves.length);
+        movesLeftText.setText(movesLeftCountText);
     }
 
     @Override
@@ -168,16 +159,20 @@ public class SolutionActivity extends AppCompatActivity {
         }
     }
 
+    void executeMove(String move, boolean inv) {
+        int num = moveToInt(move.charAt(0));
+        boolean inverse = inv;
+        if (move.length() > 1 && move.charAt(1) == '\'')
+            inverse = !inverse;
+        cubeView.executeMove(num, inverse);
+        if (move.length() > 1 && move.charAt(1) == '2')
+            cubeView.executeMove(num, inverse);
+    }
+
     private void onNextStepClicked() {
         if (currentStep < moves.length) {
             String currentMove = moves[currentStep];
-            int move = moveToInt(currentMove.charAt(0));
-            boolean inverse = false;
-            if (currentMove.length() > 1 && currentMove.charAt(1) == '\'')
-                inverse = true;
-            cubeView.executeMove(move, inverse);
-            if (currentMove.length() > 1 && currentMove.charAt(1) == '2')
-                cubeView.executeMove(move, inverse);
+            executeMove(currentMove, false);
             currentStep++;
             if (currentStep == moves.length) {
                 setMove("");
@@ -188,7 +183,14 @@ public class SolutionActivity extends AppCompatActivity {
             if (stages.containsValue(currentStep)) {
                 setStage(currentStep);
             }
-            setMovesLeftCount(moves.length - currentStep);
+            setMovesLeftCount();
+
+            CheckBox check = findViewById(R.id.checkBox);
+            if (check.isChecked()) {
+                currentMove = moves[currentStep];
+                executeMove(currentMove, false);
+                executeMove(currentMove, true);
+            }
         }
     }
 
@@ -204,15 +206,17 @@ public class SolutionActivity extends AppCompatActivity {
             if (stages.containsValue(currentStep + 1)) {
                 setStage(currentStep);
             }
-            int move = moveToInt(currentMove.charAt(0));
-            boolean inverse = true;
-            if (currentMove.length() > 1 && currentMove.charAt(1) == '\'')
-                inverse = false;
-            cubeView.executeMove(move, inverse);
-            if (currentMove.length() > 1 && currentMove.charAt(1) == '2')
-                cubeView.executeMove(move, inverse);
+            executeMove(currentMove, true);
+
+
+            CheckBox check = findViewById(R.id.checkBox);
+            if (check.isChecked()) {
+                currentMove = moves[currentStep];
+                executeMove(currentMove, false);
+                executeMove(currentMove, true);
+            }
         }
-        setMovesLeftCount(moves.length - currentStep);
+        setMovesLeftCount();
     }
 
     private void setMove(String move) {
@@ -272,7 +276,7 @@ public class SolutionActivity extends AppCompatActivity {
                                 int index = moves.length - 1;
                                 while (true) {
                                     char move = moves[index].charAt(0);
-                                    if (move == 'x' || move == 'y') {
+                                    if (move == 'x' || move == 'y' || move == 'z') {
                                         index--;
                                     }
                                     else {
@@ -280,7 +284,7 @@ public class SolutionActivity extends AppCompatActivity {
                                     }
                                 }
                                 moves = Arrays.copyOfRange(moves, 0, index + 1);
-                                setMovesLeftCount(moves.length);
+                                setMovesLeftCount();
                             }
                         })
                 .setNegativeButton("Самый быстрый алгоритм",
