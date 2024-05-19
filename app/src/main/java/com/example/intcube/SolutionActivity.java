@@ -109,9 +109,13 @@ public class SolutionActivity extends AppCompatActivity {
         cubeView.disableTouch();
     }
 
-    private void setMovesLeftCount() {
-        String movesLeftCountText = "Шаг " + String.valueOf(currentStep + 1) + "/" + String.valueOf(moves.length);
-        movesLeftText.setText(movesLeftCountText);
+    private void setMovesLeftCount(int count) {
+        if (count > 99) {
+            movesLeftText.setText("Осталось шагов: 99+");
+        } else {
+            String movesLeftCountText = "Осталось шагов: " + String.valueOf(count);
+            movesLeftText.setText(movesLeftCountText);
+        }
     }
 
     @Override
@@ -183,7 +187,7 @@ public class SolutionActivity extends AppCompatActivity {
             if (stages.containsValue(currentStep)) {
                 setStage(currentStep);
             }
-            setMovesLeftCount();
+            setMovesLeftCount(moves.length - currentStep);
 
             CheckBox check = findViewById(R.id.checkBox);
             if (check.isChecked()) {
@@ -216,7 +220,7 @@ public class SolutionActivity extends AppCompatActivity {
                 executeMove(currentMove, true);
             }
         }
-        setMovesLeftCount();
+        setMovesLeftCount(moves.length - currentStep);
     }
 
     private void setMove(String move) {
@@ -284,7 +288,7 @@ public class SolutionActivity extends AppCompatActivity {
                                     }
                                 }
                                 moves = Arrays.copyOfRange(moves, 0, index + 1);
-                                setMovesLeftCount();
+                                setMovesLeftCount(moves.length);
                             }
                         })
                 .setNegativeButton("Самый быстрый алгоритм",
