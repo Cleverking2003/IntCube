@@ -94,8 +94,7 @@ public class ScanAxisColorActivity extends CameraActivity implements CvCameraVie
     private int[] colors;
     Rect[] rois;
 
-    private Pair<Boolean, String> leftupangle = new Pair<>(true, "qwer");
-    private HashMap<Integer, Pair<Integer, String>> statePreview = new HashMap();
+    private HashMap<Integer, String> statePreview = new HashMap();
 
     private boolean isFromScan = true;
 
@@ -157,7 +156,7 @@ public class ScanAxisColorActivity extends CameraActivity implements CvCameraVie
         colors[4] = R.color.blue;
         colors[5] = R.color.green;
 
-        for(int i=0;i<9;i++) statePreview.put(i, new Pair<>(0,"W"));
+        for(int i=0;i<9;i++) statePreview.put(i, "W");
 
         byte[] leftcntr = getIntent().getByteArrayExtra("left");
         byte[] rightcntr = getIntent().getByteArrayExtra("right");
@@ -314,7 +313,7 @@ public class ScanAxisColorActivity extends CameraActivity implements CvCameraVie
                     int color = getColor(ROI);
                     DrawableCompat.setTint(preview[i].getDrawable(),
                             ContextCompat.getColor(getApplicationContext(), color));
-                    statePreview.put(i, new Pair<>(1, colorInterface(color)));
+                    statePreview.put(i, colorInterface(color));
                 });
             }
             else {
@@ -322,7 +321,7 @@ public class ScanAxisColorActivity extends CameraActivity implements CvCameraVie
                 String[] colors = get2Color(ROI, ret.GetPoints(), i);
                 if (ret.IsCorrect()) runOnUiThread(() -> preview[i].setImageResource(
                         Get2ColorsCorner(colors)));
-                statePreview.put(i, new Pair<>(1, colors[0] + " " + colors[1]));
+                statePreview.put(i, colors[0] + " " + colors[1]);
             }
         }
         else{
@@ -333,7 +332,7 @@ public class ScanAxisColorActivity extends CameraActivity implements CvCameraVie
                     preview[i].setImageResource(R.drawable.one_color_edge_lda);
                     DrawableCompat.setTint(preview[i].getDrawable(),
                             ContextCompat.getColor(getApplicationContext(), getColor(ROI)));
-                    statePreview.put(i, new Pair<>(1, colorInterface(color)));
+                    statePreview.put(i, colorInterface(color));
                 });
             else {
                 RetValue ret = isCorrectline(ROI, lines, i);
@@ -341,7 +340,7 @@ public class ScanAxisColorActivity extends CameraActivity implements CvCameraVie
                 if (ret.IsCorrect())
                     runOnUiThread(() ->
                     preview[i].setImageResource(Get2ColorsEdge(colors)));
-                statePreview.put(i, new Pair<>(1, colors[0] + " " + colors[1]));
+                statePreview.put(i, colors[0] + " " + colors[1]);
             }
         }
     }
@@ -434,25 +433,25 @@ public class ScanAxisColorActivity extends CameraActivity implements CvCameraVie
 
         switch(counter){
             case 0:
-                statePreview.put(4, new Pair<>(2, "W R"));
+                statePreview.put(4,"W R");
                 return new int[]{R.drawable.by_center, R.drawable.wr_center, R.drawable.wg_center};
             case 1:
-                statePreview.put(4, new Pair<>(2, "W G"));
+                statePreview.put(4, "W G");
                 return new int[]{R.drawable.wr_center, R.drawable.wg_center, R.drawable.yo_center};
             case 2:
-                statePreview.put(4, new Pair<>(2, "Y O"));
+                statePreview.put(4, "Y O");
                 return new int[]{R.drawable.wg_center, R.drawable.yo_center, R.drawable.by_center};
             case 3:
-                statePreview.put(4, new Pair<>(2, "B Y"));
+                statePreview.put(4, "B Y");
                 return new int[]{R.drawable.yo_center, R.drawable.by_center, R.drawable.wr_center};
             case 4:
-                statePreview.put(4, new Pair<>(2, "R G"));
+                statePreview.put(4, "R G");
                 return new int[]{R.drawable.yo_center, R.drawable.rg_center, R.drawable.wr_center};
             case 5:
-                statePreview.put(4, new Pair<>(2, "B O"));
+                statePreview.put(4, "B O");
                 return new int[]{R.drawable.yo_center, R.drawable.bo_center, R.drawable.wr_center};
             default:
-                statePreview.put(4, new Pair<>(2, "W B"));
+                statePreview.put(4, "W B");
                 return new int[] {R.drawable.center, R.drawable.center, R.drawable.center};
         }
     }

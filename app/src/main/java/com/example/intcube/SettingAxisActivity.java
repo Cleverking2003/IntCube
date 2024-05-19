@@ -42,8 +42,8 @@ public class SettingAxisActivity extends AppCompatActivity{
                         //Распаковка интента
                         Intent intent = result.getData();
                         assert intent != null;
-                        HashMap<Integer, Pair<Integer, String>> preview =
-                                (HashMap<Integer, Pair<Integer, String>>)
+                        HashMap<Integer, String> preview =
+                                (HashMap<Integer, String>)
                                         intent.getSerializableExtra("sideInfo");
                     }
                     else{
