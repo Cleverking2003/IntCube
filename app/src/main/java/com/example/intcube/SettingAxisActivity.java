@@ -138,7 +138,7 @@ public class SettingAxisActivity extends AppCompatActivity{
         intent.putExtra("right", rightAsBytes);
         intent.putExtra("main", mainAsBytes);
 
-        startActivity(intent);
+        mStartForResult.launch(intent);
     }
 
 
