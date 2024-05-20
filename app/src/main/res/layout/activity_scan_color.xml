@@ -58,12 +58,12 @@
         android:id="@+id/upedge"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginEnd="152dp"
+        android:layout_marginEnd="-20dp"
         android:layout_marginBottom="4dp"
         android:rotation="90"
         android:src="@drawable/two_color_edge_lda"
         app:layout_constraintBottom_toTopOf="@+id/center"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="@+id/center" />
 
     <ImageView
         android:id="@+id/rightupcorner"
@@ -143,10 +143,10 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginTop="4dp"
-        android:layout_marginEnd="152dp"
+        android:layout_marginEnd="-20dp"
         android:rotation="270"
         android:src="@drawable/two_color_edge_lda"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/center"
         app:layout_constraintTop_toBottomOf="@+id/center" />
 
     <ImageView
