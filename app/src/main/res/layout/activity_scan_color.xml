@@ -8,19 +8,6 @@
     tools:context=".ScanAxisColorActivity">
 
 
-    <ImageButton
-        android:id="@+id/HelpScanAxis"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="40dp"
-        android:layout_marginEnd="32dp"
-        android:background="@android:color/transparent"
-        android:scaleType="fitXY"
-        android:onClick="CreateAndShowDialog"
-        android:src="@drawable/help_image"
-        opencv:layout_constraintEnd_toEndOf="parent"
-        opencv:layout_constraintTop_toTopOf="parent" />
-
     <org.opencv.android.JavaCameraView
         android:id="@+id/CameraView"
         android:layout_width="fill_parent"
@@ -34,6 +21,22 @@
         app:layout_constraintVertical_bias="0.0"
         opencv:camera_id="any"
         opencv:show_fps="false" />
+
+    <ImageButton
+        android:id="@+id/HelpScanAxis"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="44dp"
+        android:layout_marginBottom="28dp"
+        android:background="@android:color/transparent"
+        android:onClick="CreateAndShowDialog"
+        android:scaleType="fitXY"
+        android:src="@drawable/help_image"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        opencv:layout_constraintEnd_toEndOf="parent"
+        opencv:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/buttonScanType"
