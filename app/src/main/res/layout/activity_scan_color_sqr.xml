@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".ScanTypeActivity">
 
+    <ImageButton
+        android:id="@+id/HelpScan3x3"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="32dp"
+        android:src="@drawable/help_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <org.opencv.android.JavaCameraView
         android:id="@+id/typeCamera"
         android:layout_width="fill_parent"

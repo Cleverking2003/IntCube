@@ -17,6 +17,16 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.089">
 
+        <ImageButton
+            android:id="@+id/ManualInputAxisHelp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="76dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/help_image"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <androidx.gridlayout.widget.GridLayout
             android:id="@+id/axisView"
             android:layout_width="260dp"
