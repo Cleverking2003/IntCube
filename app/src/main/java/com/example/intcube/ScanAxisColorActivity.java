@@ -2,6 +2,7 @@ package com.example.intcube;
 
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 
 import android.graphics.Bitmap;
@@ -588,5 +589,17 @@ public class ScanAxisColorActivity extends CameraActivity implements CvCameraVie
             setResult(1);
             finish();
         }
+    }
+
+    public Dialog createDialog() {
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+        builder.setTitle("Справка")
+                .setMessage(R.string.scanNote);
+        return builder.create();
+    }
+
+    public void CreateAndShowDialog(View view) {
+        androidx.appcompat.app.AlertDialog dialogInfo = (androidx.appcompat.app.AlertDialog) createDialog();
+        dialogInfo.show();
     }
 }

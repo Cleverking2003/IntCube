@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -441,5 +442,17 @@ public class ScanTypeActivity extends CameraActivity implements CvCameraViewList
     public void startActivityScanColors(View v){
         Intent intent = new Intent(this, ScanAxisColorActivity.class);
         startActivity(intent);
+    }
+
+    public Dialog createDialog() {
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+        builder.setTitle("Справка")
+                .setMessage(R.string.scanNote);
+        return builder.create();
+    }
+
+    public void CreateAndShowDialog(View view) {
+        androidx.appcompat.app.AlertDialog dialogInfo = (androidx.appcompat.app.AlertDialog) createDialog();
+        dialogInfo.show();
     }
 }

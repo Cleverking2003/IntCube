@@ -6,6 +6,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -54,6 +55,18 @@ public class SettingAxisActivity extends AppCompatActivity{
                     }
                 }
             });
+
+    public Dialog createDialog() {
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+        builder.setTitle("Справка")
+                .setMessage(R.string.scanNote);
+        return builder.create();
+    }
+
+    public void CreateAndShowDialog(View view) {
+        androidx.appcompat.app.AlertDialog dialogInfo = (androidx.appcompat.app.AlertDialog) createDialog();
+        dialogInfo.show();
+    }
 
     private class ChoosingElement{
         Button Element;
