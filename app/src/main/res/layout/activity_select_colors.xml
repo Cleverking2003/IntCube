@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SelectColorsActivity">
+    android:visibility="visible"
+    tools:context=".SelectColorsActivity"
+    tools:visibility="visible">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
@@ -132,8 +134,8 @@
             android:id="@+id/clearColor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/clearColorElement"
             android:onClick="clearColor"
+            android:text="@string/clearColorElement"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.05"
@@ -242,6 +244,20 @@
             app:layout_constraintTop_toBottomOf="@+id/layoutForButtons"
             app:layout_constraintVertical_bias="0.619"
             app:srcCompat="@drawable/bottom" />
+
+        <ImageButton
+            android:id="@+id/helpButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:scaleType="fitXY"
+            android:onClick="CreateAndShowDialog"
+            android:background="@android:color/transparent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.955"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/startScan"
+            app:srcCompat="@drawable/help_image" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

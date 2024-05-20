@@ -1,7 +1,9 @@
 package com.example.intcube;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -432,6 +434,18 @@ public class SelectColorsActivity extends AppCompatActivity{
             setResult(1);
             finish();
         }
+    }
+
+    public Dialog createDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Справка")
+                .setMessage(R.string.manualInputNote);
+        return builder.create();
+    }
+
+    public void CreateAndShowDialog(View view) {
+        AlertDialog dialogInfo = (AlertDialog) createDialog();
+        dialogInfo.show();
     }
 
 }

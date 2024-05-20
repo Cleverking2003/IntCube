@@ -56,6 +56,20 @@
 
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
+    <ImageButton
+        android:id="@+id/helpButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="5dp"
+        android:background="@android:color/transparent"
+        android:onClick="CreateAndShowDialog"
+        android:scaleType="fitXY"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.985"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toggleGroup"
+        app:srcCompat="@drawable/help_image" />
+
     <TextView
         android:id="@+id/stageText"
         android:layout_width="wrap_content"

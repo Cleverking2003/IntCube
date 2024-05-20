@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -612,6 +613,18 @@ public class SolutionActivity extends AppCompatActivity {
         stages.put("Ориентирование желтого центра", numOfSteps7);
         stages.put("Постановка углов", numOfSteps8);
         return solution;
+    }
+
+    public Dialog createDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Справка")
+                .setMessage(R.string.solutionNote);
+        return builder.create();
+    }
+
+    public void CreateAndShowDialog(View view) {
+        AlertDialog dialogInfo = (AlertDialog) createDialog();
+        dialogInfo.show();
     }
 }
 
