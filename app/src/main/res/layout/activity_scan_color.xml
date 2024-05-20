@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ScanColorActivity">
+    tools:context=".ScanAxisColorActivity">
 
 
     <org.opencv.android.JavaCameraView
@@ -38,33 +38,33 @@
         android:id="@+id/leftupcorner"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginStart="70dp"
-        android:layout_marginBottom="244dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="4dp"
         android:src="@drawable/one_color_corner"
-        app:layout_constraintBottom_toBottomOf="@+id/CameraView"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/center"
+        app:layout_constraintEnd_toStartOf="@+id/center" />
 
     <ImageView
         android:id="@+id/upedge"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginEnd="153dp"
-        android:layout_marginBottom="244dp"
+        android:layout_marginEnd="152dp"
+        android:layout_marginBottom="4dp"
         android:rotation="90"
         android:src="@drawable/two_color_edge_lda"
-        app:layout_constraintBottom_toBottomOf="@+id/CameraView"
+        app:layout_constraintBottom_toTopOf="@+id/center"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageView
         android:id="@+id/rightupcorner"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginEnd="70dp"
-        android:layout_marginBottom="244dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginBottom="4dp"
         android:rotation="90"
         android:src="@drawable/one_color_corner"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintBottom_toTopOf="@+id/center"
+        app:layout_constraintStart_toEndOf="@+id/center" />
 
     <ImageView
         android:id="@+id/center"
@@ -100,54 +100,54 @@
         android:id="@+id/leftedge"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginStart="70dp"
+        android:layout_marginEnd="4dp"
         android:layout_marginBottom="160dp"
         android:src="@drawable/one_color_edge_lda"
         app:layout_constraintBottom_toBottomOf="@+id/CameraView"
-        app:layout_constraintStart_toStartOf="@+id/CameraView" />
+        app:layout_constraintEnd_toStartOf="@+id/center" />
 
     <ImageView
         android:id="@+id/rightedge"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginStart="239dp"
+        android:layout_marginStart="4dp"
         android:layout_marginBottom="160dp"
         android:rotation="180"
         android:src="@drawable/one_color_edge_lda"
         app:layout_constraintBottom_toBottomOf="@+id/CameraView"
-        app:layout_constraintStart_toStartOf="@+id/CameraView" />
+        app:layout_constraintStart_toEndOf="@+id/center" />
 
     <ImageView
         android:id="@+id/rightdowncorner"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginEnd="70dp"
-        android:layout_marginBottom="75dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
         android:rotation="180"
         android:src="@drawable/one_color_corner"
-        app:layout_constraintBottom_toBottomOf="@+id/CameraView"
-        app:layout_constraintEnd_toEndOf="@+id/CameraView" />
+        app:layout_constraintStart_toEndOf="@+id/center"
+        app:layout_constraintTop_toBottomOf="@+id/center" />
 
     <ImageView
         android:id="@+id/downedge"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginEnd="153dp"
-        android:layout_marginBottom="75dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="152dp"
         android:rotation="270"
         android:src="@drawable/two_color_edge_lda"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/center" />
 
     <ImageView
         android:id="@+id/leftdowncorner"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginStart="70dp"
-        android:layout_marginBottom="75dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
         android:rotation="270"
         android:src="@drawable/one_color_corner"
-        app:layout_constraintBottom_toBottomOf="@+id/CameraView"
-        app:layout_constraintStart_toStartOf="@+id/CameraView" />
+        app:layout_constraintEnd_toStartOf="@+id/center"
+        app:layout_constraintTop_toBottomOf="@+id/center" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
