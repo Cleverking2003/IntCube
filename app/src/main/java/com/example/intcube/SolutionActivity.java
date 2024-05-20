@@ -87,6 +87,7 @@ public class SolutionActivity extends AppCompatActivity {
             mType = 0;
         }
         char[][][] colors = (char[][][]) extras.getSerializable("colors");
+        char[] directions = (char[]) extras.getSerializable("directions");
 
         assert colors != null;
 
@@ -95,7 +96,7 @@ public class SolutionActivity extends AppCompatActivity {
         setSolutionVersion();
 
 
-        solve(type, colors);
+        solve(type, colors, directions);
         moves = solution.trim().split("\\s+");
 
         setMove(moves[currentStep]);
@@ -369,7 +370,7 @@ public class SolutionActivity extends AppCompatActivity {
      * Будет получать тип кубика и массив с отсканированными цветами
      * Будет возвращать строку для решения
      */
-    public void solve(int type, char[][][] colors) {
+    public void solve(int type, char[][][] colors, char[] directions) {
         if (type == 0) {
             Cube2x2 cube2x2 = new Cube2x2(colors);
             solution = solve2x2Cube(cube2x2);
@@ -379,7 +380,7 @@ public class SolutionActivity extends AppCompatActivity {
             solution = solve3x3Cube(cube3x3);
         }
         else if (type == 3) {
-            AxisCube axisCube = new AxisCube();
+            AxisCube axisCube = new AxisCube(colors, directions);
             solution = solveAxisCube(axisCube);
         }
     }

@@ -639,6 +639,7 @@ public class SettingAxisActivity extends AppCompatActivity{
 
         intent.putExtra("type", 2);
         intent.putExtra("colors", colors);
+        intent.putExtra("directions", directions);
         startActivity(intent);
     }
 }
