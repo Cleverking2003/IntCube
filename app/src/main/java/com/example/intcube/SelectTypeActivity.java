@@ -1,6 +1,7 @@
 package com.example.intcube;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat;
 
 import android.annotation.SuppressLint;
@@ -24,6 +25,19 @@ public class SelectTypeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_type);
+
+        Toolbar toolbar = findViewById(R.id.guideToolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            getSupportActionBar().setTitle("Выбор типа");
+        }
+    }
+
+    public boolean onSupportNavigateUp() {
+        this.finish();
+        return true;
     }
 
     public void choosing2x2(View v)
