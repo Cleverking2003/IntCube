@@ -594,7 +594,7 @@ public class ScanAxisColorActivity extends CameraActivity implements CvCameraVie
     public Dialog createDialog() {
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
         builder.setTitle("Справка")
-                .setMessage(R.string.scanNote);
+                .setMessage(R.string.scanAxisNote);
         return builder.create();
     }
 

@@ -447,7 +447,7 @@ public class ScanTypeActivity extends CameraActivity implements CvCameraViewList
     public Dialog createDialog() {
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
         builder.setTitle("Справка")
-                .setMessage(R.string.scanNote);
+                .setMessage(R.string.scanTypeNote);
         return builder.create();
     }
 

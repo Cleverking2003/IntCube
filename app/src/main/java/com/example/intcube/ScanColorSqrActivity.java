@@ -5,6 +5,7 @@ import static org.opencv.android.NativeCameraView.TAG;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -569,5 +570,17 @@ public class ScanColorSqrActivity extends CameraActivity implements CvCameraView
     public void startActivityScanColors(View v){
         Intent intent = new Intent(this, ScanAxisColorActivity.class);
         startActivity(intent);
+    }
+
+    public Dialog createDialog() {
+        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
+        builder.setTitle("Справка")
+                .setMessage(R.string.scan3x32x2Note);
+        return builder.create();
+    }
+
+    public void CreateAndShowDialog(View view) {
+        androidx.appcompat.app.AlertDialog dialogInfo = (androidx.appcompat.app.AlertDialog) createDialog();
+        dialogInfo.show();
     }
 }
