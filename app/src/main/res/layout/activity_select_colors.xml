@@ -9,8 +9,9 @@
     tools:visibility="visible">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout2"
         android:layout_width="0dp"
-        android:layout_height="250dp"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -34,11 +35,8 @@
             <android.widget.Button
                 android:id="@+id/red"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="5dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:background="@drawable/radius_red"
                 android:onClick="choosingRed"
                 app:layout_column="0"
@@ -48,11 +46,8 @@
             <android.widget.Button
                 android:id="@+id/orange"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="5dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:background="@drawable/radius_orange"
                 android:onClick="choosingOrange"
                 app:layout_column="1"
@@ -62,11 +57,8 @@
             <android.widget.Button
                 android:id="@+id/green"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="5dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:background="@drawable/radius_green"
                 android:onClick="choosingGreen"
                 app:layout_column="2"
@@ -76,11 +68,8 @@
             <android.widget.Button
                 android:id="@+id/blue"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="5dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:background="@drawable/radius_blue"
                 android:onClick="choosingBlue"
                 app:layout_column="0"
@@ -90,11 +79,8 @@
             <android.widget.Button
                 android:id="@+id/white"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="5dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:background="@drawable/radius_white"
                 android:onClick="choosingWhite"
                 app:layout_column="1"
@@ -104,11 +90,8 @@
             <android.widget.Button
                 android:id="@+id/yellow"
                 android:layout_width="0dp"
-                android:layout_height="50dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="5dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
                 android:background="@drawable/radius_yellow"
                 android:onClick="choosingYellow"
                 app:layout_column="2"
@@ -117,31 +100,6 @@
 
         </androidx.gridlayout.widget.GridLayout>
 
-        <Button
-            android:id="@+id/solveCube"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:onClick="solveCube"
-            android:text="@string/textToSolveButton"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.95"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.7" />
-
-        <Button
-            android:id="@+id/clearColor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="clearColor"
-            android:text="@string/clearColorElement"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.05"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.7" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -215,7 +173,7 @@
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.38"
+            app:layout_constraintVertical_bias="0.37"
             app:srcCompat="@drawable/up" />
 
         <ImageButton
@@ -260,6 +218,32 @@
             app:srcCompat="@drawable/help_image" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/clearColor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="clearColor"
+        android:text="@string/clearColorElement"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.022"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/constraintLayout2"
+        app:layout_constraintVertical_bias="0.915" />
+
+    <Button
+        android:id="@+id/solveCube"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="solveCube"
+        android:text="@string/textToSolveButton"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.978"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/constraintLayout2"
+        app:layout_constraintVertical_bias="0.908" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

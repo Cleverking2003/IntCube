@@ -6,20 +6,18 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
-import android.util.Log;
-import android.util.Pair;
 import android.view.View;
 import android.widget.Button;
 import androidx.gridlayout.widget.GridLayout;
@@ -28,9 +26,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
-import java.lang.reflect.Array;
 import java.util.Arrays;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -49,24 +45,13 @@ public class SettingAxisActivity extends AppCompatActivity{
                         HashMap<Integer, String> preview =
                                 (HashMap<Integer, String>)
                                         intent.getSerializableExtra("sideInfo");
+                        createSide(preview);
                     }
                     else{
                         //Наверное ничего
                     }
                 }
             });
-
-    public Dialog createDialog() {
-        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(this);
-        builder.setTitle("Справка")
-                .setMessage(R.string.scanAxisManualNote);
-        return builder.create();
-    }
-
-    public void CreateAndShowDialog(View view) {
-        androidx.appcompat.app.AlertDialog dialogInfo = (androidx.appcompat.app.AlertDialog) createDialog();
-        dialogInfo.show();
-    }
 
     private class ChoosingElement{
         Button Element;
@@ -85,11 +70,16 @@ public class SettingAxisActivity extends AppCompatActivity{
 
         public void choosingNewElement(Button newButton){
             deleteBorder();
-            Element = newButton;
-            String tag = (String) Element.getTag();
+            String tag = (String) newButton.getTag();
             int row = Integer.parseInt(tag.split(" ")[0]);
             int column = Integer.parseInt(tag.split(" ")[1]);
             Position = AxisMI.PositionFrontSide.getPosition(row, column, Cube.Size - 1, Cube.Size - 1);
+            if(Position == AxisMI.PositionFrontSide.Center && IsSelectColors)
+            {
+                Position = null;
+                return;
+            }
+            Element = newButton;
             setBackgroundWithBorder();
         }
 
@@ -113,11 +103,7 @@ public class SettingAxisActivity extends AppCompatActivity{
     AxisMI Cube;
     ChoosingElement Element = new ChoosingElement();
     boolean IsSelectColors = false;
-
-    HashMap<String, ImageButton> buttonsNavigationCube = new HashMap<>();
-
-    Button buttonToScanAxis;
-
+    HashMap<String, ImageButton> ButtonsNavigationCube = new HashMap<>();
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -127,45 +113,25 @@ public class SettingAxisActivity extends AppCompatActivity{
         Context = this;
         Cube = new AxisMI();
         Cube.createCenters();
-        buttonsNavigationCube.put("L", findViewById(R.id.leftAxis));
-        buttonsNavigationCube.put("U", findViewById(R.id.upAxis));
-        buttonsNavigationCube.put("R", findViewById(R.id.rightAxis));
-        buttonsNavigationCube.put("D", findViewById(R.id.downAxis));
-        checkSelectColorButton();
-
+        ButtonsNavigationCube.put("L", findViewById(R.id.leftAxis));
+        ButtonsNavigationCube.put("U", findViewById(R.id.upAxis));
+        ButtonsNavigationCube.put("R", findViewById(R.id.rightAxis));
+        ButtonsNavigationCube.put("D", findViewById(R.id.downAxis));
+        checkSelectColorsButton();
     }
-
-
-
-
-    public void startActivityScanAxis(View v){
-        Intent intent = new Intent(this, ScanAxisColorActivity.class);
-
-        HashMap<String, Drawable> centers = Cube.ViewSide.getColorsNeighboringSidesCenters();
-
-        if (centers.get("L") == null | centers.get("R") == null) return;
-        Drawable left = centers.get("L");
-        Drawable right = centers.get("R");
-        Drawable main = Cube.ViewSide.ViewCenter.getDrawable();
-
-        byte[] leftAsBytes = drawable2Bytes(left);
-        byte[] rightAsBytes = drawable2Bytes(right);
-        byte[] mainAsBytes = drawable2Bytes(main);
-
-        intent.putExtra("left", leftAsBytes);
-        intent.putExtra("right", rightAsBytes);
-        intent.putExtra("main", mainAsBytes);
-
-        mStartForResult.launch(intent);
-    }
-
 
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) {
-            showSide();
-        }
+        if (hasFocus)
+            createSide((HashMap<Integer, String>) getIntent().getSerializableExtra("sideInfo"));
+    }
+
+    private void createSide(HashMap<Integer, String> dataFromScan){
+        Cube.createCurrentView();
+        if(dataFromScan != null)
+            Cube.ViewSide.setElements(dataFromScan);
+        showSide();
     }
 
     private void showSide(){
@@ -174,7 +140,6 @@ public class SettingAxisActivity extends AppCompatActivity{
         int verticalPadding = getMargins(layout.getWidth(), layout.getHeight());
         layout.setPadding(0, verticalPadding, 0, verticalPadding);
         int sizeButton = getSizeButtons(layout.getWidth());
-        Cube.createCurrentView();
         layout.setRowCount(Cube.Size);
         layout.setColumnCount(Cube.Size);
         int row = 0;
@@ -193,7 +158,6 @@ public class SettingAxisActivity extends AppCompatActivity{
         }
         changeBackgroundNavigationButtons();
     }
-
 
     @SuppressLint("UseCompatLoadingForDrawables")
     private void addViewOnGrid(GridLayout layout, GridLayout.LayoutParams params, Drawable background, String tag, int sizeButton){
@@ -221,12 +185,8 @@ public class SettingAxisActivity extends AppCompatActivity{
 
     private void changeBackgroundNavigationButtons() {
         HashMap<String, Drawable> sideColor = Cube.ViewSide.getColorsNeighboringSidesCenters();
-        for (Map.Entry<String, Drawable> oneSide : sideColor.entrySet()) {
-            Drawable[] drawables = new Drawable[2];
-            drawables[0] = oneSide.getValue();
-            drawables[1] = getDrawable(R.drawable.radius_transparent);
-            buttonsNavigationCube.get(oneSide.getKey()).setBackground(new LayerDrawable(drawables));
-        }
+        for (Map.Entry<String, Drawable> oneSide : sideColor.entrySet())
+            ButtonsNavigationCube.get(oneSide.getKey()).setBackground(oneSide.getValue());
     }
 
     private int getMargins(int width, int height){
@@ -234,7 +194,44 @@ public class SettingAxisActivity extends AppCompatActivity{
     }
 
     public void toPreviousActivity(View v){
-        finish();
+        showAlert(
+                "Данные не сохранятся, покинуть окно?",
+                "Нет",
+                "Да",
+                this::finish);
+    }
+
+    public void startActivityScanAxis(View v){
+        Intent intent = new Intent(this, ScanAxisColorActivity.class);
+
+        HashMap<String, Drawable> centers = Cube.ViewSide.getColorsNeighboringSidesCenters();
+
+        if (centers.get("L") == null | centers.get("R") == null) return;
+        Drawable left = centers.get("L");
+        Drawable right = centers.get("R");
+        Drawable main = Cube.ViewSide.ViewCenter.getDrawable();
+
+        byte[] leftAsBytes = drawable2Bytes(left);
+        byte[] rightAsBytes = drawable2Bytes(right);
+        byte[] mainAsBytes = drawable2Bytes(main);
+
+        intent.putExtra("left", leftAsBytes);
+        intent.putExtra("right", rightAsBytes);
+        intent.putExtra("main", mainAsBytes);
+
+        mStartForResult.launch(intent);
+    }
+
+    public Dialog createDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Справка")
+                .setMessage(R.string.scanAxisManualNote);
+        return builder.create();
+    }
+
+    public void CreateAndShowDialog(View view) {
+        androidx.appcompat.app.AlertDialog dialogInfo = (androidx.appcompat.app.AlertDialog) createDialog();
+        dialogInfo.show();
     }
 
     public void choosingElement(View v){
@@ -244,38 +241,41 @@ public class SettingAxisActivity extends AppCompatActivity{
     public void goUpSide(View v){
         Element.deleteBorder();
         Cube.turnUp();
-        showSide();
+        createSide(null);
     }
 
     public void goLeftSide(View v){
         Element.deleteBorder();
         Cube.turnLeft();
-        showSide();
+        createSide(null);
     }
 
     public void goDownSide(View v){
         Element.deleteBorder();
         Cube.turnDown();
-        showSide();
+        createSide(null);
     }
 
     public void goRightSide(View v){
         Element.deleteBorder();
         Cube.turnRight();
-        showSide();
+        createSide(null);
     }
 
     public void addOneColorCorner(View v) {
         if (Element.elementIsNotSelected())
             Toast.makeText(this, "Выберите элемент", Toast.LENGTH_SHORT).show();
-        else if(AxisMI.PositionFrontSide.isPositionCorner(Element.Position))
-            if(Objects.equals(Cube.CountCorners.get(AxisMI.TypeCorner.OneColor), Cube.MaxCountCorners.get(AxisMI.TypeCorner.OneColor)))
+        else if(AxisMI.PositionFrontSide.isPositionCorner(Element.Position)) {
+            if (Objects.equals(Cube.CountCorners.get(AxisMI.TypeCorner.OneColor), Cube.MaxCountCorners.get(AxisMI.TypeCorner.OneColor)))
                 Toast.makeText(this, "Достигнут максимум этих элементов", Toast.LENGTH_SHORT).show();
-            else {
+            else if (Cube.ViewSide.getDrawable(Element.Position, false) == null) {
                 Cube.ViewSide.addCorner(Element.Position, AxisMI.TypeCorner.OneColor);
                 Element.setBackgroundWithBorder();
-                checkSelectColorButton();
+                checkSelectColorsButton();
             }
+            else
+                Toast.makeText(this, "Удалите текущий угол, чтобы добавить", Toast.LENGTH_SHORT).show();
+        }
         else
             Toast.makeText(this, "Здесь не может быть угла", Toast.LENGTH_SHORT).show();
     }
@@ -283,14 +283,17 @@ public class SettingAxisActivity extends AppCompatActivity{
     public void addThreeColorsCorner(View v) {
         if (Element.elementIsNotSelected())
             Toast.makeText(this, "Выберите элемент", Toast.LENGTH_SHORT).show();
-        else if(AxisMI.PositionFrontSide.isPositionCorner(Element.Position))
-            if(Objects.equals(Cube.CountCorners.get(AxisMI.TypeCorner.ThreeColors), Cube.MaxCountCorners.get(AxisMI.TypeCorner.ThreeColors)))
+        else if(AxisMI.PositionFrontSide.isPositionCorner(Element.Position)) {
+            if (Objects.equals(Cube.CountCorners.get(AxisMI.TypeCorner.ThreeColors), Cube.MaxCountCorners.get(AxisMI.TypeCorner.ThreeColors)))
                 Toast.makeText(this, "Достигнут максимум этих элементов", Toast.LENGTH_SHORT).show();
-            else {
+            else if (Cube.ViewSide.getDrawable(Element.Position, false) == null) {
                 Cube.ViewSide.addCorner(Element.Position, AxisMI.TypeCorner.ThreeColors);
                 Element.setBackgroundWithBorder();
-                checkSelectColorButton();
+                checkSelectColorsButton();
             }
+            else
+                Toast.makeText(this, "Удалите текущий угол, чтобы добавить", Toast.LENGTH_SHORT).show();
+        }
         else
             Toast.makeText(this, "Здесь не может быть угла", Toast.LENGTH_SHORT).show();
     }
@@ -301,11 +304,13 @@ public class SettingAxisActivity extends AppCompatActivity{
         else if(AxisMI.PositionFrontSide.isPositionEdge(Element.Position)) {
             if(Objects.equals(Cube.CountEdges.get(AxisMI.TypeEdge.OneColor), Cube.MaxCountEdges.get(AxisMI.TypeEdge.OneColor)))
                 Toast.makeText(this, "Достигнут максимум этих элементов", Toast.LENGTH_SHORT).show();
-            else {
+            else  if(Cube.ViewSide.getDrawable(Element.Position, false) == null){
                 Cube.ViewSide.addEdge(Element.Position, AxisMI.TypeEdge.OneColor);
                 Element.setBackgroundWithBorder();
-                checkSelectColorButton();
+                checkSelectColorsButton();
             }
+            else
+                Toast.makeText(this, "Удалите текущee ребро, чтобы добавить", Toast.LENGTH_SHORT).show();
         }
         else
             Toast.makeText(this, "Здесь не может быть ребра", Toast.LENGTH_SHORT).show();
@@ -314,14 +319,17 @@ public class SettingAxisActivity extends AppCompatActivity{
     public void addTwoColorsEdge(View v) {
         if (Element.elementIsNotSelected())
             Toast.makeText(this, "Выберите элемент", Toast.LENGTH_SHORT).show();
-        else if(AxisMI.PositionFrontSide.isPositionEdge(Element.Position))
+        else if(AxisMI.PositionFrontSide.isPositionEdge(Element.Position)){
             if(Objects.equals(Cube.CountEdges.get(AxisMI.TypeEdge.TwoColors), Cube.MaxCountEdges.get(AxisMI.TypeEdge.TwoColors)))
                 Toast.makeText(this, "Достигнут максимум этих элементов", Toast.LENGTH_SHORT).show();
-            else {
+            else  if(Cube.ViewSide.getDrawable(Element.Position, false) == null){
                 Cube.ViewSide.addEdge(Element.Position, AxisMI.TypeEdge.TwoColors);
                 Element.setBackgroundWithBorder();
-                checkSelectColorButton();
+                checkSelectColorsButton();
             }
+            else
+                Toast.makeText(this, "Удалите текущee ребро, чтобы добавить", Toast.LENGTH_SHORT).show();
+        }
         else
             Toast.makeText(this, "Здесь не может быть ребра", Toast.LENGTH_SHORT).show();
     }
@@ -354,21 +362,19 @@ public class SettingAxisActivity extends AppCompatActivity{
                 else
                     Cube.ViewSide.deleteEdge(Element.Position);
                 Element.setBackgroundWithBorder();
+                checkSelectColorsButton();
             }
         }
     }
 
-    @SuppressLint("UseCompatLoadingForDrawables")
-    public void goSelectColors(View v) {
-        Element.deleteBorder();
-        IsSelectColors = true;
-        GridLayout grid = findViewById(R.id.workWithAxis);
-        grid.removeAllViews();
-        grid.setColumnCount(3);
-        grid.setRowCount(3);
+    private Button[] getColorButtons(){
         Context context = this;
-        Button[] colorButtons = new Button[]{ new Button(context), new Button(context), new Button(context), new Button(context), new Button(context), new Button(context) };
-        @SuppressLint("UseCompatLoadingForDrawables") HashMap<Button, Drawable> drawablesButtons = new HashMap<Button, Drawable>(){
+        return new Button[]{ new Button(context), new Button(context), new Button(context), new Button(context), new Button(context), new Button(context) };
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    private HashMap<Button, Drawable> getDrawableColorButtons(Button[] colorButtons){
+        return new HashMap<Button, Drawable>(){
             {put(colorButtons[0], getDrawable(R.drawable.radius_red));}
             {put(colorButtons[1], getDrawable(R.drawable.radius_orange));}
             {put(colorButtons[2], getDrawable(R.drawable.radius_green));}
@@ -376,7 +382,10 @@ public class SettingAxisActivity extends AppCompatActivity{
             {put(colorButtons[4], getDrawable(R.drawable.radius_white));}
             {put(colorButtons[5], getDrawable(R.drawable.radius_yellow));}
         };
-        HashMap<Button, View.OnClickListener> methodsButtons = new HashMap<Button, View.OnClickListener>(){
+    }
+
+    private HashMap<Button, View.OnClickListener> getMethodButtons(Button[] colorButtons){
+        return new HashMap<Button, View.OnClickListener>(){
             {put(colorButtons[0], v -> selectRed(colorButtons[0]));}
             {put(colorButtons[1], v -> selectOrange(colorButtons[1]));}
             {put(colorButtons[2], v -> selectGreen(colorButtons[2]));}
@@ -384,30 +393,79 @@ public class SettingAxisActivity extends AppCompatActivity{
             {put(colorButtons[4], v -> selectWhite(colorButtons[4]));}
             {put(colorButtons[5], v -> selectYellow(colorButtons[5]));}
         };
-        for(int row = 0; row < 3; row++)
+    }
+
+    private void showAlert(String message, String positiveButton, String negativeButton, Runnable negativeAction){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Подтверждение");
+        builder.setMessage(message);
+        builder.setNegativeButton(negativeButton, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                negativeAction.run();
+            }
+        });
+        builder.setPositiveButton(positiveButton, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.show();
+    }
+
+    @SuppressLint("UseCompatLoadingForDrawables")
+    public void goSelectColors(View v) {
+        showAlert(
+                "Далее изменить разворот деталей будет невозможно, вы уверены?",
+                "Проверю еще раз",
+                "Да",
+                this::changeGrid);
+    }
+
+    private void changeGrid(){
+        Element.deleteBorder();
+        findViewById(R.id.startScan).setEnabled(false);
+        IsSelectColors = true;
+        GridLayout grid = findViewById(R.id.workWithAxis);
+        grid.removeAllViews();
+        grid.setColumnCount(3);
+        grid.setRowCount(4);
+        Button[] colorButtons = getColorButtons();
+        HashMap<Button, Drawable> drawablesButtons = getDrawableColorButtons(colorButtons);
+        HashMap<Button, View.OnClickListener> methodsButtons = getMethodButtons(colorButtons);
+        for(int row = 0; row < 4; row++)
             for(int column = 0; column < 3; column++){
                 Button currentButton;
+                boolean columnSpan = false;
                 if(row * 3 + column < colorButtons.length) {
                     currentButton = colorButtons[row * 3 + column];
                     currentButton.setBackground(drawablesButtons.get(currentButton));
                     currentButton.setOnClickListener(methodsButtons.get(currentButton));
                 }
-                else if(column == 0){
-                    currentButton = new Button(context);
+                else if(row == 2 && column == 0){
+                    currentButton = new Button(this);
                     currentButton.setText(R.string.clearColorsElement);
                     currentButton.setOnClickListener(this::clearColors);
+                    columnSpan = true;
                 }
-                else if(column == 2){
-                    currentButton = new Button(context);
+                else if(row == 3 && column == 0){
+                    currentButton = new Button(this);
                     currentButton.setId(R.id.solveCube);
                     currentButton.setText(R.string.textToSolveButton);
                     currentButton.setOnClickListener(this::solveCube);
+                    columnSpan = true;
                 }
                 else
                     continue;
                 GridLayout.LayoutParams params = new GridLayout.LayoutParams();
                 params.rowSpec = GridLayout.spec(row);
-                params.columnSpec = GridLayout.spec(column, 1f);
+                if(columnSpan)
+                    params.columnSpec = GridLayout.spec(0, 3, 1f);
+                else
+                    params.columnSpec = GridLayout.spec(column, 1f);
                 params.width = 0;
                 params.height = GridLayout.LayoutParams.WRAP_CONTENT;
                 params.setMargins(20, 5, 20, 5);
@@ -415,12 +473,7 @@ public class SettingAxisActivity extends AppCompatActivity{
             }
     }
 
-    public void toPreviousActivityFromSettingAxis(View v){
-        finish();
-    }
-
     public void selectRed(View v) {
-        Log.wtf("COunt", String.valueOf(Cube.CountColors.get(Color.RED)));
         if (Element.elementIsNotSelected())
             Toast.makeText(this, "Выберите элемент", Toast.LENGTH_SHORT).show();
         else if (Element.Position == AxisMI.PositionFrontSide.Center)
@@ -505,24 +558,26 @@ public class SettingAxisActivity extends AppCompatActivity{
     }
 
     public void clearColors(View v){
-        if(Element.Position == AxisMI.PositionFrontSide.Center)
+        if(Element.elementIsNotSelected())
+            Toast.makeText(this, "Выберите элемент", Toast.LENGTH_SHORT).show();
+        else if(Element.Position == AxisMI.PositionFrontSide.Center)
             Toast.makeText(this, "Здесь очистить цвета нельзя", Toast.LENGTH_SHORT).show();
         else {
-            Cube.ViewSide.clearColorsCorner(Element.Position);
-            Cube.ViewSide.clearColorsEdge(Element.Position);
+            Cube.ViewSide.clearColors(Element.Position);
             Element.setBackgroundWithBorder();
             checkSolveButton();
         }
     }
 
-    private void checkSelectColorButton(){
+    private void checkSelectColorsButton(){
         Button selectButton = findViewById(R.id.selectColorsAxis);
         selectButton.setEnabled(Cube.cubeIsFillElements());
     }
 
     private void checkSolveButton(){
         Button solveButton = findViewById(R.id.solveCube);
-        solveButton.setEnabled(Cube.cubeIsFillColors());
+        if(solveButton != null)
+            solveButton.setEnabled(Cube.cubeIsFillColors());
     }
 
     public static byte[] drawable2Bytes(Drawable d) {
@@ -574,10 +629,21 @@ public class SettingAxisActivity extends AppCompatActivity{
             return 'U';
         else if(currentDirection == directions[(first + 1) % directions.length])
             return 'R';
-        else if(currentDirection == directions[(first - 1) % directions.length])
+        else if(currentDirection == directions[(first + directions.length - 1) % directions.length])
             return 'L';
         else
             return 'D';
+    }
+
+    private char getColorCorner(String location, String side){
+        AxisMI.Corner corner = Cube.Corners.get(Cube.getSortedString(location));
+        if(corner.Type == AxisMI.TypeCorner.OneColor){
+
+        }
+        else{
+
+        }
+        return 'K';
     }
 
     public void solveCube(View v){

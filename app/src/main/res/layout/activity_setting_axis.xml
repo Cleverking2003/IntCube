@@ -15,7 +15,7 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.089">
+        app:layout_constraintVertical_bias="0.0">
 
         <ImageButton
             android:id="@+id/ManualInputAxisHelp"
@@ -23,9 +23,6 @@
             android:layout_height="40dp"
             android:layout_marginTop="76dp"
             android:layout_marginEnd="16dp"
-            android:background="@android:color/transparent"
-            android:scaleType="fitXY"
-            android:onClick="CreateAndShowDialog"
             android:src="@drawable/help_image"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -105,7 +102,7 @@
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.04"
+            app:layout_constraintVertical_bias="0.037"
             app:srcCompat="@drawable/up" />
 
         <Button
@@ -119,7 +116,7 @@
             app:layout_constraintHorizontal_bias="0.941"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.039" />
+            app:layout_constraintVertical_bias="0.037" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

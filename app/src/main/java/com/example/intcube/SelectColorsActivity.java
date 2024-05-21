@@ -4,6 +4,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -287,8 +288,33 @@ public class SelectColorsActivity extends AppCompatActivity{
         showSide();
     }
 
+    private void showAlert(String message, String positiveButton, String negativeButton, Runnable negativeAction){
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("Подтверждение");
+        builder.setMessage(message);
+        builder.setNegativeButton(negativeButton, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                negativeAction.run();
+            }
+        });
+        builder.setPositiveButton(positiveButton, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        android.app.AlertDialog alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.show();
+    }
+
     public void toPreviousActivity(View v){
-        finish();
+        showAlert(
+                "Данные не сохранятся, покинуть окно?",
+                "Нет",
+                "Да",
+                this::finish);
     }
 
     public void startActivityScan(View view) {
@@ -297,9 +323,12 @@ public class SelectColorsActivity extends AppCompatActivity{
             intent = new Intent(this, ScanColorsSqr2Activity.class);
         else
             intent = new Intent(this, ScanColorSqrActivity.class);
-        startActivity(intent);
+        showAlert(
+                "Данные не сохранятся, покинуть окно?",
+                "Нет",
+                "Да",
+                () -> {startActivity(intent);});
     }
-
 
     private void checkSolveButton(){
         Button solveButton = findViewById(R.id.solveCube);
