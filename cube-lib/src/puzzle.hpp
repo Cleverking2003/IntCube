@@ -44,7 +44,7 @@ public:
             pos = coord_mat * pos;
             pos = glm::vec3(glm::round(pos.x), glm::round(pos.y), glm::round(pos.z));
 
-            c.play_rotate_animation(axis_vec, glm::two_pi<float>() / axis_part, 100ms);
+            c.play_rotate_animation(axis_vec, glm::two_pi<float>() / axis_part, 250ms);
         }
     }
 
@@ -110,7 +110,7 @@ public:
         for (auto& [c, pos, orig_pos] : m_cubies) {
             pos = mat * pos;
             pos = glm::vec3(glm::round(pos.x), glm::round(pos.y), glm::round(pos.z));
-            c.play_rotate_animation(axis_vec, glm::half_pi<float>(), 200ms);
+            c.play_rotate_animation(axis_vec, glm::half_pi<float>(), 250ms);
         }
     }
 
