@@ -44,9 +44,9 @@ import java.util.List;
 
 
 class RetValue{
-    private boolean isCorrectLine;
-    private Point pt1;
-    private Point pt2;
+    private final boolean isCorrectLine;
+    private final Point pt1;
+    private final Point pt2;
 
     public boolean IsCorrect(){
         return isCorrectLine;
@@ -95,7 +95,7 @@ public class ScanAxisColorActivity extends CameraActivity implements CvCameraVie
     private int[] colors;
     Rect[] rois;
 
-    private HashMap<Integer, String> statePreview = new HashMap();
+    private final HashMap<Integer, String> statePreview = new HashMap();
 
     private boolean isFromScan = true;
 

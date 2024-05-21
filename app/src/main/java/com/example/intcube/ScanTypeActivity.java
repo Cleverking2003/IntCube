@@ -61,8 +61,8 @@ public class ScanTypeActivity extends CameraActivity implements CvCameraViewList
     private SeekBar threshold1, threshold2, epsilon, minArea;
 
     private boolean resultDialog = false;
-    private LinkedList<Integer> rectCounts = new LinkedList<>();
-    private LinkedList<Integer> trisCounts = new LinkedList<>();
+    private final LinkedList<Integer> rectCounts = new LinkedList<>();
+    private final LinkedList<Integer> trisCounts = new LinkedList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

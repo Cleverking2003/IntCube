@@ -812,18 +812,18 @@ public class Cube2x2 {
                                     i--;
                                 } else if(moves.substring(i+4, i+5).compareTo("'") == 0) {
                                     //Ex. "U2 U'" --> "U"
-                                    moves = moves.substring(0, i) + moves.substring(i, i+1)
+                                    moves = moves.substring(0, i) + moves.charAt(i)
                                             + moves.substring(i+5);
                                     i--;
                                 } else {
                                     //Ex. "U2 U" --> "U'"
-                                    moves = moves.substring(0, i) + moves.substring(i, i+1) + "'"
+                                    moves = moves.substring(0, i) + moves.charAt(i) + "'"
                                             + moves.substring(i+4);
                                     i--;
                                 }
                             } else {
                                 //Ex. "U2 U" --> "U'"
-                                moves = moves.substring(0, i) + moves.substring(i, i+1) + "'"
+                                moves = moves.substring(0, i) + moves.charAt(i) + "'"
                                         + moves.substring(i+4);
                                 i--;
                             }
@@ -834,12 +834,12 @@ public class Cube2x2 {
                             if(i <= moves.length()-5) {
                                 if(moves.substring(i+4, i+5).compareTo("2") == 0) {
                                     //Ex. "U' U2" --> "U"
-                                    moves = moves.substring(0, i) + moves.substring(i, i+1)
+                                    moves = moves.substring(0, i) + moves.charAt(i)
                                             + moves.substring(i+5);
                                     i--;
                                 } else if(moves.substring(i+4, i+5).compareTo("'") == 0) {
                                     //Ex. "U' U'" --> "U2"
-                                    moves = moves.substring(0, i) + moves.substring(i, i+1) + "2"
+                                    moves = moves.substring(0, i) + moves.charAt(i) + "2"
                                             + moves.substring(i+5);
                                     i--;
                                 } else {
@@ -859,7 +859,7 @@ public class Cube2x2 {
                             if(i <= moves.length()-4) {
                                 if(moves.substring(i+3, i+4).compareTo("2") == 0) {
                                     //Ex. "U U2" --> "U' "
-                                    moves = moves.substring(0, i) + moves.substring(i, i+1) + "'"
+                                    moves = moves.substring(0, i) + moves.charAt(i) + "'"
                                             + moves.substring(i+4);
                                     i--;
                                 } else if(moves.substring(i+3, i+4).compareTo("'") == 0) {
@@ -868,14 +868,14 @@ public class Cube2x2 {
                                     i--;
                                 } else {
                                     //Ex. "U U" --> "U2"
-                                    moves = new String(moves.substring(0, i) + moves.substring(i, i+1) + "2"
-                                            + moves.substring(i+3));
+                                    moves = moves.substring(0, i) + moves.charAt(i) + "2"
+                                            + moves.substring(i + 3);
                                     i--;
                                 }
                             } else {
                                 //Ex. "U U" --> "U2"
-                                moves = new String(moves.substring(0, i) + moves.substring(i, i+1) + "2"
-                                        + moves.substring(i+3));
+                                moves = moves.substring(0, i) + moves.charAt(i) + "2"
+                                        + moves.substring(i + 3);
                                 i--;
                             }
                         }

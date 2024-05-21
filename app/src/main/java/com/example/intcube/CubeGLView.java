@@ -16,7 +16,7 @@ import androidx.annotation.Nullable;
 
 public class CubeGLView extends GLSurfaceView {
 
-    private CubeGLRenderer renderer;
+    private final CubeGLRenderer renderer;
     private boolean mDisableTouch = false;
     public native void handleDragStart(int x, int y);
 
@@ -59,7 +59,7 @@ public class CubeGLView extends GLSurfaceView {
         mDisableTouch = true;
     }
     public class CreateCube implements Runnable {
-        private int m_type;
+        private final int m_type;
         public CreateCube(int type) {
             m_type = type;
         }
@@ -69,8 +69,8 @@ public class CubeGLView extends GLSurfaceView {
         }
     }
     public class ExecuteMove implements Runnable {
-        private int m_type;
-        private boolean m_inverse;
+        private final int m_type;
+        private final boolean m_inverse;
         public ExecuteMove(int type, boolean inverse) {
             m_type = type;
             m_inverse = inverse;
@@ -81,8 +81,8 @@ public class CubeGLView extends GLSurfaceView {
         }
     }
     public class ApplyMove implements Runnable {
-        private int m_type;
-        private boolean m_inverse;
+        private final int m_type;
+        private final boolean m_inverse;
         public ApplyMove(int type, boolean inverse) {
             m_type = type;
             m_inverse = inverse;

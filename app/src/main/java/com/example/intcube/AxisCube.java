@@ -614,18 +614,18 @@ public class AxisCube {
                                     i--;
                                 } else if(moves.substring(i+4, i+5).compareTo("'") == 0) {
                                     //Ex. "U2 U'" --> "U"
-                                    moves = moves.substring(0, i) + moves.substring(i, i+1)
+                                    moves = moves.substring(0, i) + moves.charAt(i)
                                             + moves.substring(i+5);
                                     i--;
                                 } else {
                                     //Ex. "U2 U" --> "U'"
-                                    moves = moves.substring(0, i) + moves.substring(i, i+1) + "'"
+                                    moves = moves.substring(0, i) + moves.charAt(i) + "'"
                                             + moves.substring(i+4);
                                     i--;
                                 }
                             } else {
                                 //Ex. "U2 U" --> "U'"
-                                moves = moves.substring(0, i) + moves.substring(i, i+1) + "'"
+                                moves = moves.substring(0, i) + moves.charAt(i) + "'"
                                         + moves.substring(i+4);
                                 i--;
                             }
@@ -636,12 +636,12 @@ public class AxisCube {
                             if(i <= moves.length()-5) {
                                 if(moves.substring(i+4, i+5).compareTo("2") == 0) {
                                     //Ex. "U' U2" --> "U"
-                                    moves = moves.substring(0, i) + moves.substring(i, i+1)
+                                    moves = moves.substring(0, i) + moves.charAt(i)
                                             + moves.substring(i+5);
                                     i--;
                                 } else if(moves.substring(i+4, i+5).compareTo("'") == 0) {
                                     //Ex. "U' U'" --> "U2"
-                                    moves = moves.substring(0, i) + moves.substring(i, i+1) + "2"
+                                    moves = moves.substring(0, i) + moves.charAt(i) + "2"
                                             + moves.substring(i+5);
                                     i--;
                                 } else {
@@ -661,7 +661,7 @@ public class AxisCube {
                             if(i <= moves.length()-4) {
                                 if(moves.substring(i+3, i+4).compareTo("2") == 0) {
                                     //Ex. "U U2" --> "U' "
-                                    moves = moves.substring(0, i) + moves.substring(i, i+1) + "'"
+                                    moves = moves.substring(0, i) + moves.charAt(i) + "'"
                                             + moves.substring(i+4);
                                     i--;
                                 } else if(moves.substring(i+3, i+4).compareTo("'") == 0) {
@@ -670,14 +670,14 @@ public class AxisCube {
                                     i--;
                                 } else {
                                     //Ex. "U U" --> "U2"
-                                    moves = new String(moves.substring(0, i) + moves.substring(i, i+1) + "2"
-                                            + moves.substring(i+3));
+                                    moves = moves.substring(0, i) + moves.charAt(i) + "2"
+                                            + moves.substring(i + 3);
                                     i--;
                                 }
                             } else {
                                 //Ex. "U U" --> "U2"
-                                moves = new String(moves.substring(0, i) + moves.substring(i, i+1) + "2"
-                                        + moves.substring(i+3));
+                                moves = moves.substring(0, i) + moves.charAt(i) + "2"
+                                        + moves.substring(i + 3);
                                 i--;
                             }
                         }
@@ -697,7 +697,7 @@ public class AxisCube {
      * @return moves used to make sunflower
      */
     public String makeSunflower() {
-        String moves = new String();
+        String moves = "";
         moves += orientWhiteCenter();
 
         //Если белый на детали смотрит вниз, подготавливаем место для нее сверху (отводим верхние белые детали) и поднимаем
@@ -709,7 +709,7 @@ public class AxisCube {
                             moves += prepareSlot(i, j, 0, 'W'); // Делаем U, чтоб на месте детали не было белого цвета
                             //Get the vertical plane in which the cubie lies
                             char turnToMake = cubiePos[i][j][2].verticalFace(i, j); // Определяем, деталь на грани F, L, R или B
-                            moves += performMoves("" + turnToMake + "2 "); // Дважды делаем движение F, L, R или B
+                            moves += performMoves(turnToMake + "2 "); // Дважды делаем движение F, L, R или B
                         }
                     }
                 }
@@ -917,7 +917,7 @@ public class AxisCube {
 
     // Опускаем верхние ребра вниз, если они стоят правильно. Если неправильно, делаем U.
     public String makeWhiteCross() {
-        String moves = new String();
+        String moves = "";
 
         long startTime = System.currentTimeMillis();
         while(numWhiteEdgesOriented() != 0) {
@@ -951,7 +951,7 @@ public class AxisCube {
      * @return the moves used to complete the white layer
      */
     public String finishWhiteLayer() {
-        String moves = new String();
+        String moves = "";
         moves+=insertCornersInU();
 //        moves+="\n";
         String res = insertMisorientedCorners();
@@ -986,7 +986,7 @@ public class AxisCube {
      * @return moves used to insert white corners that are in the U layer
      */
     public String insertCornersInU() {
-        String moves = new String();
+        String moves = "";
 
         for(int y = 0; y<3; y++) {
             for(int x = 0; x<3; x++) {
@@ -1054,7 +1054,7 @@ public class AxisCube {
      * @return moves used to properly orient misoriented white corners
      */
     public String insertMisorientedCorners() {
-        String moves = new String();
+        String moves = "";
         for(int i = 0; i<4; i++) {
             moves += performMoves("y ");
             if(!cornerInserted(2,0,2)) {
@@ -1294,7 +1294,7 @@ public class AxisCube {
      * @return Dot, L, Bar, or Cross
      */
     public String yellowEdgeOrientation() {
-        String status = new String();
+        String status = "";
         // Количество деталей, у которых желтый цвет сверху
         int numOriented = numYellowEdgesOriented();
 
@@ -1329,7 +1329,7 @@ public class AxisCube {
      * Делает желтый неориентированный крест
      */
     public String makeYellowCross() {
-        String moves = new String();
+        String moves = "";
         String status = yellowEdgeOrientation();
 
         if(status.compareTo("Dot") == 0) {
@@ -1360,7 +1360,7 @@ public class AxisCube {
 
 
     public String orientYellowCross() {
-        String moves = new String();
+        String moves = "";
         int numOriented = numYellowEdgesOrientedCorrectly();
         long startTime = System.currentTimeMillis();
         while (numOriented != 4) {

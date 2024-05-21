@@ -3,11 +3,11 @@ package com.example.intcube;
 public class Cubie {
 
 	//Store x, y, and z positions of a cubie
-	private int x;
-	private int y;
-	private int z;
-	private boolean corner;
-	private boolean edge;
+	private final int x;
+	private final int y;
+	private final int z;
+	private final boolean corner;
+	private final boolean edge;
 	//Store the set of colors associated with a cubie; accessible to all subclasses
 	protected CubieColor[] colors;
 
@@ -144,11 +144,8 @@ public class Cubie {
 	}
 
 	public boolean isCenterCubie() {
-		if (edge || corner || ((x == 1) && (y == 1) && (z == 1))) {
-			return false;
-		}
-		return true;
-	}
+        return !edge && !corner && ((x != 1) || (y != 1) || (z != 1));
+    }
 
 
 	/**

@@ -18,7 +18,7 @@ public class CubeGLRenderer implements GLSurfaceView.Renderer {
     public native void applyMove(int move, boolean inverse);
     public native void setClearColor(float r, float g, float b, float a);
 
-    private Context m_context;
+    private final Context m_context;
 
     public CubeGLRenderer(Context context) {
         super();

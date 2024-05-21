@@ -67,8 +67,7 @@ class CubeMI{
                     }
                     else
                         Elements[row][column] = new Center(Color.GRAY);
-            for(int i = 0; i < sides.length; i++)
-                Orientation[i] = sides[i];
+            System.arraycopy(sides, 0, Orientation, 0, sides.length);
         }
 
         public void checkOrientation(String[] orientation){
@@ -79,15 +78,13 @@ class CubeMI{
                     rotateElements(Side.Left, 1);
                 else
                     rotateElements(Side.Left, 2);
-            for(int i = 0; i < orientation.length; i++)
-                Orientation[i] = orientation[i];
+            System.arraycopy(orientation, 0, Orientation, 0, orientation.length);
         }
 
         private void rotateElements(Side where, int count){
             Center[][] source = new Center[Elements.length][Elements.length];
             for(int row = 0; row < source.length; row++)
-                for(int column = 0; column < source.length; column++)
-                    source[row][column] = Elements[row][column];
+                System.arraycopy(Elements[row], 0, source[row], 0, source.length);
             for(int row = 0; row < source.length; row++)
                 for(int column = 0; column < source.length; column++)
                     if(count == 1)

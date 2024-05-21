@@ -71,7 +71,7 @@ public class ScanColorsSqr2Activity extends CameraActivity implements CvCameraVi
     private char[][][] colors;
     private int sideIndex;
 
-    private String[] Stages = new String[] {
+    private final String[] Stages = new String[] {
             "Выберите любую сторону, запомните её",
             "Поверните кубик вверх из предыдущего положения",
             "Поверните кубик вправо из предыдущего положения (во второй раз)",
@@ -80,7 +80,7 @@ public class ScanColorsSqr2Activity extends CameraActivity implements CvCameraVi
             "Поверните кубик вверх из предыдущего положения",
             "",
     };
-    private String[] StagesBar = new String[] {
+    private final String[] StagesBar = new String[] {
             "Отсканируйте сторону",
             "Отсканировано 1 из 6 сторон",
             "Отсканировано 2 из 6 сторон",
@@ -519,7 +519,7 @@ public class ScanColorsSqr2Activity extends CameraActivity implements CvCameraVi
             if (i == 1)
                 result.append("<br>");
         }
-        return Html.fromHtml("<big>" + result.toString() + "</big>");
+        return Html.fromHtml("<big>" + result + "</big>");
     }
 
     // Проверка на дистанцию между контурами

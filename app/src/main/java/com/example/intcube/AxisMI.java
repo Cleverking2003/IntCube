@@ -437,8 +437,7 @@ class AxisMI{
         }
 
         public void changeOrientation(String[] newOrientation){
-            for(int i = 0; i < Orientation.length; i++)
-                Orientation[i] = newOrientation[i];
+            System.arraycopy(newOrientation, 0, Orientation, 0, Orientation.length);
         }
 
         public DirectionCorner getDirection(){

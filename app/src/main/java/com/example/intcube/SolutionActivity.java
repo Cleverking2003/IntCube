@@ -116,7 +116,7 @@ public class SolutionActivity extends AppCompatActivity {
         if (count > 99) {
             movesLeftText.setText("Осталось шагов: 99+");
         } else {
-            String movesLeftCountText = "Осталось шагов: " + String.valueOf(count);
+            String movesLeftCountText = "Осталось шагов: " + count;
             movesLeftText.setText(movesLeftCountText);
         }
     }
@@ -262,9 +262,7 @@ public class SolutionActivity extends AppCompatActivity {
                                 for (int i = moves.length - 1; i >= 0; i--) {
                                     String currentMove = moves[i];
                                     int move = moveToInt(currentMove.charAt(0));
-                                    boolean inverse = true;
-                                    if (currentMove.length() > 1 && currentMove.charAt(1) == '\'')
-                                        inverse = false;
+                                    boolean inverse = currentMove.length() <= 1 || currentMove.charAt(1) != '\'';
                                     cubeView.applyMove(move, inverse);
                                     if (currentMove.length() > 1 && currentMove.charAt(1) == '2')
                                         cubeView.applyMove(move, inverse);
@@ -303,7 +301,7 @@ public class SolutionActivity extends AppCompatActivity {
             flagMoves = 1;
             String currentMove = moveText.getText().toString();
             String sub = currentMove.substring(currentMove.length() - 6);
-            if (currentMove.substring(currentMove.length() - 6).equals("дважды")) {
+            if (currentMove.endsWith("дважды")) {
                 currentMove = currentMove.substring(0, currentMove.length() - 7);
                 String moveInLangOfTurns = getKeyByValue(movesAlternative, currentMove);
                 String text = moveInLangOfTurns + "2";

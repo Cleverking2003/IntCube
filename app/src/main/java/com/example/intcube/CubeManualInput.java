@@ -14,8 +14,7 @@ public class CubeManualInput {
         public void turnLeft(){
             Integer[][] source = new Integer[Elements.length][Elements.length];
             for(int i = 0; i < Elements.length; i++)
-                for(int j = 0; j < Elements.length; j++)
-                    source[i][j] = Elements[i][j];
+                System.arraycopy(Elements[i], 0, source[i], 0, Elements.length);
             for(int i = 0; i < source.length; i++)
                 for(int j = 0; j < source[i].length; j++)
                     Elements[i][j] = source[j][source.length - i - 1];
@@ -24,8 +23,7 @@ public class CubeManualInput {
         public void turnRight(){
             Integer[][] source = new Integer[Elements.length][Elements.length];
             for(int i = 0; i < source.length; i++)
-                for(int j = 0; j < source[i].length; j++)
-                    source[i][j] = Elements[i][j];
+                System.arraycopy(Elements[i], 0, source[i], 0, source[i].length);
             for(int i = 0; i < source.length; i++)
                 for(int j = 0; j < source[i].length; j++)
                     Elements[i][j] = source[source.length - j - 1][i];
@@ -35,9 +33,9 @@ public class CubeManualInput {
     public int Size = 0;
     public int MaxCountColors = 0;
     public final int[] Colors = new int[]{Color.RED, Color.BLUE, Color.parseColor("#FFA500"), Color.GREEN, Color.WHITE, Color.YELLOW };
-    private String[] NameEdgeForAdd = new String[]{"F", "R", "B", "L", "U", "D"};
+    private final String[] NameEdgeForAdd = new String[]{"F", "R", "B", "L", "U", "D"};
     public HashMap<Integer, Integer> ColorsCount = new HashMap<>();
-    private HashMap<String, Side> cube = new HashMap<>();
+    private final HashMap<String, Side> cube = new HashMap<>();
 
     public CubeManualInput(String typeCube){
         switch(typeCube){
