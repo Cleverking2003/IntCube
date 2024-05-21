@@ -1219,7 +1219,7 @@ public class Cube3x3 {
 			moves += checkEdgesInYellowLayer();
 			movesSecondLayer = checkEdgesInSecondLayer();
 		}
-		return moves;
+		return optimizeMoves(moves);
 	}
 
 	/**
@@ -1472,6 +1472,6 @@ public class Cube3x3 {
 			moves += performMoves("y ");
 		}
 
-		return moves;
+		return optimizeMoves(moves);
 	}
 }

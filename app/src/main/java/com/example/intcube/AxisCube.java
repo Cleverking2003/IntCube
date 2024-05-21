@@ -1158,7 +1158,7 @@ public class AxisCube {
             moves += performMoves("U' U' F2 ");
             moves += performMoves("y ");
         }
-        return moves;
+        return optimizeMoves(moves);
     }
 
     public String putEdgeInSecondLayer(int x, int y) {
@@ -1268,7 +1268,7 @@ public class AxisCube {
             moves += checkEdgesInYellowLayer();
             movesSecondLayer = checkEdgesInSecondLayer();
         }
-        return moves;
+        return optimizeMoves(moves);
     }
 
     /**
@@ -1524,7 +1524,7 @@ public class AxisCube {
             if (checkInfLoop(startTime2)) return "Wrong cube";
             moves += performMoves("D ");
         }
-        return moves;
+        return optimizeMoves(moves);
     }
 
     public boolean checkCubeIsSolved() {
