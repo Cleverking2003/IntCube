@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -134,6 +135,12 @@ public class SolutionActivity extends AppCompatActivity {
         cubeView.onResume();
     }
 
+    public void showMove(View v){
+        String currentMove = moves[currentStep];
+        executeMove(currentMove, false);
+        executeMove(currentMove, true);
+    }
+
     private int moveToInt(char move) {
         switch (move) {
             case 'U':
@@ -190,13 +197,6 @@ public class SolutionActivity extends AppCompatActivity {
                 setStage(currentStep);
             }
             setMovesLeftCount(moves.length - currentStep);
-
-            CheckBox check = findViewById(R.id.checkBox);
-            if (check.isChecked()) {
-                currentMove = moves[currentStep];
-                executeMove(currentMove, false);
-                executeMove(currentMove, true);
-            }
         }
     }
 
@@ -213,14 +213,6 @@ public class SolutionActivity extends AppCompatActivity {
                 setStage(currentStep);
             }
             executeMove(currentMove, true);
-
-
-            CheckBox check = findViewById(R.id.checkBox);
-            if (check.isChecked()) {
-                currentMove = moves[currentStep];
-                executeMove(currentMove, false);
-                executeMove(currentMove, true);
-            }
         }
         setMovesLeftCount(moves.length - currentStep);
     }

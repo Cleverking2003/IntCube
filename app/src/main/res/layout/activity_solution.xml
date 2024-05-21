@@ -135,8 +135,8 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="140dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="140dp"
         android:layout_marginEnd="8dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -149,21 +149,27 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
             android:text="Пред. шаг" />
 
-        <CheckBox
-            android:id="@+id/checkBox"
+        <Button
+            android:id="@+id/buttonMove"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:checked="false"
-            android:text="Превью поворота" />
+            android:onClick="showMove"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:text="Показать" />
 
         <Button
             android:id="@+id/buttonNext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
             android:text="След. шаг" />
     </LinearLayout>
 
