@@ -671,7 +671,7 @@ class AxisMI{
         {put("B", new String[]{ "R", "U", "L", "D" });}
         {put("L", new String[]{ "B", "U", "F", "D" });}
         {put("U", new String[]{ "L", "B", "R", "F" });}
-        {put("D", new String[]{ "R", "F", "L", "B" });}
+        {put("D", new String[]{ "R", "B", "L", "F" });}
     };
     ViewSide ViewSide = new ViewSide();
     Map<String, Corner> Corners = new HashMap<>();

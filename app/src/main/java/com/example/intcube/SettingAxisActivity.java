@@ -18,6 +18,7 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import androidx.gridlayout.widget.GridLayout;
@@ -471,6 +472,7 @@ public class SettingAxisActivity extends AppCompatActivity{
                 params.setMargins(20, 5, 20, 5);
                 grid.addView(currentButton, params);
             }
+        checkSolveButton();
     }
 
     public void selectRed(View v) {
@@ -638,11 +640,45 @@ public class SettingAxisActivity extends AppCompatActivity{
     private char getColorCorner(String location, String side){
         AxisMI.Corner corner = Cube.Corners.get(Cube.getSortedString(location));
         if(corner.Type == AxisMI.TypeCorner.OneColor){
-
+            Integer color = corner.Colors.get(side);
+            for(Map.Entry<String, Integer[]> centerColor : Cube.CentersColor.entrySet())
+                if(Objects.equals(centerColor.getValue()[0], color)){
+                    String[] orientation = Cube.CentersOrientation.get(centerColor.getKey());
+                    if(Objects.equals(corner.Direction, String.valueOf(location.charAt(0))))
+                        return getColor(color);
+                    else if(Objects.equals(corner.Direction, String.valueOf(location.charAt(1)))) {
+                        if(location.contains(orientation[0]))
+                            return getColor(Cube.CentersColor.get(orientation[0])[0]);
+                        else
+                            return getColor(Cube.CentersColor.get(orientation[2])[0]);
+                    }
+                    else if(Objects.equals(corner.Direction, String.valueOf(location.charAt(2)))) {
+                        if(location.contains(orientation[1]))
+                            return getColor(Cube.CentersColor.get(orientation[1])[0]);
+                        else
+                            return getColor(Cube.CentersColor.get(orientation[3])[0]);
+                    }
+                }
         }
-        else{
+        else
+            return getColor(corner.Colors.get(side));
+        return 'K';
+    }
 
+    private char getEdgeColor(String location, String side, String another){
+        AxisMI.Edge edge = Cube.Edges.get(Cube.getSortedString(location));
+        if(edge.Type == AxisMI.TypeEdge.OneColor){
+            Integer color = edge.Colors.get(side);
+            for(Map.Entry<String, Integer[]> centerColor : Cube.CentersColor.entrySet())
+                if(Objects.equals(centerColor.getValue()[0], color)){
+                    if(Objects.equals(edge.Directions.get(side), AxisMI.DirectionEdge.Right))
+                        return getColor(color);
+                    else
+                        return getColor(Cube.CentersColor.get(another)[0]);
+                }
         }
+        else
+            return getColor(edge.Colors.get(side));
         return 'K';
     }
 
@@ -650,75 +686,87 @@ public class SettingAxisActivity extends AppCompatActivity{
         Intent intent = new Intent(this, SolutionActivity.class);
         char[][][] colors = new char[6][3][3];
         char[] directions = new char[6];
-        colors[0][0][0] = getColor(Cube.Corners.get(Cube.getSortedString("FLU")).Colors.get("F"));
-        colors[0][0][1] = getColor(Cube.Edges.get(Cube.getSortedString("UF")).Colors.get("F"));
-        colors[0][0][2] = getColor(Cube.Corners.get(Cube.getSortedString("RUF")).Colors.get("F"));
-        colors[0][1][0] = getColor(Cube.Edges.get(Cube.getSortedString("LF")).Colors.get("F"));
+        colors[0][0][0] = getColorCorner("FLU", "F");
+        colors[0][0][1] = getEdgeColor(Cube.getSortedString("FU"), "F", "U");
+        colors[0][0][2] = getColorCorner("FRU", "F");
+        colors[0][1][0] = getEdgeColor(Cube.getSortedString("FL"), "F", "L");
         colors[0][1][1] = getColor(Cube.Centers.get("F").Colors[0]);
-        colors[0][1][2] = getColor(Cube.Edges.get(Cube.getSortedString("RF")).Colors.get("F"));
-        colors[0][2][0] = getColor(Cube.Corners.get(Cube.getSortedString("LDF")).Colors.get("F"));
-        colors[0][2][1] = getColor(Cube.Edges.get(Cube.getSortedString("DF")).Colors.get("F"));
-        colors[0][2][2] = getColor(Cube.Corners.get(Cube.getSortedString("RDF")).Colors.get("F"));
+        colors[0][1][2] = getEdgeColor(Cube.getSortedString("FR"), "F", "R");
+        colors[0][2][0] = getColorCorner("FLD", "F");
+        colors[0][2][1] = getEdgeColor(Cube.getSortedString("FD"), "F", "D");
+        colors[0][2][2] = getColorCorner("FRD", "F");
         directions[0] = getDirection("F");
 
-        colors[1][0][0] = getColor(Cube.Corners.get(Cube.getSortedString("LUB")).Colors.get("U"));
-        colors[1][0][1] = getColor(Cube.Edges.get(Cube.getSortedString("UB")).Colors.get("U"));
-        colors[1][0][2] = getColor(Cube.Corners.get(Cube.getSortedString("RBU")).Colors.get("U"));
-        colors[1][1][0] = getColor(Cube.Edges.get(Cube.getSortedString("LU")).Colors.get("U"));
+        colors[1][0][0] = getColorCorner("ULB", "U");
+        colors[1][0][1] = getEdgeColor(Cube.getSortedString("UB"), "U", "B");
+        colors[1][0][2] = getColorCorner("URB", "U");
+        colors[1][1][0] = getEdgeColor(Cube.getSortedString("UL"), "U", "L");
         colors[1][1][1] = getColor(Cube.Centers.get("U").Colors[0]);
-        colors[1][1][2] = getColor(Cube.Edges.get(Cube.getSortedString("UR")).Colors.get("U"));
-        colors[1][2][0] = getColor(Cube.Corners.get(Cube.getSortedString("LFU")).Colors.get("U"));
-        colors[1][2][1] = getColor(Cube.Edges.get(Cube.getSortedString("FU")).Colors.get("U"));
-        colors[1][2][2] = getColor(Cube.Corners.get(Cube.getSortedString("RFU")).Colors.get("U"));
+        colors[1][1][2] = getEdgeColor(Cube.getSortedString("UR"), "U", "R");
+        colors[1][2][0] = getColorCorner("ULF", "U");
+        colors[1][2][1] = getEdgeColor(Cube.getSortedString("UF"), "U", "F");
+        colors[1][2][2] = getColorCorner("URF", "U");
         directions[1] = getDirection("U");
 
-        colors[2][0][0] = getColor(Cube.Corners.get(Cube.getSortedString("BUR")).Colors.get("R"));
-        colors[2][0][1] = getColor(Cube.Edges.get(Cube.getSortedString("RB")).Colors.get("R"));
-        colors[2][0][2] = getColor(Cube.Corners.get(Cube.getSortedString("BDR")).Colors.get("R"));
-        colors[2][1][0] = getColor(Cube.Edges.get(Cube.getSortedString("RU")).Colors.get("R"));
+        colors[2][0][0] = getColorCorner("RBU", "R");
+        colors[2][0][1] = getEdgeColor(Cube.getSortedString("RB"), "R", "B");
+        colors[2][0][2] = getColorCorner("RBD", "R");
+        colors[2][1][0] = getEdgeColor(Cube.getSortedString("RU"), "R", "U");
         colors[2][1][1] = getColor(Cube.Centers.get("R").Colors[0]);
-        colors[2][1][2] = getColor(Cube.Edges.get(Cube.getSortedString("RD")).Colors.get("R"));
-        colors[2][2][0] = getColor(Cube.Corners.get(Cube.getSortedString("FUR")).Colors.get("R"));
-        colors[2][2][1] = getColor(Cube.Edges.get(Cube.getSortedString("FR")).Colors.get("R"));
-        colors[2][2][2] = getColor(Cube.Corners.get(Cube.getSortedString("FDR")).Colors.get("R"));
+        colors[2][1][2] = getEdgeColor(Cube.getSortedString("RD"), "R", "D");
+        colors[2][2][0] = getColorCorner("RFU", "R");
+        colors[2][2][1] = getEdgeColor(Cube.getSortedString("RF"), "R", "F");
+        colors[2][2][2] = getColorCorner("RFD", "R");
         directions[2] = getDirection("R");
 
-        colors[3][0][0] = getColor(Cube.Corners.get(Cube.getSortedString("BDR")).Colors.get("D"));
-        colors[3][0][1] = getColor(Cube.Edges.get(Cube.getSortedString("DB")).Colors.get("D"));
-        colors[3][0][2] = getColor(Cube.Corners.get(Cube.getSortedString("BDL")).Colors.get("D"));
-        colors[3][1][0] = getColor(Cube.Edges.get(Cube.getSortedString("RD")).Colors.get("D"));
+        colors[3][0][0] = getColorCorner("DRB", "D");
+        colors[3][0][1] = getEdgeColor(Cube.getSortedString("DB"), "D", "B");
+        colors[3][0][2] = getColorCorner("DLB", "D");
+        colors[3][1][0] = getEdgeColor(Cube.getSortedString("DR"), "D", "R");
         colors[3][1][1] = getColor(Cube.Centers.get("D").Colors[0]);
-        colors[3][1][2] = getColor(Cube.Edges.get(Cube.getSortedString("LD")).Colors.get("D"));
-        colors[3][2][0] = getColor(Cube.Corners.get(Cube.getSortedString("FDR")).Colors.get("D"));
-        colors[3][2][1] = getColor(Cube.Edges.get(Cube.getSortedString("FD")).Colors.get("D"));
-        colors[3][2][2] = getColor(Cube.Corners.get(Cube.getSortedString("FDL")).Colors.get("D"));
+        colors[3][1][2] = getEdgeColor(Cube.getSortedString("DL"), "D", "L");
+        colors[3][2][0] = getColorCorner("DRF", "D");
+        colors[3][2][1] = getEdgeColor(Cube.getSortedString("DF"), "D", "F");
+        colors[3][2][2] = getColorCorner("DLF", "D");
         directions[3] = getDirection("D");
 
-        colors[4][0][0] = getColor(Cube.Corners.get(Cube.getSortedString("BDL")).Colors.get("L"));
-        colors[4][0][1] = getColor(Cube.Edges.get(Cube.getSortedString("LB")).Colors.get("L"));
-        colors[4][0][2] = getColor(Cube.Corners.get(Cube.getSortedString("BUL")).Colors.get("L"));
-        colors[4][1][0] = getColor(Cube.Edges.get(Cube.getSortedString("LD")).Colors.get("L"));
+        colors[4][0][0] = getColorCorner("LBD", "L");
+        colors[4][0][1] = getEdgeColor(Cube.getSortedString("LB"), "L", "B");
+        colors[4][0][2] = getColorCorner("LBU", "L");
+        colors[4][1][0] = getEdgeColor(Cube.getSortedString("LD"), "L", "D");
         colors[4][1][1] = getColor(Cube.Centers.get("L").Colors[0]);
-        colors[4][1][2] = getColor(Cube.Edges.get(Cube.getSortedString("LU")).Colors.get("L"));
-        colors[4][2][0] = getColor(Cube.Corners.get(Cube.getSortedString("FDL")).Colors.get("L"));
-        colors[4][2][1] = getColor(Cube.Edges.get(Cube.getSortedString("FL")).Colors.get("L"));
-        colors[4][2][2] = getColor(Cube.Corners.get(Cube.getSortedString("FUL")).Colors.get("L"));
+        colors[4][1][2] = getEdgeColor(Cube.getSortedString("LU"), "L", "U");
+        colors[4][2][0] = getColorCorner("LFD", "L");
+        colors[4][2][1] = getEdgeColor(Cube.getSortedString("LF"), "L", "F");
+        colors[4][2][2] = getColorCorner("LFU", "L");
         directions[4] = getDirection("L");
 
-        colors[5][0][0] = getColor(Cube.Corners.get(Cube.getSortedString("BDR")).Colors.get("B"));
-        colors[5][0][1] = getColor(Cube.Edges.get(Cube.getSortedString("BR")).Colors.get("B"));
-        colors[5][0][2] = getColor(Cube.Corners.get(Cube.getSortedString("BUR")).Colors.get("B"));
-        colors[5][1][0] = getColor(Cube.Edges.get(Cube.getSortedString("BD")).Colors.get("B"));
+        colors[5][0][0] = getColorCorner("BRD", "B");
+        colors[5][0][1] = getEdgeColor(Cube.getSortedString("BR"), "B", "R");
+        colors[5][0][2] = getColorCorner("BRU", "B");
+        colors[5][1][0] = getEdgeColor(Cube.getSortedString("BD"), "B", "D");
         colors[5][1][1] = getColor(Cube.Centers.get("B").Colors[0]);
-        colors[5][1][2] = getColor(Cube.Edges.get(Cube.getSortedString("BU")).Colors.get("B"));
-        colors[5][2][0] = getColor(Cube.Corners.get(Cube.getSortedString("BDL")).Colors.get("B"));
-        colors[5][2][1] = getColor(Cube.Edges.get(Cube.getSortedString("BL")).Colors.get("B"));
-        colors[5][2][2] = getColor(Cube.Corners.get(Cube.getSortedString("BUL")).Colors.get("B"));
+        colors[5][1][2] = getEdgeColor(Cube.getSortedString("BU"), "B", "U");
+        colors[5][2][0] = getColorCorner("BLD", "B");
+        colors[5][2][1] = getEdgeColor(Cube.getSortedString("BL"), "B", "L");
+        colors[5][2][2] = getColorCorner("BLU", "B");
         directions[5] = getDirection("B");
 
-        intent.putExtra("type", 2);
+
+        for(int side = 0; side < 6; side++) {
+            for (int row = 0; row < 3; row++){
+                StringBuilder rowElements = new StringBuilder();
+                for(int column = 0; column < 3; column++)
+                    rowElements.append(colors[side][row][column]);
+                Log.wtf("row", rowElements.toString());
+            }
+            Log.wtf("center rotate", String.valueOf(directions[side]));
+        }
+
+        /*
+        intent.putExtra("type", 3);
         intent.putExtra("colors", colors);
         intent.putExtra("directions", directions);
-        startActivity(intent);
+        startActivity(intent);*/
     }
 }
