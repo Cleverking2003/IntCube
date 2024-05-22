@@ -609,17 +609,17 @@ public class SettingAxisActivity extends AppCompatActivity{
 
     private char getColor(Integer color){
         if(color == Color.RED)
-            return 'R';
+            return 'F';
         else if(color == Color.parseColor("#FFA500"))
-            return 'O';
-        else if(color == Color.GREEN)
-            return 'G';
-        else if(color == Color.BLUE)
             return 'B';
+        else if(color == Color.GREEN)
+            return 'L';
+        else if(color == Color.BLUE)
+            return 'R';
         else if(color == Color.WHITE)
-            return 'W';
+            return 'U';
         else
-            return 'Y';
+            return 'D';
     }
 
     private char getDirection(String side){
@@ -763,10 +763,55 @@ public class SettingAxisActivity extends AppCompatActivity{
             Log.wtf("center rotate", String.valueOf(directions[side]));
         }
 
-        /*
         intent.putExtra("type", 3);
         intent.putExtra("colors", colors);
         intent.putExtra("directions", directions);
-        startActivity(intent);*/
+        startActivity(intent);
+    }
+
+    public void test(View v) {
+        Intent intent = new Intent(this, SolutionActivity.class);
+        char[][][] colors = new char[6][3][3];
+        char[] directions = new char[6];
+
+
+        colors = new char[][][] {
+                {
+                        { 'F', 'F', 'F' },
+                        { 'L', 'F', 'R' },
+                        { 'F', 'F', 'F' },
+                },
+                {
+                        { 'U', 'U', 'U' },
+                        { 'U', 'U', 'U' },
+                        { 'U', 'U', 'U' },
+                },
+                {
+                        { 'R', 'R', 'R' },
+                        { 'R', 'R', 'F' },
+                        { 'R', 'R', 'R' },
+                },
+                {
+                        { 'D', 'D', 'D' },
+                        { 'D', 'D', 'D' },
+                        { 'D', 'D', 'D' },
+                },
+                {
+                        { 'L', 'L', 'L' },
+                        { 'F', 'L', 'L' },
+                        { 'L', 'L', 'L' },
+                },
+                {
+                        { 'B', 'B', 'B' },
+                        { 'B', 'B', 'B' },
+                        { 'B', 'B', 'B' },
+                },
+        };
+
+        directions = new char[] { 'U', 'U', 'U', 'U', 'U', 'U', };
+        intent.putExtra("type", 1);
+        intent.putExtra("colors", colors);
+        intent.putExtra("directions", directions);
+        startActivity(intent);
     }
 }
